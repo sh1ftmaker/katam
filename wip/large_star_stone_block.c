@@ -452,8 +452,7 @@ NAKED void sub_08120B90(struct Unknown82 *x)
 #else
 void sub_08120B90(struct Unknown82 *x)
 {
-    struct Unknown82 *x2 = x;
-    struct Unk_0888562C_4 * volatile arr = x->obj2.unk8C;
+    struct Unk_0888562C_4 *arr = x->obj2.unk8C;
     u8 unk56 = x->obj2.base.unk56;
     register struct LevelInfo *li asm("sl");
     register u32 k asm("sb");
@@ -466,25 +465,25 @@ void sub_08120B90(struct Unknown82 *x)
             x->unkB8 |= 0x10;
     }
 
-    if ((s16)x2->unkBA > 0) {
-        x2->unkBA--;
+    if ((s16)x->unkBA > 0) {
+        x->unkBA--;
     } else {
-        if (x2->unkB8 & 1)
-            x2->unkB8 |= 0x10;
-        x2->unkBA = 0;
+        if (x->unkB8 & 1)
+            x->unkB8 |= 0x10;
+        x->unkBA = 0;
     }
 
-    if (x2->unkB8 & 0x10) {
-        x2->unkB8 &= ~0x10;
-        if (x2->unkB8 & 1) {
+    if (x->unkB8 & 0x10) {
+        x->unkB8 &= ~0x10;
+        if (x->unkB8 & 1) {
             u32 i;
-            x2->unkB8 &= ~1;
-            for (i = 0; i < (u16)x2->unkB4; i++)
+            x->unkB8 &= ~1;
+            for (i = 0; i < (u16)x->unkB4; i++)
                 sub_08001408(unk56, &arr[i].unk0, NULL, NULL);
         } else {
             u32 i;
-            x2->unkB8 |= 1;
-            for (i = 0; i < (u16)x2->unkB4; i++)
+            x->unkB8 |= 1;
+            for (i = 0; i < (u16)x->unkB4; i++)
                 sub_08001408(unk56, arr[i].unk14, NULL, NULL);
         }
     }
