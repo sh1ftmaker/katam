@@ -14,7 +14,7 @@ void sub_080B976C(struct Object2 *);
 void sub_080B9810(struct Object2 *);
 void sub_080B998C(struct Object2 *);
 void sub_080B9AF0(struct Object2 *);
-void sub_080B9DF0(struct Object2 *);
+void sub_080B9DF0(struct Object2 *, u8);
 void sub_080BA004(struct Object2 *);
 void sub_080BA334(struct Object2 *);
 void sub_080BA36C(struct Object2 *);
@@ -42,6 +42,79 @@ void sub_080BA97C(struct Object2 *);
 void sub_080BA9F0(struct Object2 *);
 void sub_080BAA78(struct Object2 *);
 void sub_080BAAF8(struct Object2 *);
+
+void sub_080B8954(struct Object2 *flamer)
+{
+    u8 t;
+
+    ObjectSetFunc(flamer, 0, sub_080B89DC);
+    flamer->base.flags |= 0x40;
+    t = flamer->subtype;
+    switch (t)
+    {
+    case 0:
+        flamer->base.xspeed = 0xCD;
+        t = 0;
+        flamer->unk83 = t;
+        break;
+    case 1:
+        flamer->base.xspeed = 0x140;
+        goto set_unk83;
+    case 2:
+        flamer->base.xspeed = 0x300;
+    set_unk83:
+        flamer->unk83 = t;
+        break;
+    }
+    if (flamer->base.flags & 1)
+        flamer->base.xspeed = -flamer->base.xspeed;
+    flamer->base.flags |= 0x140;
+    flamer->base.unkC &= ~1;
+}
+
+
+void sub_080B976C(struct Object2 *flamer)
+{
+    s16 c;
+
+    flamer->base.flags |= 4;
+    c = flamer->base.counter;
+    if (c != 0)
+    {
+        flamer->base.counter++;
+        if ((s16)flamer->base.counter > 0xC)
+        {
+            if (flamer->unk85 & 0x10)
+                sub_080BA4D0(flamer);
+            else
+                sub_080BA498(flamer);
+        }
+    }
+    else
+    {
+        s32 t = flamer->unk9E + 1;
+
+        flamer->unk9E = t;
+        t &= 0xFF;
+        if ((t & 3) == 3)
+        {
+            sub_080B9DF0(flamer, t >> 2);
+            if (flamer->unk9E & 8)
+                flamer->unk9E = c;
+        }
+        if (flamer->base.flags & 1)
+        {
+            if (flamer->kirby3->base.base.base.x > flamer->base.x)
+                flamer->base.counter++;
+        }
+        else
+        {
+            if (flamer->kirby3->base.base.base.x < flamer->base.x)
+                flamer->base.counter++;
+        }
+    }
+}
+
 
 // sub_080BA334: functionally equivalent; remaining diff is register allocation / constant scheduling.
 #ifndef NONMATCHING

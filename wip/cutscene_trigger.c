@@ -6,6 +6,8 @@
 #include "kirby.h"
 #include "random.h"
 #include "main.h"
+#include "save.h"
+#include "multi_08030C94.h"
 #include "code_0806F780.h"
 #include "constants/songs.h"
 
@@ -216,6 +218,139 @@ void sub_0802084C(struct CutsceneTrigger *x) {
         x2->unkCE = j;
         x->obj2.unk78 = sub_08022E6C;
     }
+}
+
+void sub_08021360(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    u16 i;
+
+    for (i = 0; i < 4; i++) {
+        int v = x2->unkCC;
+
+        if ((v >> i) & 1) {
+            struct Kirby *kirby;
+
+            gKirbys[i].base.base.base.flags &= ~0x01000000;
+            kirby = &gKirbys[i];
+            if (kirby->ability == 0xB) {
+                sub_080641FC(kirby);
+            } else if (kirby->ability == 0xE) {
+                sub_0806A798(kirby);
+            } else if (kirby->ability == 0x13 && (kirby->base.base.base.flags & 0x40)) {
+                sub_08047EF0(kirby);
+            } else {
+                struct Kirby *k2 = &gKirbys[i];
+
+                if (k2->base.base.base.unk58 & 2)
+                    sub_08059810(k2);
+                else if (k2->base.base.base.flags & 0x60)
+                    sub_08044EA8(k2);
+                else
+                    sub_0803FE74(k2);
+            }
+            return;
+        }
+    }
+    x->obj2.base.flags |= 0x1000;
+}
+
+void sub_08021424(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    u16 i;
+    u16 j;
+    u8 flag = 1;
+
+    j = 0;
+    for (i = 0; i < 4; i++) {
+        struct Kirby *kirby = &gKirbys[i];
+
+        if (kirby->hp > 0 && x->obj2.base.roomId == kirby->base.base.base.roomId) {
+            if (!(gKirbys[i].base.base.base.flags & 0x01000000)) {
+                kirby->base.base.base.flags |= 0x01000000;
+                kirby->base.base.base.flags &= ~1;
+                flag = 0;
+            } else if (kirby->animationIndex != 0) {
+                flag = 0;
+            } else {
+                x->unkB8.h[0] |= 1 << i;
+            }
+            j++;
+        }
+    }
+    if (flag) {
+        x2->unkB8.h[1] = j;
+        x->obj2.unk78 = sub_08022ECC;
+    }
+}
+
+void sub_080214E4(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+
+    x->unkB4.obj = CreateObjTemplateAndObj(x->obj2.base.unk56, 1, 0x24, 0xFFE0, 0xFFE0, 0, 0x1F, 0, 0, 0x36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    x2->unkB4.obj->base.flags |= 1;
+    x2->unkB4.obj->unk83 = 7;
+    x2->unkB4.obj->base.xspeed = 0x200;
+    x2->unkB4.obj->base.yspeed = 0xFE00;
+    x->obj2.unk78 = sub_08023504;
+}
+
+void sub_080215B4(struct CutsceneTrigger *x) {
+    struct Object2 *obj = x->unkB4.obj;
+    struct Sprite sprite;
+
+    sub_0808AE30(&obj->base, 0, 0x28C, 2);
+    sprite.tilesVram = 0x06000000;
+    sprite.animId = 0x2C3;
+    sprite.variant = 3;
+    sprite.unk1B = 0xFF;
+    sprite.x = 0;
+    sprite.y = 0;
+    sprite.unk14 = 0;
+    sprite.unk16 = 0;
+    sprite.unk1C = 0x10;
+    sprite.palId = obj->base.sprite.palId & 0xF;
+    sprite.unk8 = 0x80000;
+    sub_08155128(&sprite);
+    sub_0803D280(sprite.palId << 4, 0x10);
+    obj->unk83 = 8;
+    x->obj2.unk78 = sub_08022EE0;
+}
+
+void sub_08021DD4(struct Task *t) {
+    struct CutsceneTrigger *x = TaskGetStructPtr(t);
+    struct Object *obj = x->obj2.object;
+    u8 a = obj->unk2;
+    u8 b = obj->unk3;
+    u8 id = x->obj2.base.unk56;
+    u16 st = gAIKirbyState;
+
+    if (st <= 0x63) {
+        gAIKirbyState = AI_KIRBY_STATE_TUTORIAL;
+        if (!(gUnk_0203AD10 & 0x10)) {
+            if (gUnk_0203AD10 & 2) {
+                if (gUnk_0203AD3C == gUnk_0203AD24) {
+                    u16 v = gSaveID;
+                    u16 off = 0;
+
+                    if (v <= 2)
+                        off = v;
+                    UpdateSaveBufferByOffset(1, off);
+                } else {
+                    sub_08031CE4(8);
+                }
+            } else {
+                u16 v = gSaveID;
+                u16 off = 0;
+
+                if (v <= 2)
+                    off = v;
+                UpdateSaveBufferByOffset(1, off);
+            }
+        }
+    }
+    ObjectDestroy(t);
+    if (a != 0 || id != 0xFF)
+        sub_08001678(a, b, gCurLevelInfo[id].unk65E, 1);
 }
 
 void sub_08022E6C(struct CutsceneTrigger *x) {

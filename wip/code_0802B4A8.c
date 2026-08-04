@@ -45,6 +45,16 @@ struct Unk_0802E390 {
     /* 0x44 */ u16 unk44;
 }; /* size = 0x48 */
 
+struct Unk_0802CE64 {
+    /* 0x00 */ struct Sprite sprite;
+    /* 0x28 */ struct Unk_0802B4A8 *unk28;
+    /* 0x2C */ s32 unk2C;
+    /* 0x30 */ s32 unk30;
+    /* 0x34 */ s16 unk34;
+    /* 0x36 */ s16 unk36;
+    /* 0x38 */ u16 unk38;
+}; /* size = 0x3C */
+
 struct Unk_0802D898 {
     /* 0x00 */ void (*unk0)(struct Unk_0802D898 *);
     /* 0x04 */ u8 filler4[0x44 - 0x04];
@@ -109,7 +119,7 @@ void sub_0802DAB4(struct Unk_0802B4A8 *);
 void sub_0802DAC8(struct Unk_0802B4A8 *);
 void sub_0802DB00(struct Unk_0802B4A8 *);
 void sub_0802DB34(struct Unk_0802B4A8 *);
-void sub_0802DB48(struct Unk_0802B4A8 *);
+struct Unk_0802D898 *sub_0802DB48(struct Unk_0802B4A8 *);
 void sub_0802DBC0(struct Unk_0802B4A8 *);
 void sub_0802DC10(struct Unk_0802B4A8 *);
 void sub_0802DC34(struct Unk_0802B4A8 *);
@@ -149,6 +159,12 @@ void sub_0802E088(struct Unk_0802B4A8 *);
 void sub_0802E0D4(struct Unk_0802B4A8 *);
 void sub_0802E0E8(struct Unk_0802B4A8 *);
 void sub_0802E11C(struct Unk_0802B4A8 *);
+void sub_0802D444(struct Unk_0802B4A8 *);
+void sub_0802DD3C(void);
+void sub_0802DD94(struct Unk_0802D898 *);
+struct Sprite *sub_0802CFF0(struct Unk_0802B4A8 *, u16, u16, u32, s32, s32, s32, s32, s32);
+void sub_0802CF2C(void);
+void sub_0802D528(struct Unk_0802B4A8 *);
 
 void sub_0802B4A8(void) {
     struct Task *t;
@@ -196,6 +212,7 @@ void sub_0802BF68(struct Unk_0802B4A8 *x) {
 }
 
 void sub_0802C308(struct Unk_0802B4A8 *x) {
+    u32 t2;
     u32 t = x->unk2BC + 1;
 
     x->unk2BC = t;
@@ -205,8 +222,22 @@ void sub_0802C308(struct Unk_0802B4A8 *x) {
         x->unk214 &= 0xDFFFFFFF;
         x->unk0 = sub_0802D708;
     } else {
-        gBldRegs.bldY = 0x10 - ((u16)t >> 2);
+        t2 = t;
+        gBldRegs.bldY = 0x10 - ((u16)t2 >> (t = 2));
     }
+}
+
+void sub_0802C360(struct Unk_0802B4A8 *x) {
+    x->unk240[4][0] -= 4;
+    if ((s16)x->unk240[4][0] < -0x80) {
+        x->unk240[4][0] = 0xFF80;
+    }
+    if ((s32)x->unk218[4][0] < -0x2000) {
+        x->unk214 &= 0xFFFF8FFF;
+        x->unk240[4][0] = 0;
+        x->unk0 = sub_0802D444;
+    }
+    x->unk218[4][0] += (s16)x->unk240[4][0];
 }
 
 void sub_0802CDA0(struct Unk_0802D898 *x) {
@@ -236,6 +267,51 @@ void sub_0802CDF8(struct Unk_0802D898 *x) {
     } else {
         gBldRegs.bldAlpha = (0x10 - t) | (t << 8);
     }
+}
+
+struct Unk_0802CE64 *sub_0802CE64(struct Unk_0802B4A8 *x, u16 animId, u16 variant, u32 tilesVram, s32 a5, s32 a6, u16 a7, u16 a8, u16 a9) {
+    struct Task *t;
+    struct Unk_0802CE64 *s;
+
+    t = TaskCreate(sub_0802CF2C, 0x3C, 0x101, 0, NULL);
+    s = TaskGetStructPtr(t);
+    s->unk28 = x;
+    s->unk2C = a5;
+    s->unk30 = a6;
+    s->unk34 = a7;
+    s->unk36 = a8;
+    s->unk38 = a9;
+    SpriteInit(&s->sprite, tilesVram, 0x140, animId, variant, 0, 0xFF, 0x10, 0xD, a5 >> 8, a6 >> 8, 0x81000);
+    return s;
+}
+
+void sub_0802CF2C(void) {
+    struct Unk_0802CE64 *tmp = TaskGetStructPtr(gCurTask);
+    struct Unk_0802CE64 *s = tmp;
+    struct Unk_0802CE64 *s2;
+
+#ifndef NONMATCHING
+    asm("" : "+r"(s));
+#endif
+    s2 = s;
+#ifndef NONMATCHING
+    asm("" : "+r"(s2));
+#endif
+    s->sprite.x = (s->unk2C - s->unk28->unk2B4) >> 8;
+    s->sprite.y = s->unk30 >> 8;
+    if (sub_08155128(&s->sprite) == 0) {
+        s->sprite.unk1B = 0xFF;
+    }
+    sub_0815604C(&s->sprite);
+    s->unk2C += s->unk34;
+    s->unk30 += s->unk36;
+    if (s->unk38 == 0 || --s->unk38 != 0) {
+        if ((u16)(s2->sprite.x + 0x40) <= 0x170 && (s16)s2->sprite.y >= -0x40 && (s16)s2->sprite.y <= 0xE0
+            && !(s->unk28->unk214 & 0x4000000)) {
+            return;
+        }
+    }
+    gCurTask->main = (TaskMain)sub_0802D528;
 }
 
 void sub_0802D360(struct Task *t) {
@@ -550,6 +626,19 @@ void sub_0802DB34(struct Unk_0802B4A8 *x) {
     x->unk0 = sub_0802DD18;
 }
 
+struct Unk_0802D898 *sub_0802DB48(struct Unk_0802B4A8 *x) {
+    struct Task *t;
+    struct Unk_0802D898 *s;
+
+    x->unk214 &= 0xFDFFFFFF;
+    t = TaskCreate(sub_0802DD3C, 0x50, 0x101, 0, NULL);
+    s = TaskGetStructPtr(t);
+    CpuFill16(0, s, 0x50);
+    s->unk44 = x;
+    s->unk0 = sub_0802DD94;
+    return s;
+}
+
 void sub_0802DBC0(struct Unk_0802B4A8 *x) {
     if (x->unk278 <= 0x63FF) {
         if (x->unk280 != 0) {
@@ -596,6 +685,7 @@ void sub_0802DCA0(struct Unk_0802B4A8 *x) {
 }
 
 void sub_0802DCC4(struct Unk_0802B4A8 *x) {
+    u32 t2;
     u32 t = x->unk2BC + 1;
 
     x->unk2BC = t;
@@ -604,7 +694,8 @@ void sub_0802DCC4(struct Unk_0802B4A8 *x) {
         x->unk214 &= 0xDFFFFFFF;
         x->unk0 = sub_0802DE00;
     } else {
-        gBldRegs.bldY = 0x10 - ((u16)t >> 2);
+        t2 = t;
+        gBldRegs.bldY = 0x10 - ((u16)t2 >> (t = 2));
     }
 }
 
@@ -661,6 +752,7 @@ void sub_0802DE14(struct Unk_0802B4A8 *x) {
 }
 
 void sub_0802E11C(struct Unk_0802B4A8 *x) {
+    u32 t2;
     u32 t = x->unk2BC + 1;
 
     x->unk2BC = t;
@@ -669,7 +761,8 @@ void sub_0802E11C(struct Unk_0802B4A8 *x) {
         x->unk214 &= 0xDFFFFFFF;
         x->unk0 = sub_0802C770;
     } else {
-        gBldRegs.bldY = (u16)t >> 2;
+        t2 = t;
+        gBldRegs.bldY = (u16)t2 >> (t = 2);
     }
 }
 
@@ -711,6 +804,17 @@ void sub_0802DF0C(struct Unk_0802B4A8 *x) {
     x->unk4[4].variant = 4;
     x->unk2BC = 0;
     x->unk0 = sub_0802E040;
+}
+
+void sub_0802DF30(struct Unk_0802B4A8 *x) {
+    struct Sprite *s;
+
+    x->unk214 &= 0xFBFFFFFF;
+    x->unk2B4 = 0;
+    s = sub_0802CFF0(x, 0x28F, 3, x->unk16C.tilesVram, x->unk2A4, x->unk2A8, 0, 0, 1);
+    s->unk1C >>= 1;
+    m4aSongNumStart(0x212);
+    x->unk0 = sub_0802DFA0;
 }
 
 void sub_0802DFA0(struct Unk_0802B4A8 *x) {

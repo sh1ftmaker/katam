@@ -131,36 +131,25 @@ void sub_0811BE64(struct ObjectSpawner *x) {
     }
 }
 
-// sub_0811BEBC: functionally equivalent; remaining diff is register allocation only.
-#ifndef NONMATCHING
-static NAKED void sub_0811BEBC(struct Task *task) {
-    asm(".include \"asm/nonmatching/sub_0811BEBC.inc\"");
-}
-#else
 static void sub_0811BEBC(struct Task *task) {
     struct ObjectSpawner *x = TaskGetStructPtr(task);
     u32 playerId = x->obj2.base.unk56;
     u32 a = x->obj2.object->unk2;
-    u32 b = x->obj2.object->unk3;
-    u32 c = gCurLevelInfo[playerId].unk65E;
+    char b = x->obj2.object->unk3;
+    char c = gCurLevelInfo[playerId].unk65E;
 
     ObjectDestroy(task);
     if (a != 0 || playerId != 0xFF) {
         sub_08001678(a, b, c, 1);
     }
 }
-#endif
 
-// sub_0811BF24: functionally equivalent; remaining diff is register allocation only.
-#ifndef NONMATCHING
-NAKED void sub_0811BF24(struct Object2 *arg) {
-    asm(".include \"asm/nonmatching/sub_0811BF24.inc\"");
-}
-#else
 void sub_0811BF24(struct Object2 *arg) {
+    s32 kx;
     struct ObjectSpawner *x = (struct ObjectSpawner *)arg;
     u16 room = gCurLevelInfo[x->obj2.base.unk56].currentRoom;
     u8 i;
+    s16 ky;
     s16 rect[4];
 
     for (i = 0; i < gUnk_0203AD44; i++) {
@@ -178,10 +167,12 @@ void sub_0811BF24(struct Object2 *arg) {
             rect[2] = (x->obj2.base.x >> 8) + 8;
             rect[3] = (x->obj2.base.y >> 8) - 8;
         }
-        if (rect[0] > (s16)((gKirbys[i].base.base.base.x << 8) >> 16)
+        kx = gKirbys[i].base.base.base.x << 8;
+        ky = (s16)((gKirbys[i].base.base.base.y << 8) >> 16);
+        if (rect[0] > (s16)(kx >> 16)
          || rect[2] < (s16)((gKirbys[i].base.base.base.x << 8) >> 16)
-         || rect[1] > (s16)((gKirbys[i].base.base.base.y << 8) >> 16)
-         || rect[3] < (s16)((gKirbys[i].base.base.base.y << 8) >> 16)) {
+         || rect[1] > ky
+         || rect[3] < ky) {
             continue;
         }
         if (gKirbys[i].base.base.base.unkC & 0x8000) {
@@ -198,7 +189,6 @@ void sub_0811BF24(struct Object2 *arg) {
     }
     x->obj2.base.counter++;
 }
-#endif
 
 static void sub_0811C07C(struct ObjectSpawner *x) {
     s16 unused[4];
