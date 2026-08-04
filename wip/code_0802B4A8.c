@@ -553,6 +553,7 @@ void sub_0802BFBC(struct Unk_0802B4A8 *x) {
 void sub_0802C064(struct Unk_0802B4A8 *x) {
     u32 acc = 0;
     u16 i;
+    u16 t;
 
     for (i = 0; i < 5; i++) {
         if (i == 4) {
@@ -588,7 +589,8 @@ void sub_0802C064(struct Unk_0802B4A8 *x) {
         }
         x->unk218[i][0] += (s16)x->unk240[i][0];
         x->unk218[i][1] += (s16)x->unk240[i][1];
-        acc |= x->unk240[i][0] | x->unk240[i][1];
+        t = x->unk240[i][0];
+        acc |= t | x->unk240[i][1];
     }
     if ((u16)acc == 0 && (x->unk214 & 0x2000000)) {
         x->unk0 = sub_0802D430;
@@ -866,7 +868,11 @@ void sub_0802C8E8(struct Unk_0802B4A8 *x) {
 
 void sub_0802CA78(struct Unk_0802B4A8 *x) {
     u16 i;
+#ifndef NONMATCHING
+    register u32 flag asm("sl") = 1;
+#else
     u32 flag = 1;
+#endif
 
     for (i = 0; i < 4; i++) {
         if ((s16)x->unk240[i][0] > 0x80) {
