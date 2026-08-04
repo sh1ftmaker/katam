@@ -952,34 +952,18 @@ void sub_080BA004(void)
 }
 
 
-// sub_080BA334: functionally equivalent; remaining diff is ONE branch mnemonic in the
-// switch decision tree (ref `ble` = signed LE vs ours `bcc` = unsigned LT); see flamer.md.
-#ifndef NONMATCHING
-NAKED void sub_080BA334(struct Object2 *flamer)
-{
-    asm(".include \"asm/nonmatching/sub_080BA334.inc\"");
-}
-#else
 void sub_080BA334(struct Object2 *flamer)
 {
+    s32 subtype;
+
     flamer->base.unk68 &= ~0x100;
-    switch ((u32)flamer->object->subtype1)
-    {
-        case 0:
-            sub_080BA4F0(flamer);
-            break;
-        case 1:
-            sub_080BA4F0(flamer);
-            break;
-        case 2:
-            sub_080BA5A4(flamer);
-            break;
-        default:
-            sub_080BA4F0(flamer);
-            break;
-    }
+
+    subtype = flamer->object->subtype1;
+    if (flamer->object->subtype1 == 1 || subtype <= 1 || subtype != 2)
+        sub_080BA4F0(flamer);
+    else
+        sub_080BA5A4(flamer);
 }
-#endif
 
 
 void sub_080BA36C(struct Object2 *flamer)
