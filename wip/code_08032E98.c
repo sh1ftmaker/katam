@@ -7,7 +7,7 @@
 extern u16 gUnk_02022120[0x100];
 extern u16 gUnk_02022320[0x100];
 extern u16 gUnk_02022520[0x200];
-extern u32 gUnk_0203AD4C;
+extern struct Task *gUnk_0203AD4C;
 
 extern void sub_080356AC(u32, u8, u8);
 extern void sub_08020220(void);
@@ -35,6 +35,7 @@ void sub_08039E58(struct Unk_08039E04 *);
 void sub_08039F04(struct Unk_08039E04 *);
 void sub_08039F38(struct Unk_08039E04 *);
 void sub_08039F94(struct Unk_08039E04 *);
+void sub_08039DB0(struct Task *);
 void sub_0803D2D0(void);
 void sub_0803D324(struct Unk_02022930_0 *, u8);
 
@@ -237,4 +238,341 @@ void sub_0803D324(struct Unk_02022930_0 *arg0, u8 arg1)
         sub_0803D324(r2, arg1 + 1);
     }
     gUnk_02022930.unk80[arg1] = arg0;
+}
+
+void sub_080396BC(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 9;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039728(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0xa;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039794(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0xb;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039800(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0xc;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_0803986C(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0xd;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_080398D8(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0xe;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039944(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0xf;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_080399B0(void)
+{
+    struct Task *t;
+    u32 base, off;
+    u32 v = 0x10;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & v) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = v;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039A1C(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0x11;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039A88(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0x12;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039AF4(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0x13;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039B60(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0x14;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039BCC(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0x15;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039C38(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0x16;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039CA4(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0x17;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08039D10(void)
+{
+    struct Task *t;
+    u32 base, off;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    if (t->flags & TASK_USE_EWRAM) {
+        off = t->structOffset << 2;
+        base = EWRAM_START;
+    } else {
+        off = t->structOffset;
+        base = IWRAM_START;
+    }
+    t = (void *)(off + base);
+    ((struct Unk_08039E04 *)t)->unk0 = sub_08039E04;
+    ((struct Unk_08039E04 *)t)->unk8 = 0x18;
+    ((struct Unk_08039E04 *)t)->unk4 = 0;
+    gMainFlags |= 0x400;
 }
