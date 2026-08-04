@@ -254,9 +254,8 @@ void sub_08020A90(struct CutsceneTrigger *x) {
     u32 flag;
     u16 i;
     u16 j;
-    u16 *st = &x2->unkD4;
 
-    if (*st <= 0x63) {
+    if (x2->unkD4 <= 0x63) {
         flag = 1;
         j = 0;
         for (i = 0; i < 4; i++) {
@@ -342,7 +341,7 @@ void sub_08020A90(struct CutsceneTrigger *x) {
         if (flag != 0)
             x2->unkD4 = 0x64;
     } else
-        switch (*st) {
+        switch (x2->unkD4) {
         case 0x64: {
         u16 k;
         u16 m;
@@ -360,7 +359,7 @@ void sub_08020A90(struct CutsceneTrigger *x) {
             }
         }
         x->unkD0 = 0;
-        *st = 0x65;
+        x2->unkD4 = 0x65;
         break; }
         case 0x65:
             if (x->unkD0++ > 0x3C)
