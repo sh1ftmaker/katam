@@ -370,7 +370,9 @@ void sub_080B9AF0(struct Object2 *flamer)
         y = flamer->base.y + (flamer->base.unk3D << 8);
         if (y <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56, x >> 12, y >> 12)];
+            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56,
+                ((flamer->base.x >> 8) + flamer->base.unk3E) >> 4,
+                ((flamer->base.y >> 8) + flamer->base.unk3D) >> 4)];
     }
 
     x = flamer->base.x + (flamer->base.unk3C << 8);
@@ -380,7 +382,9 @@ void sub_080B9AF0(struct Object2 *flamer)
         y = flamer->base.y + (flamer->base.unk3D << 8);
         if (y <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56, x >> 12, y >> 12)];
+            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56,
+                ((flamer->base.x >> 8) + flamer->base.unk3C) >> 4,
+                ((flamer->base.y >> 8) + flamer->base.unk3D) >> 4)];
     }
 
     x = flamer->base.x + (flamer->base.unk3E << 8);
@@ -390,7 +394,9 @@ void sub_080B9AF0(struct Object2 *flamer)
         y = flamer->base.y + (flamer->base.unk3F << 8);
         if (y <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56, x >> 12, y >> 12)];
+            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56,
+                ((flamer->base.x >> 8) + flamer->base.unk3E) >> 4,
+                ((flamer->base.y >> 8) + flamer->base.unk3F) >> 4)];
     }
 
     x = flamer->base.x + (flamer->base.unk3C << 8);
@@ -400,7 +406,9 @@ void sub_080B9AF0(struct Object2 *flamer)
         y = flamer->base.y + (flamer->base.unk3F << 8);
         if (y <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56, x >> 12, y >> 12)];
+            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56,
+                ((flamer->base.x >> 8) + flamer->base.unk3C) >> 4,
+                ((flamer->base.y >> 8) + flamer->base.unk3F) >> 4)];
     }
 
     if (collideFlags == 1)
