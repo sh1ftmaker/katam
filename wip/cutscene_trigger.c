@@ -1100,6 +1100,10 @@ void sub_0802262C(struct CutsceneTrigger *x) {
 void sub_080226C4(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
     u16 *p;
+    u16 *q;
+    u16 *c;
+    u32 off;
+    u16 v;
     u8 i;
 
     x->unkB4.s[0] = 0;
@@ -1108,11 +1112,18 @@ void sub_080226C4(struct CutsceneTrigger *x) {
         struct Kirby *kirby = &gKirbys[i];
 
         if (kirby->hp > 0 && kirby->base.base.base.roomId == x->obj2.base.roomId) {
-            (&x2->unkCE)[i * 2] = 0;
-            if (kirby->base.base.base.y >> 8 > 0xDF)
-                p[i * 2] = 0xFD00;
-            else
-                p[i * 2] = 0x300;
+            off = i * 4;
+            c = &x2->unkCE;
+            c = (u16 *)((u32)c + off);
+            *c = 0;
+            if (kirby->base.base.base.y >> 8 > 0xDF) {
+                q = (u16 *)((u32)p + off);
+                v = 0xFD00;
+            } else {
+                q = (u16 *)((u32)p + off);
+                v = 0x300;
+            }
+            *q = v;
             kirby->animationIndex = i + 0x4A;
             kirby->base.base.base.flags |= 0x100;
         }
