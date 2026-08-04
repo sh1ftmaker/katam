@@ -247,6 +247,7 @@ void sub_08020DDC(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
     struct Object4 *obj;
     union CutsceneVal *p;
+    union CutsceneVal *q;
     u16 mask;
     u16 i;
 
@@ -268,13 +269,15 @@ void sub_08020DDC(struct CutsceneTrigger *x) {
             p[i].obj4->sprite.palId = 0;
         }
         if (i != 0) {
-            obj = (&x2->unkB8)[i].obj4;
+            q = &x2->unkB8;
+            obj = q[i].obj4;
             obj->x = ((-(x2->unkCE * 0x12) >> 1) + ((Rand16() & mask) + 0x4E)) << 8;
         } else {
-            obj = (&x2->unkB8)[i].obj4;
+            q = &x2->unkB8;
+            obj = q[i].obj4;
             obj->x = ((-(x2->unkCE * 0x12) >> 1) - ((Rand16() & mask) - 0x52)) << 8;
         }
-        (&x2->unkB8)[i].obj4->y = (0x74 - (Rand16() & 0xF)) << 8;
+        q[i].obj4->y = (0x74 - (Rand16() & 0xF)) << 8;
     }
     if (x2->unkD0++ > 0xB4) {
         if (x2->unkB8.obj4 != NULL)
@@ -601,7 +604,6 @@ void sub_08021EB0(struct CutsceneTrigger *x) {
     u16 animId = gUnk_082DE9FC[18];
     u8 variant = gUnk_082DE9FC[19];
     u16 animId2;
-    u8 variant2;
     u8 i;
 
     x->unkBC.obj4 = sub_0808B62C(&x->obj2.base, 1, animId, variant, 0);
