@@ -1634,6 +1634,145 @@ extern bool8 sub_080E1B8C(struct Object2 *, struct Kirby *);
 extern bool8 sub_080C8548(struct Object2 *, struct Kirby *);
 extern bool8 sub_080AC5E0(struct Object2 *, struct Kirby *);
 extern void sub_080853C8(struct Kirby *, u16);
+extern struct Object5 *sub_08034E14(struct Object2 *);
+extern void sub_0808845C(struct Object2 *, u16);
+extern void sub_0808520C(struct Object2 *, s16);
+extern void sub_080884C4(struct Object2 *);
+
+u32 sub_080365C8(struct ObjectBase *arg0, struct Kirby *kirby)
+{
+    struct Object2 *p;
+    u32 m;
+
+    if (arg0->unk0 == 2) {
+        if (kirby->base.base.type == 0x46 && arg0->xspeed < 0)
+            return 0;
+        if (arg0->unk0 == 2 && arg0->parent == kirby)
+            return 0;
+    }
+    if (kirby->base.base.base.flags & 0x1000000) {
+        if (arg0->flags & 0x40000)
+            return 0;
+        if (arg0->unk68 & 0x80)
+            return 0;
+    }
+    if (arg0->parent != NULL && ((struct Object2 *)arg0->parent)->base.unk0 == 0
+        && arg0->unk56 == gUnk_0203AD3C)
+        sub_08034E14(&kirby->base.base);
+    if (arg0->unk68 & 0x20) {
+        p = arg0->parent;
+        if (p == NULL)
+            return 0;
+        if (p->base.unk0 == 1) {
+            if (p->type != 7 && p->type != 0xE)
+                return 0;
+            if ((u8)(kirby->base.base.type - 0x5E) > 0xE)
+                return 0;
+            if (!(arg0->flags & 0x10000)) {
+                kirby->base.base.base.flags |= 0x40000;
+                kirby->base.base.base.unk6C = p;
+            }
+            sub_0809CFC4(&kirby->base.base);
+            return 1;
+        }
+        if (arg0->unk56 >= gUnk_0203AD30) {
+            if ((u8)(kirby->base.base.type - 0x5E) <= 0xE)
+                return 0;
+            if (kirby->base.base.type == 0xA4)
+                return 0;
+            if (kirby->base.base.type == 0xA3 && kirby->base.base.base.unk56 < gUnk_0203AD30)
+                return 0;
+        }
+        if (!(arg0->flags & 0x10000) && !(kirby->base.base.base.flags & 0x20000)) {
+            if ((arg0->flags & 0x100000) || (kirby->base.base.base.flags & 0x200000)) {
+                m = 0x3FFFF8 & ~(kirby->base.base.base.unk5C & -8);
+                if ((m & arg0->unk68) != 0
+                    && (arg0->unk68 & 7) >= (kirby->base.base.base.unk5C & 7)) {
+                    kirby->base.base.base.flags |= 0x40000;
+                    kirby->base.base.base.unk6C = p;
+                }
+            } else {
+                kirby->base.base.base.flags |= 0x40000;
+                kirby->base.base.base.unk6C = p;
+            }
+        }
+        if (arg0->unk68 == 0x20000023)
+            kirby->base.base.unk90
+                = (kirby->base.base.unk90 & ~(3 << (arg0->unk56 * 2))) | (2 << (arg0->unk56 * 2));
+        else
+            kirby->base.base.unk90
+                = (kirby->base.base.unk90 & ~(3 << (arg0->unk56 * 2))) | (1 << (arg0->unk56 * 2));
+        if (kirby->base.base.base.unk5C & 0x20) {
+            if (kirby->base.base.type <= 0xD4)
+                return 0;
+            if (!(arg0->unk68 & 0x200000))
+                return 0;
+        } else if (!(arg0->unk68 & 0x200000)) {
+            goto _080367F8;
+        }
+        if ((u8)(kirby->base.base.type - 0x5E) <= 0xE) {
+            arg0->flags &= ~0x40000;
+            return 0;
+        }
+    _080367F8:
+        m = 0x3FFFF8 & ~(kirby->base.base.base.unk5C & -8);
+        if ((m & arg0->unk68) != 0 && (arg0->unk68 & 7) >= (kirby->base.base.base.unk5C & 7)) {
+            arg0->flags |= 0x40000;
+            kirby->base.base.base.unk6C = p;
+            sub_0809C380(&kirby->base.base);
+            return 0;
+        }
+        if (Macro_0810B1F4(&kirby->base.base.base))
+            return 0;
+        kirby->base.base.base.objBase54 += (gUnk_0203AD40 & 2) << 1;
+        return 0;
+    } else {
+        if (!(arg0->flags & 0x10000) && !(kirby->base.base.base.flags & 0x20000)) {
+            if ((arg0->flags & 0x100000) || (kirby->base.base.base.flags & 0x200000)) {
+                m = 0x3FFFF8 & ~(kirby->base.base.base.unk5C & -8);
+                if ((m & arg0->unk68) == 0)
+                    goto _0803690E;
+                if ((arg0->unk68 & 7) < (kirby->base.base.base.unk5C & 7))
+                    goto _080368BC;
+            }
+            kirby->base.base.base.flags |= 0x40000;
+            kirby->base.base.base.unk6C = arg0;
+        }
+    _080368BC:
+        m = 0x3FFFF8 & ~(kirby->base.base.base.unk5C & -8);
+        if ((m & arg0->unk68) == 0)
+            goto _0803690E;
+        if ((arg0->unk68 & 7) < (kirby->base.base.base.unk5C & 7))
+            goto _0803690E;
+        if (kirby->base.base.base.flags & 0x8000)
+            goto _0803690E;
+        if (arg0->unk68 & 0x8000)
+            sub_0809C6D0(&kirby->base.base);
+        else
+            sub_0809B1E4(&kirby->base.base);
+        if (kirby->base.base.base.unk68 & 0x20000000)
+            return 0;
+        return 1;
+    _0803690E:
+        if (!(kirby->base.base.base.flags & 0x40000))
+            return 0;
+        if (arg0->unk68 & 0x800000)
+            return 0;
+        if ((u8)(kirby->base.base.type - 0x38) > 0x1A) {
+            if (kirby->base.base.type != 0x6D || !(arg0->unk68 & 0x80))
+                sub_0808845C(&kirby->base.base, 0xA);
+            if (!(kirby->base.base.base.flags & 0x8000))
+                sub_0808520C(&kirby->base.base, 0x10);
+        } else {
+            sub_0808845C(&kirby->base.base, 0xA);
+            if (!(kirby->base.base.base.flags & 0x8000))
+                sub_0808520C(&kirby->base.base, 0x10);
+        }
+        if (arg0->unk68 & 0x10000)
+            sub_080884C4(&kirby->base.base);
+        return 0;
+    }
+}
 
 u8 sub_0803699C(struct Kirby *kirby, struct ObjectBase *arg0)
 {
