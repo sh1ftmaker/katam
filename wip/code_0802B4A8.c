@@ -83,6 +83,11 @@ void sub_0802E470(struct Unk_0802E390 *);
 void sub_0802E484(struct Unk_0802E390 *);
 void sub_0802E500(struct Unk_0802E390 *);
 void sub_0802E55C(struct Unk_0802E390 *);
+void sub_0802D3F4(struct Unk_0802B4A8 *);
+void sub_0802D898(struct Unk_0802D898 *);
+void sub_0802D92C(struct Unk_0802D898 *);
+void sub_0802D9A4(struct Unk_0802D898 *);
+void sub_0802D708(struct Unk_0802B4A8 *);
 void sub_0802D4E0(struct Unk_0802B4A8 *);
 void sub_0802D564(struct Unk_0802B4A8 *);
 void sub_0802D588(struct Unk_0802B4A8 *);
@@ -112,6 +117,7 @@ void sub_0802DC58(struct Unk_0802B4A8 *);
 void sub_0802DCC4(struct Unk_0802B4A8 *);
 void sub_0802DD18(struct Unk_0802B4A8 *);
 void sub_0802DCA0(struct Unk_0802B4A8 *);
+void sub_0802C770(struct Unk_0802B4A8 *);
 void sub_0802DDA0(struct Unk_0802B4A8 *);
 void sub_0802DDB4(struct Unk_0802B4A8 *);
 void sub_0802DDC0(struct Unk_0802B4A8 *);
@@ -173,6 +179,63 @@ void sub_0802B4A8(void) {
     x->unk144.tilesVram = VramMalloc(0x10);
     gUnk_0300000C = 0;
     x->unk0 = sub_0802BCEC;
+}
+
+void sub_0802BF68(struct Unk_0802B4A8 *x) {
+    u32 t = x->unk2BC + 1;
+
+    x->unk2BC = t;
+    if ((u16)t > 0xF) {
+        gBldRegs.bldCnt = 0;
+        gBldRegs.bldY = 0;
+        x->unk214 &= 0xDFFFFFFF;
+        x->unk0 = sub_0802D3F4;
+    } else {
+        gBldRegs.bldY = 0x10 - t;
+    }
+}
+
+void sub_0802C308(struct Unk_0802B4A8 *x) {
+    u32 t = x->unk2BC + 1;
+
+    x->unk2BC = t;
+    if ((u16)t > 0x3F) {
+        gBldRegs.bldCnt = 0;
+        gBldRegs.bldY = 0;
+        x->unk214 &= 0xDFFFFFFF;
+        x->unk0 = sub_0802D708;
+    } else {
+        gBldRegs.bldY = 0x10 - ((u16)t >> 2);
+    }
+}
+
+void sub_0802CDA0(struct Unk_0802D898 *x) {
+    u32 t = x->unk4A + 1;
+
+    x->unk4A = t;
+    if ((u16)t > 0xF) {
+        gBldRegs.bldCnt = 0;
+        gBldRegs.bldAlpha = 0x10;
+        x->unk44->unk214 &= 0xDFFFFFFF;
+        x->unk0 = sub_0802D898;
+    } else {
+        gBldRegs.bldAlpha = t | ((0x10 - t) << 8);
+    }
+}
+
+void sub_0802CDF8(struct Unk_0802D898 *x) {
+    u32 t = x->unk4A + 1;
+
+    x->unk4A = t;
+    if ((u16)t > 0xF) {
+        gDispCnt &= 0xFBFF;
+        gBldRegs.bldCnt = 0;
+        gBldRegs.bldAlpha = 0x1000;
+        x->unk44->unk214 &= 0xDFFFFFFF;
+        x->unk0 = sub_0802D92C;
+    } else {
+        gBldRegs.bldAlpha = (0x10 - t) | (t << 8);
+    }
 }
 
 void sub_0802D360(struct Task *t) {
@@ -541,13 +604,24 @@ void sub_0802DCC4(struct Unk_0802B4A8 *x) {
         x->unk214 &= 0xDFFFFFFF;
         x->unk0 = sub_0802DE00;
     } else {
-        gBldRegs.bldY = 0x10 - ((t << 16) >> 18);
+        gBldRegs.bldY = 0x10 - ((u16)t >> 2);
     }
 }
 
 void sub_0802DD18(struct Unk_0802B4A8 *x) {
     if (x->unk2BC++ > 0x3C) {
         x->unk0 = sub_0802CB60;
+    }
+}
+
+void sub_0802DD3C(void) {
+    struct Unk_0802D898 *x = TaskGetStructPtr(gCurTask);
+
+    if ((s32)x->unk44->unk214 >= 0) {
+        x->unk0(x);
+        x->unk48++;
+    } else {
+        sub_0802D9A4(x);
     }
 }
 
@@ -583,6 +657,19 @@ void sub_0802DE00(struct Unk_0802B4A8 *x) {
 void sub_0802DE14(struct Unk_0802B4A8 *x) {
     if (x->unk2BC++ > 0x3C) {
         x->unk0 = sub_0802DEE0;
+    }
+}
+
+void sub_0802E11C(struct Unk_0802B4A8 *x) {
+    u32 t = x->unk2BC + 1;
+
+    x->unk2BC = t;
+    if ((u16)t > 0x3F) {
+        gBldRegs.bldY = 0x10;
+        x->unk214 &= 0xDFFFFFFF;
+        x->unk0 = sub_0802C770;
+    } else {
+        gBldRegs.bldY = (u16)t >> 2;
     }
 }
 

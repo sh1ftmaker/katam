@@ -190,18 +190,24 @@ void sub_080BA5C8(struct Object2 *flamer)
         s32 off = flamer->base.unk3E * 0x100;
         s32 x = flamer->base.x + off;
         s32 y = flamer->base.y;
-        x &= ~0xF00;
-        y &= 0xF00;
-        flamer->base.x = x + 0xF00 - y - off;
+        s32 m;
+        s32 xm = x & ~0xF00;
+        m = 0xF00;
+        xm += m;
+        y &= m;
+        flamer->base.x = xm - y - off;
     }
     else
     {
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3F * 0x100;
         s32 y = flamer->base.y + off;
-        y &= ~0xF00;
-        x &= 0xF00;
-        flamer->base.y = y + 0xF00 - x - off;
+        s32 m;
+        s32 ym = y & ~0xF00;
+        m = 0xF00;
+        ym += m;
+        x &= m;
+        flamer->base.y = ym - x - off;
     }
 }
 #endif
