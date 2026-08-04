@@ -864,7 +864,8 @@ void sub_08021DD4(struct Task *t) {
         if (!(gUnk_0203AD10 & 0x10)) {
             if (gUnk_0203AD10 & 2) {
                 if (gUnk_0203AD3C == gUnk_0203AD24) {
-                    u16 v = gSaveID;
+                    register u16 *sav asm("r2") = &gSaveID;
+                    u16 v = *sav;
                     u16 off = 0;
 
                     if (v <= 2)
@@ -874,7 +875,8 @@ void sub_08021DD4(struct Task *t) {
                     sub_08031CE4(8);
                 }
             } else {
-                u16 v = gSaveID;
+                register u16 *sav asm("r2") = &gSaveID;
+                u16 v = *sav;
                 u16 off = 0;
 
                 if (v <= 2)
@@ -1100,16 +1102,19 @@ void sub_0802262C(struct CutsceneTrigger *x) {
 void sub_080226C4(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
     u16 *p;
-    u16 *q;
+    register u16 *q asm("r1");
     u16 *c;
     u32 off;
-    u16 v;
+    u32 v;
+    u32 mask;
     u8 i;
 
     x->unkB4.s[0] = 0;
-    p = &x->unkD0;
     for (i = 0; i < 4; i++) {
         struct Kirby *kirby = &gKirbys[i];
+
+        mask = 0x100;
+        p = &x->unkD0;
 
         if (kirby->hp > 0 && kirby->base.base.base.roomId == x->obj2.base.roomId) {
             off = i * 4;
@@ -1125,7 +1130,7 @@ void sub_080226C4(struct CutsceneTrigger *x) {
             }
             *q = v;
             kirby->animationIndex = i + 0x4A;
-            kirby->base.base.base.flags |= 0x100;
+            kirby->base.base.base.flags |= mask;
         }
     }
     x->obj2.unk78 = sub_08022770;
