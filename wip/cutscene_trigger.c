@@ -887,6 +887,8 @@ void sub_08022770(struct CutsceneTrigger *x) {
                 }
                 flag = 0;
                 break;
+            case 2:
+                break;
             }
         }
     }
