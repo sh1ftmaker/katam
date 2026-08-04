@@ -460,11 +460,15 @@ void sub_08020FA8(struct CutsceneTrigger *x) {
 
 void sub_0802114C(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
+#ifndef NONMATCHING
+    register struct Object2 *obj asm("r4") = x->unkB4.obj;
+#else
     struct Object2 *obj = x->unkB4.obj;
+#endif
     struct Object4 *obj4;
     struct Object4 *o;
 #ifndef NONMATCHING
-    register u16 i asm("r9");
+    register u32 i asm("r9");
 #else
     u16 i;
 #endif
