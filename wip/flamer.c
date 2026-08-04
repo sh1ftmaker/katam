@@ -390,22 +390,22 @@ post:
     {
         s32 dx = flamer->kirby3->base.base.base.x - flamer->base.x;
         s32 dy;
-        if (dx < 0)
+        if (dx >= 0)
         {
-            if (flamer->base.x - flamer->kirby3->base.base.base.x > 0x3FFF)
+            if (dx > 0x3FFF)
                 goto retarget;
         }
-        else if (dx > 0x3FFF)
+        else if (flamer->base.x - flamer->kirby3->base.base.base.x > 0x3FFF)
         {
             goto retarget;
         }
         dy = flamer->kirby3->base.base.base.y - flamer->base.y;
-        if (dy < 0)
+        if (dy >= 0)
         {
-            if (flamer->base.y - flamer->kirby3->base.base.base.y > 0x3FFF)
+            if (dy > 0x3FFF)
                 goto retarget;
         }
-        else if (dy > 0x3FFF)
+        else if (flamer->base.y - flamer->kirby3->base.base.base.y > 0x3FFF)
         {
             goto retarget;
         }
