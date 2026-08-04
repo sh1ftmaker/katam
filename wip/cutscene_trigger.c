@@ -1143,9 +1143,15 @@ void sub_080226C4(struct CutsceneTrigger *x) {
 }
 
 void sub_08022770(struct CutsceneTrigger *x) {
-    struct CutsceneTrigger *x2 = x;
     s16 v[2];
     s16 d[2];
+#ifndef NONMATCHING
+    register struct CutsceneTrigger *x2 asm("r9") = x;
+    register s16 *vp asm("r7") = v;
+#else
+    struct CutsceneTrigger *x2 = x;
+    s16 *vp = v;
+#endif
     u8 i;
     u8 flag = 1;
 
@@ -1165,15 +1171,15 @@ void sub_08022770(struct CutsceneTrigger *x) {
                     kirby->animationIndex = 0x4A;
                 t = x2->unkB4.s[0] / 2;
                 angle = t > 0xC7 ? 0xC8 : t;
-                v[0] = (&x2->unkCE)[i * 2];
-                v[1] = (&x2->unkD0)[i * 2];
+                vp[0] = (&x2->unkCE)[i * 2];
+                vp[1] = (&x2->unkD0)[i * 2];
                 d[0] = 0x7000 - kirby->base.base.base.x;
                 d[1] = -0x2000 - kirby->base.base.base.y;
-                if (d[0] * v[1] - v[0] * d[1] > 0)
+                if (d[0] * vp[1] - vp[0] * d[1] > 0)
                     angle = -angle;
                 idx = ((s8)angle + 0x400) & 0x3FF;
-                (&x2->unkCE)[i * 2] = (v[0] * gSineTable[idx + 0x100] - v[1] * gSineTable[idx]) >> 14;
-                (&x2->unkD0)[i * 2] = (v[0] * gSineTable[idx] + v[1] * gSineTable[idx + 0x100]) >> 14;
+                (&x2->unkCE)[i * 2] = (vp[0] * gSineTable[idx + 0x100] - vp[1] * gSineTable[idx]) >> 14;
+                (&x2->unkD0)[i * 2] = (vp[0] * gSineTable[idx] + vp[1] * gSineTable[idx + 0x100]) >> 14;
                 kirby->base.base.base.x += (s16)(&x2->unkCE)[i * 2];
                 kirby->base.base.base.y += (s16)(&x2->unkD0)[i * 2];
                 if (kirby->base.base.base.x >> 8 >= 0x168 && kirby->base.base.base.x >> 8 <= 0x178) {
