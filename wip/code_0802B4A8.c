@@ -1669,10 +1669,12 @@ void sub_0802E16C(void) {
     struct Unk_0802E390 *x;
     u16 bgIdx;
     u16 white;
+    s32 val;
 
     white = 0x7FFF;
     sub_0803D21C(&white, 0, 1);
-    gDispCnt = 0x1840;
+    val = 0x1840;
+    gDispCnt = val;
     x = TaskGetStructPtr(t);
     x->unk40 = sub_0802E3C8;
     x->unk44 = 0;
@@ -1680,7 +1682,27 @@ void sub_0802E16C(void) {
     gBgScrollRegs[3][0] = 0;
     gBgScrollRegs[3][1] = 0;
     gBgCntRegs[3] = 0x1E0A;
-    BgInit(&x->unk0, 0x06008000, 0, 0x0600F000, 0, 0, bgIdx, 0, 0, 0, 0, 0x1E, 0x14, 0, 0, 0, 0x1B, 0, 0, 0x7FFF, 0x7FFF);
+    x->unk0.tilesVram = 0x06008000;
+    x->unk0.unkA = 0;
+    x->unk0.tilemapVram = 0x0600F000;
+    x->unk0.unk18 = 0;
+    x->unk0.unk1A = 0;
+    x->unk0.unk1C = bgIdx;
+    x->unk0.unk1E = 0;
+    x->unk0.unk20 = 0;
+    x->unk0.unk22 = 0;
+    x->unk0.unk24 = 0;
+    x->unk0.unk26 = 0x1E;
+    x->unk0.unk28 = 0x14;
+    x->unk0.paletteOffset = 0;
+    x->unk0.animFrameCounter = 0;
+    x->unk0.animDelayCounter = 0;
+    x->unk0.unk2E = 0x1B;
+    x->unk0.scrollX = 0;
+    x->unk0.scrollY = 0;
+    x->unk0.prevScrollX = 0x7FFF;
+    val = 0x7FFF;
+    x->unk0.prevScrollY = val;
     LZ77UnCompVram(gUnk_082D7850[bgIdx]->tileset, (void *)x->unk0.tilesVram);
     sub_08153060(&x->unk0);
 }
