@@ -1843,3 +1843,188 @@ void sub_0803CFC4(u8 palId, u16 animId, u8 variant, s8 dr, s8 dg, s8 db, u16 ble
 
     CpuSet(&gObjPalette[(u8)(palId * 16)], &gUnk_02022320[(u8)(palId * 16)], 0x10);
 }
+
+void sub_0803A078(void)
+{
+    struct Unk_02022930 *g = &gUnk_02022930;
+
+    if (g->unk80[0] == NULL && g->unk80[1] == NULL && g->unk80[2] == NULL
+     && g->unk80[3] == NULL && g->unk80[4] == NULL && g->unk80[5] == NULL
+     && g->unk80[6] == NULL && g->unk80[7] == NULL)
+        return;
+
+    if (g->unk80[6] == NULL) {
+        g->unk80[6] = g->unk80[7];
+        g->unk80[7] = NULL;
+    }
+    if (g->unk80[5] == NULL) {
+        g->unk80[5] = g->unk80[6];
+        g->unk80[6] = g->unk80[7];
+        g->unk80[7] = NULL;
+    }
+    if (g->unk80[4] == NULL) {
+        g->unk80[4] = g->unk80[5];
+        g->unk80[5] = g->unk80[6];
+        g->unk80[6] = g->unk80[7];
+        g->unk80[7] = NULL;
+    }
+    if (g->unk80[3] == NULL) {
+        g->unk80[3] = g->unk80[4];
+        g->unk80[4] = g->unk80[5];
+        g->unk80[5] = g->unk80[6];
+        g->unk80[6] = g->unk80[7];
+        g->unk80[7] = NULL;
+    }
+    if (g->unk80[2] == NULL) {
+        g->unk80[2] = g->unk80[3];
+        g->unk80[3] = g->unk80[4];
+        g->unk80[4] = g->unk80[5];
+        g->unk80[5] = g->unk80[6];
+        g->unk80[6] = g->unk80[7];
+        g->unk80[7] = NULL;
+    }
+    if (g->unk80[1] == NULL) {
+        g->unk80[1] = g->unk80[2];
+        g->unk80[2] = g->unk80[3];
+        g->unk80[3] = g->unk80[4];
+        g->unk80[4] = g->unk80[5];
+        g->unk80[5] = g->unk80[6];
+        g->unk80[6] = g->unk80[7];
+        g->unk80[7] = NULL;
+    }
+    if (g->unk80[0] == NULL) {
+        g->unk80[0] = g->unk80[1];
+        g->unk80[1] = g->unk80[2];
+        g->unk80[2] = g->unk80[3];
+        g->unk80[3] = g->unk80[4];
+        g->unk80[4] = g->unk80[5];
+        g->unk80[5] = g->unk80[6];
+        g->unk80[6] = g->unk80[7];
+        g->unk80[7] = NULL;
+    }
+}
+
+extern void (*const gUnk_0834C120[])(struct Unk_02022930_0 *);
+
+void sub_0803A1F4(void)
+{
+    struct Unk_02022930 *g = &gUnk_02022930;
+    u8 i;
+    u16 flags;
+    u32 objDirty = 0;
+    u32 bgDirty = 0;
+    u16 v;
+    u16 t;
+
+    flags = g->unk0[0].unk8 | g->unk0[1].unk8 | g->unk0[2].unk8 | g->unk0[3].unk8
+          | g->unk0[4].unk8 | g->unk0[5].unk8 | g->unk0[6].unk8 | g->unk0[7].unk8;
+
+    if (flags & 4) {
+        v = flags & 0x100;
+        for (i = 0; i < 8; i++) {
+            if (!(g->unk0[i].unk8 & 0x10) && (g->unk0[i].unk8 & 4)) {
+                if (!(gMainFlags & 0x800) || v == 0 || (g->unk0[i].unk8 & 0x80)) {
+                    if (g->unk0[i].unk6 != 0 && bgDirty == 0) {
+                        CpuSet(gUnk_02022120, gBgPalette, CPU_SET_32BIT | 0x80);
+                        bgDirty = 1;
+                    }
+                    if (g->unk0[i].unk4 != 0 && objDirty == 0) {
+                        CpuSet(gUnk_02022320, gObjPalette, CPU_SET_32BIT | 0x80);
+                        objDirty = 1;
+                    }
+                }
+            }
+        }
+    }
+
+    if ((gMainFlags & 0x800) && !(flags & 0x80))
+        return;
+
+    v = flags & 0x100;
+    for (i = 0; i < 8; i++) {
+        if (g->unk80[i] != NULL) {
+            if (!(gMainFlags & 0x800) || v == 0 || (g->unk80[i]->unk8 & 0x80)) {
+                gUnk_0834C120[g->unk80[i]->unk0](g->unk80[i]);
+                t = g->unk80[i]->unk8 & 2;
+                if (t == 0) {
+                    if (g->unk80[i]->unk8 & 1)
+                        g->unk80[i] = NULL;
+                    objDirty = 0;
+                } else if (!(g->unk0[i].unk8 & 0x10) && (g->unk0[i].unk8 & 4)
+                        && g->unk0[i].unk4 != 0) {
+                    objDirty = 1;
+                }
+            }
+        }
+    }
+
+    sub_0803A078();
+
+    if (gMainFlags & 0x10000) {
+        if (objDirty) {
+            if (gMainFlags & 0x20000) {
+                LoadObjPaletteWithTransformation(gObjPalette, 0, 0x100);
+            } else {
+                DmaCopy16(3, gObjPalette, gObjPalette, 0x200);
+                gMainFlags |= 2;
+            }
+        }
+        if (bgDirty) {
+            if (gMainFlags & 0x10000) {
+                LoadBgPaletteWithTransformation(gBgPalette, 0, 0x100);
+            } else {
+                DmaCopy16(3, gBgPalette, gBgPalette, 0x200);
+                gMainFlags |= 1;
+            }
+        }
+    }
+}
+
+extern const u16 *const gUnk_08D60F5C[];
+extern const u16 *const gUnk_08D60F74[];
+
+void sub_08034A20(void)
+{
+    struct Kirby *kirby = &gKirbys[gUnk_0203AD3C];
+    vu16 *dst = (vu16 *)0x0600E190;
+    u8 i, j;
+
+    CpuSet(gUnk_08D60F5C[gLanguage], (void *)0x060070A0, 0x200);
+    CpuSet(gUnk_08D60F74[gLanguage], (void *)0x06007C60, 0x1D0);
+
+    if (gKirbys[gUnk_0203AD3C].base.base.base.roomId != 0x397) {
+        for (j = 0; j < 2; j++) {
+            for (i = 0; i < 16; i++) {
+                *dst = (j * 16 + (((long long)i) + 0x185)) | 0xFFFFF000;
+                dst++;
+            }
+            dst += 0x10;
+        }
+        dst = (vu16 *)0x0600E294;
+        for (j = 0; j < 2; j++) {
+            for (i = 0; i < 6; i++) {
+                *dst = (j * 15 + (((long long)i) + 0x1E3)) | 0xFFFFF000;
+                dst++;
+            }
+            dst += 0x1A;
+        }
+        dst = (vu16 *)0x0600E354;
+        for (j = 0; j < 2; j++) {
+            for (i = 6; i < 12; i++) {
+                *dst = (j * 15 + (((long long)i) + 0x1E3)) | 0xFFFFF000;
+                dst++;
+            }
+            dst += 0x1A;
+        }
+        if (gKirbys[gUnk_0203AD3C].unkD9 != 0)
+            sub_08034BB4();
+        else
+            sub_08034C28();
+    }
+
+    if (gRoomProps[gKirbys[gUnk_0203AD3C].base.base.base.roomId].priorityFlags & 8)
+        sub_08036194();
+    else
+        sub_080361B0();
+    sub_08034D68(kirby);
+}
