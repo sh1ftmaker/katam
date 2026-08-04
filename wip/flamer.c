@@ -952,7 +952,8 @@ void sub_080BA004(void)
 }
 
 
-// sub_080BA334: functionally equivalent; remaining diff is register allocation / constant scheduling.
+// sub_080BA334: functionally equivalent; remaining diff is ONE branch mnemonic in the
+// switch decision tree (ref `ble` = signed LE vs ours `bcc` = unsigned LT); see flamer.md.
 #ifndef NONMATCHING
 NAKED void sub_080BA334(struct Object2 *flamer)
 {
@@ -962,12 +963,21 @@ NAKED void sub_080BA334(struct Object2 *flamer)
 void sub_080BA334(struct Object2 *flamer)
 {
     flamer->base.unk68 &= ~0x100;
-    if (flamer->object->subtype1 == 1 || flamer->object->subtype1 <= 1)
-        sub_080BA4F0(flamer);
-    else if (flamer->object->subtype1 == 2)
-        sub_080BA5A4(flamer);
-    else
-        sub_080BA4F0(flamer);
+    switch ((u32)flamer->object->subtype1)
+    {
+        case 0:
+            sub_080BA4F0(flamer);
+            break;
+        case 1:
+            sub_080BA4F0(flamer);
+            break;
+        case 2:
+            sub_080BA5A4(flamer);
+            break;
+        default:
+            sub_080BA4F0(flamer);
+            break;
+    }
 }
 #endif
 
