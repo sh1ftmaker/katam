@@ -1045,6 +1045,7 @@ void sub_08022350(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
     struct LevelInfo *lvl = &gCurLevelInfo[gUnk_0203AD3C];
     u8 i;
+    struct Kirby *kirby;
 
     x->unkB4.h[0]++;
     if (x->unkB4.h[0] & 1) {
@@ -1054,9 +1055,10 @@ void sub_08022350(struct CutsceneTrigger *x) {
         lvl->viewportModX_44 += x->unkC8.sb[2];
         lvl->viewportModY_46 += x->unkC8.sb[3];
         for (i = 0; i < 4; i++) {
-            if (gKirbys[i].hp > 0 && gKirbys[i].base.base.base.roomId == x->obj2.base.roomId) {
-                gKirbys[i].base.base.base.x -= x2->unkC8.sb[2] << 8;
-                gKirbys[i].base.base.base.y -= x2->unkC8.sb[3] << 8;
+            kirby = &gKirbys[i];
+            if (kirby->hp > 0 && kirby->base.base.base.roomId == x->obj2.base.roomId) {
+                kirby->base.base.base.x -= x2->unkC8.sb[2] << 8;
+                kirby->base.base.base.y -= x2->unkC8.sb[3] << 8;
             }
         }
     } else {
@@ -1064,9 +1066,10 @@ void sub_08022350(struct CutsceneTrigger *x) {
         lvl->viewportModX_44 -= x->unkC8.sb[2];
         lvl->viewportModY_46 -= x->unkC8.sb[3];
         for (i = 0; i < 4; i++) {
-            if (gKirbys[i].hp > 0 && gKirbys[i].base.base.base.roomId == x->obj2.base.roomId) {
-                gKirbys[i].base.base.base.x += x2->unkC8.sb[2] << 8;
-                gKirbys[i].base.base.base.y += x2->unkC8.sb[3] << 8;
+            kirby = &gKirbys[i];
+            if (kirby->hp > 0 && kirby->base.base.base.roomId == x->obj2.base.roomId) {
+                kirby->base.base.base.x += x2->unkC8.sb[2] << 8;
+                kirby->base.base.base.y += x2->unkC8.sb[3] << 8;
             }
         }
         x->unkC8.sb[2] = 0;
@@ -1090,9 +1093,10 @@ void sub_08022350(struct CutsceneTrigger *x) {
             lvl->viewportModX_44 -= x2->unkC8.sb[2];
             lvl->viewportModY_46 -= x2->unkC8.sb[3];
             for (i = 0; i < 4; i++) {
-                if (gKirbys[i].hp > 0 && gKirbys[i].base.base.base.roomId == x->obj2.base.roomId) {
-                    gKirbys[i].base.base.base.x += x2->unkC8.sb[2] << 8;
-                    gKirbys[i].base.base.base.y += x2->unkC8.sb[3] << 8;
+                kirby = &gKirbys[i];
+                if (kirby->hp > 0 && kirby->base.base.base.roomId == x->obj2.base.roomId) {
+                    kirby->base.base.base.x += x2->unkC8.sb[2] << 8;
+                    kirby->base.base.base.y += x2->unkC8.sb[3] << 8;
                 }
             }
             x2->unkC8.sb[2] = 0;
