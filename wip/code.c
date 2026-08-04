@@ -225,3 +225,96 @@ void LoadLevelGfx(u8 playerId, const u16 **a, const u16 **b)
         gBgCntRegs[2] |= 2;
     }
 }
+
+void FillLevelInfo(u8 playerId, u16 room, const u16 **a, const u16 **b)
+{
+    struct Unk_08002E48_2 *var0 = TaskGetStructPtr(gUnk_02023354);
+    struct LevelInfo *levelInfo = gCurLevelInfo + playerId;
+    struct Background *bg2 = &levelInfo->unkC0[2];
+    struct Background *bg0 = &levelInfo->unkC0[0];
+    u32 prevRoom = levelInfo->currentRoom;
+    u32 var24 = 0;
+
+    if (prevRoom != 0xFFFF)
+        sub_08003028(playerId, playerId == var0->unk0);
+
+    levelInfo->unk5FA = levelInfo->currentRoom;
+    levelInfo->currentRoom = room;
+
+    if (room != 0xFFFF) {
+        const struct RoomProps *props = gRoomProps + room;
+
+        CpuSet(gForegroundTilemaps[props->mapDataIdx], &levelInfo->unk180[0], 0x10);
+        CpuSet(gRoomTiledBGs[props->backgroundIdx], &levelInfo->unk180[1], 0x10);
+
+        if (props->objectList2Idx != 0xFFFF)
+            CpuSet(gLevelObjLists[props->objectList2Idx].unk, &levelInfo->unk180[2], 0x10);
+        else
+            CpuFill16(0xFFFF, &levelInfo->unk180[2], 0x20);
+
+        levelInfo->roomWidth = levelInfo->unk180[0].width << 3;
+        levelInfo->roomHeight = levelInfo->unk180[0].height << 3;
+
+        levelInfo->levelMinPosition.x = 0x800;
+        levelInfo->levelMinPosition.y = 0x800;
+        levelInfo->levelMaxPosition.x = (levelInfo->roomWidth - 8) << 8;
+        levelInfo->levelMaxPosition.y = (levelInfo->roomHeight - 2) << 8;
+        levelInfo->unk58 = 0x800;
+        levelInfo->unk5C = 0x800;
+        levelInfo->unk60 = levelInfo->levelMaxPosition.x;
+        levelInfo->unk64 = levelInfo->levelMaxPosition.y;
+        levelInfo->unk68 = 0x200;
+        levelInfo->unk_S32Vec2_6C.x = 0x800;
+        levelInfo->unk_S32Vec2_6C.y = 0x800;
+        levelInfo->unk_S32Vec2_74.x = levelInfo->levelMaxPosition.x;
+        levelInfo->unk_S32Vec2_74.y = (levelInfo->roomHeight - 0x28) << 8;
+        levelInfo->unk_S32Vec2_7C.x = 0x800;
+        levelInfo->unk_S32Vec2_7C.y = 0x800;
+        levelInfo->unk_S32Vec2_84.x = levelInfo->unk_S32Vec2_74.x;
+        levelInfo->unk_S32Vec2_84.y = levelInfo->unk_S32Vec2_74.y;
+        levelInfo->unk8C = 0x200;
+        levelInfo->unk90 = levelInfo->levelMinPosition.x;
+        levelInfo->unk94 = levelInfo->levelMinPosition.y;
+        levelInfo->unk98 = levelInfo->levelMaxPosition.x;
+        levelInfo->unk9C = (levelInfo->roomHeight - 1) << 8;
+        levelInfo->unkA0 = levelInfo->unk90;
+        levelInfo->unkA4 = levelInfo->unk94;
+        levelInfo->unkA8 = levelInfo->unk98;
+        levelInfo->unkAC = levelInfo->unk9C;
+        levelInfo->unkB0 = 0x200;
+
+        levelInfo->unk8 = 0;
+        levelInfo->viewportPosition.x = 0;
+        levelInfo->viewportPosition.y = 0;
+        levelInfo->viewportPositionUnmodified.x = 0;
+        levelInfo->viewportPositionUnmodified.y = 0;
+        levelInfo->unk1C = 0;
+        levelInfo->unk20 = 0;
+        levelInfo->altViewport_24.x = 0;
+        levelInfo->altViewport_24.y = (levelInfo->unk180[2].height << 11) - 0xA000;
+        levelInfo->unk2C = 0;
+        levelInfo->unk30 = 0;
+        levelInfo->altViewport_34.x = props->unk0A;
+        levelInfo->altViewport_34.y = ((levelInfo->unk180[1].height << 3) - (props->unk0C + 0xA0)) << 8;
+        levelInfo->unk3C = 0;
+        levelInfo->unk40 = 0;
+        levelInfo->viewportModX_44 = 0;
+        levelInfo->viewportModY_46 = 0;
+
+        levelInfo->unk1E0 = gSolidityMaps[props->solidityMapIdx]->unk4;
+        levelInfo->objlistPtr = gLevelObjLists[gRoomProps[levelInfo->currentRoom].objectListIdx].obj;
+        levelInfo->unk1E8 = gUnk_08D63C28[gRoomProps[levelInfo->currentRoom].unk22];
+        CpuFill32(0, levelInfo->unk5FC, 0x40);
+        CpuFill32(0, levelInfo->unk63C, 0x20);
+
+        if (levelInfo->unk180[1].width <= 0x20 && levelInfo->unk180[1].height <= 0x20) {
+            bg2->unk26 = levelInfo->unk180[1].width;
+            bg2->unk28 = levelInfo->unk180[1].height;
+            bg2->unk2E &= 0xFFDF;
+        }
+        else {
+            // TODO _08000D74
+        }
+    }
+    // TODO rest (asm _08000D74 .. _080012F6)
+}
