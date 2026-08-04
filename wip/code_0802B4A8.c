@@ -13,6 +13,7 @@
 #include "save.h"
 #include "multi_08030C94.h"
 #include "code_0814EBE4.h"
+#include "kirby.h"
 
 struct Unk_0802B4A8 {
     /* 0x000 */ void (*unk0)(struct Unk_0802B4A8 *);
@@ -70,7 +71,7 @@ struct Unk_0802CE64 {
 
 struct Unk_0802D898 {
     /* 0x00 */ void (*unk0)(struct Unk_0802D898 *);
-    /* 0x04 */ u8 filler4[0x44 - 0x04];
+    /* 0x04 */ struct Background unk4;
     /* 0x44 */ struct Unk_0802B4A8 *unk44;
     /* 0x48 */ u16 unk48;
     /* 0x4A */ u16 unk4A;
@@ -84,6 +85,8 @@ extern u32 gUnk_082EB564[][2];
 extern u16 gUnk_082EB640[][6][2];
 extern u16 gUnk_082EB5B4[];
 extern u16 gUnk_0300000C;
+
+void sub_0803D2D0(void);
 extern u16 gUnk_082EB6D0[];
 
 void sub_0802BA6C(void);
@@ -161,6 +164,7 @@ void sub_0802CB60(struct Unk_0802B4A8 *);
 void sub_0802BFBC(struct Unk_0802B4A8 *);
 void sub_0802C064(struct Unk_0802B4A8 *);
 void sub_0802CC7C(struct Unk_0802D898 *);
+void sub_0802CDA0(struct Unk_0802D898 *);
 void sub_0802CDF8(struct Unk_0802D898 *);
 void sub_0802D8AC(struct Unk_0802D898 *);
 void sub_0802D8F4(struct Unk_0802D898 *);
@@ -481,6 +485,28 @@ void sub_0802CB60(struct Unk_0802B4A8 *x) {
         }
     }
     sub_0814EBE4();
+}
+
+void sub_0802CC7C(struct Unk_0802D898 *x) {
+    struct Background *bg;
+    u16 bgIdx;
+
+    gDispCnt |= 0x400;
+    gBldRegs.bldCnt = 0x1344;
+    gBldRegs.bldAlpha = 0x1000;
+    bg = &x->unk4;
+    bgIdx = gUnk_082EB640[gLanguage][x->unk4C][0];
+    gBgScrollRegs[2][0] = 0;
+    gBgScrollRegs[2][1] = 0;
+    gBgCntRegs[2] = 0x1D00;
+    BgInit(bg, 0x06000000, 0, 0x0600E800, 0, 0, bgIdx, 0, 0, 0, 0xA, 0x1E, 0xA, 0, 0, 0, 0x1A, 0, 0, 0x7FFF, 0x7FFF);
+    LZ77UnCompVram(gUnk_082D7850[bgIdx]->tileset, (void *)bg->tilesVram);
+    CpuFill32(0, (void *)(bg->tilesVram + 0x3FE0), 0x20);
+    CpuFill16(0x1FF, (void *)bg->tilemapVram, 0x800);
+    sub_08153060(bg);
+    x->unk4A = 0;
+    x->unk44->unk214 |= 0x20000000;
+    x->unk0 = sub_0802CDA0;
 }
 
 void sub_0802CDA0(struct Unk_0802D898 *x) {
@@ -1227,6 +1253,38 @@ void sub_0802E16C(void) {
     BgInit(&x->unk0, 0x06008000, 0, 0x0600F000, 0, 0, bgIdx, 0, 0, 0, 0, 0x1E, 0x14, 0, 0, 0, 0x1B, 0, 0, 0x7FFF, 0x7FFF);
     LZ77UnCompVram(gUnk_082D7850[bgIdx]->tileset, (void *)x->unk0.tilesVram);
     sub_08153060(&x->unk0);
+}
+
+void sub_0802E270(struct Unk_0802E390 *x) {
+    u16 i;
+
+    for (i = gUnk_0203AD30; i < gUnk_0203AD44; i++) {
+        gUnk_02038590[i].unk18 = gUnk_082D8D28[i];
+    }
+    for (i = 0; i < gUnk_0203AD30; i++) {
+        gKirbys[i].base.base.base.flags |= 0x1000000;
+    }
+    if (gAIKirbyState < AI_KIRBY_STATE_CUTSCENE) {
+        gAIKirbyState = AI_KIRBY_STATE_CUTSCENE;
+        if (!(gUnk_0203AD10 & 0x10)) {
+            if (gUnk_0203AD10 & 2) {
+                if (gUnk_0203AD3C == gUnk_0203AD24) {
+                    UpdateSaveBufferByOffset(SAVE_BUFFER_TYPE_WORLD_PROPS, gSaveID > 2 ? 0 : gSaveID);
+                } else {
+                    sub_08031CE4(8);
+                }
+            } else {
+                UpdateSaveBufferByOffset(SAVE_BUFFER_TYPE_WORLD_PROPS, gSaveID > 2 ? 0 : gSaveID);
+            }
+        }
+    }
+    sub_0803D21C(gBgPalette, 0, 0x100);
+    sub_0803D280(0, 0xFF);
+    sub_0803D2D0();
+    m4aMPlayAllStop();
+    m4aSoundVSyncOff();
+    sub_08039670();
+    TaskDestroy(gCurTask);
 }
 
 void sub_0802E390(void) {
