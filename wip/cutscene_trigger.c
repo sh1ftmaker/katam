@@ -38,12 +38,15 @@ struct CutsceneTrigger {
     /* 0x0E8 */ s16 unkE8;
     /* 0x0EA */ u8 fillerEA[0x1AA];
     /* 0x294 */ struct Object4 *unk294[4];
-    /* 0x2A4 */ u8 filler2A4[0x12];
+    /* 0x2A4 */ u8 filler2A4[0x10];
+    /* 0x2B4 */ u16 unk2B4;
     /* 0x2B6 */ u16 unk2B6;
 }; /* size = 0x2B8 */
 
 extern const u16 gUnk_082DE9FC[];
 extern const u16 gUnk_082DEA24[];
+extern const s16 gUnk_082DEA4C[];
+extern const s16 gUnk_082DEA4E[];
 
 void sub_08020798(struct CutsceneTrigger *);
 void sub_0802084C(struct CutsceneTrigger *);
@@ -352,6 +355,33 @@ void sub_080215B4(struct CutsceneTrigger *x) {
     sub_0803D280(sprite.palId << 4, 0x10);
     obj->unk83 = 8;
     x->obj2.unk78 = sub_08022EE0;
+}
+
+void sub_0802172C(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    u16 i;
+    u16 j;
+
+    x2->unk2B4 = 0;
+    j = 0;
+    for (i = 0; i < 4; i++) {
+        x2->unk294[i] = NULL;
+        if (x->obj2.base.roomId == gKirbys[i].base.base.base.roomId && gKirbys[i].hp > 0) {
+            struct Object4 *obj;
+
+            gKirbys[i].base.base.base.x = (-(j * 18) + 0x64) << 8;
+            gKirbys[i].base.base.base.flags = (gKirbys[i].base.base.base.flags & ~1) | 0x01000000;
+            obj = x2->unk294[i] = sub_0808B62C(&x->obj2.base, 0, 0x29C, 0, 0);
+            obj->x = *(j * 2 + gUnk_082DEA4C) << 8;
+            obj->y = *(j * 2 + gUnk_082DEA4E) << 8;
+            obj->unk3C = 0;
+            obj->unk3E = 0;
+            obj->sprite.unk8 = (obj->sprite.unk8 & 0xFFFFCFFF) | 0x3000;
+            j++;
+            x2->unk2B4++;
+        }
+    }
+    x->obj2.unk78 = sub_08022F0C;
 }
 
 void sub_08021DD4(struct Task *t) {
