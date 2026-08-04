@@ -380,9 +380,12 @@ dispatch:
     }
     *speed = mag;
 callback:
+    asm("" :: "r"(sub));
     gUnk_083547AC[attr >> 0x1C](flamer);
 post:
     asm("" :: "r"(attr));
+    asm("" :: "r"(sub));
+    asm("" :: "r"(speed));
 
     if (flamer->base.flags & 1)
         flamer->base.xspeed = -flamer->base.xspeed;
