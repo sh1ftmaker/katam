@@ -2028,3 +2028,57 @@ void sub_08034A20(void)
         sub_080361B0();
     sub_08034D68(kirby);
 }
+
+extern const u16 gUnk_083513E8[];
+extern const u16 gUnk_08351458[][4];
+extern const u16 gUnk_08351628[][4];
+
+struct Object5 *sub_08034E14(struct Object2 *obj)
+{
+    void *tmp = TaskGetStructPtr(gUnk_03000010);
+    struct Object5 *p = tmp;
+    u16 v;
+    s32 w;
+
+    if (gUnk_0203AD10 & 0x10)
+        return NULL;
+    if (gCurTask->main == sub_08035FA8)
+        return NULL;
+    if (gCurTask->main == sub_080340A8)
+        return NULL;
+    if (obj->type > 0x5D)
+        return NULL;
+    if (gKirbys[gUnk_0203AD3C].base.base.base.roomId != obj->base.roomId)
+        return NULL;
+    if (p->unk1C == obj)
+        return NULL;
+    if (obj == NULL) {
+        p->unk1C = obj;
+        sub_08034FA8(NULL);
+        return NULL;
+    }
+    if (obj->unk80 <= 0)
+        return NULL;
+    if (obj->base.flags & 0x1000)
+        return NULL;
+    p->unk1C = obj;
+    CpuSet((const u8 *)gUnk_08D60EE4[gLanguage] + (obj->type << 8),
+        (void *)0x060077A0, 0x80);
+    p->unkF = 0;
+    if ((u8)(p->unk1C->type - 0x38) <= 0x1A) {
+        if (p->unk1C->type == 0x4F)
+            v = p->unk1C->unk80 * gUnk_08351628[p->unk1C->subtype][gUnk_0203AD30 - 1];
+        else
+            v = p->unk1C->unk80
+              * gUnk_08351458[p->unk1C->type - 0x38][gUnk_0203AD30 - 1];
+        w = v << 16;
+    } else {
+        w = (p->unk1C->unk80 * gUnk_083513E8[p->unk1C->type]) << 16;
+    }
+    p->unkA = w >> 24;
+    if (w & 0xFF0000)
+        p->unkA = (w >> 24) + 1;
+    p->unk9 = p->unkA;
+    sub_08034FA8(p);
+    return p;
+}
