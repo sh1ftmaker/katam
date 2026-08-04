@@ -349,11 +349,10 @@ void sub_08020A90(struct CutsceneTrigger *x) {
 
         k = 0;
         for (m = 0; m < 4; m++) {
+            struct Kirby *kirby = &gKirbys[m];
             int v = x->unkCC;
 
             if ((v >> m) & 1) {
-                struct Kirby *kirby = &gKirbys[m];
-
                 kirby->animationIndex = 0;
                 kirby->base.base.base.x = (-(k * 18) + 0x50) << 8;
                 kirby->base.base.base.flags &= ~1;
