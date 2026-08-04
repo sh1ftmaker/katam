@@ -2029,6 +2029,80 @@ void sub_08034A20(void)
     sub_08034D68(kirby);
 }
 
+struct Unk_080340A8 {
+    /* 0x00 */ u8 filler0[0xB];
+    /* 0x0B */ u8 unkB;
+    /* 0x0C */ u8 unkC;
+    /* 0x0D */ u8 fillerD;
+    /* 0x0E */ u8 unkE;
+    /* 0x0F */ u8 fillerF;
+    /* 0x10 */ u32 unk10;
+};
+
+void sub_080340A8(void)
+{
+    void *tmp = TaskGetStructPtr(gCurTask);
+    struct Unk_080340A8 *p = tmp;
+    struct Kirby *kirby = &gKirbys[gUnk_0203AD3C];
+    u8 flag;
+    u8 i;
+
+    if (kirby->base.base.base.roomId != 0x397) {
+        if (kirby->unkD9 != 0)
+            sub_08034BB4();
+        else
+            sub_08034C28();
+    }
+
+    if (p->unkC != kirby->battery)
+        sub_08034D68(kirby);
+
+    if (gRoomProps[kirby->base.base.base.roomId].priorityFlags & 8)
+        sub_08036194();
+    else
+        sub_080361B0();
+
+    sub_08034304(p);
+    p->unkC = kirby->battery;
+    p->unkB = gRoomProps[kirby->base.base.base.roomId].priorityFlags & 8;
+
+    if (gUnk_02021580 < gUnk_0203AD44
+        && (gKirbys[gUnk_02021580].base.base.base.unkC & 0x10000
+            || gKirbys[gUnk_02021580].base.base.base.roomId
+                != kirby->base.base.base.roomId)
+        && gRoomProps[kirby->base.base.base.roomId].priorityFlags & 0x10) {
+        flag = 1;
+        for (i = 1; i <= 8; i++) {
+            if (gUnk_0835105C[i] == kirby->base.base.base.roomId
+                && *sub_08002888(1, i, 0) != 0) {
+                flag = 0;
+                break;
+            }
+        }
+        for (i = 9; i <= 0xD; i++) {
+            if (gUnk_0835105C[i] == kirby->base.base.base.roomId
+                && *sub_08002888(1, i + 3, 0) != 0) {
+                flag = 0;
+                break;
+            }
+        }
+
+        if (flag) {
+            PlaySfxAlt(&kirby->base.base.base, 0x1FC);
+            p->unkE++;
+            p->unk10 |= 1;
+            return;
+        }
+    }
+
+    if (p->unk10 & 1) {
+        if (kirby->base.base.base.unk56 == gUnk_0203AD3C)
+            m4aSongNumStop(0x1FC);
+        p->unkE = 0;
+        p->unk10 &= ~1;
+    }
+}
+
 extern const u16 gUnk_083513E8[];
 extern const u16 gUnk_08351458[][4];
 extern const u16 gUnk_08351628[][4];
