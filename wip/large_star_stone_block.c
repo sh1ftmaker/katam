@@ -390,9 +390,10 @@ void sub_08120A40(struct Unknown82 *x)
     struct Unknown82 *x2 = x;
     u8 unk56;
     u16 xu, yu;
+    s16 x12, y12;
     u32 i, j;
     u16 *e8;
-    s16 unused[6];
+    s16 unused[2];
 
     x->obj2.base.counter = 0;
     x->unkB4 = gUnk_08357D20[x->obj2.object->unk14];
@@ -400,18 +401,20 @@ void sub_08120A40(struct Unknown82 *x)
     x->unkB8 = 0;
     x->unkBA = 0;
 
-    entry = EwramMalloc(x->unkB4 * sizeof(struct Unk_0888562C_4));
+    entry = EwramMalloc((u16)x->unkB4 * sizeof(struct Unk_0888562C_4));
     x->obj2.unk8C = entry;
 
     unk56 = x->obj2.base.unk56;
     xu = x->obj2.base.x >> 0xc;
     yu = x->obj2.base.y >> 0xc;
 
+    x12 = xu;
+    y12 = yu;
     j = 0;
     e8 = entry->unk0.unk08;
     for (i = 0; i < (u16)x->unkB4; i++) {
-            u16 dx = gUnk_08357D30[x2->unkB6 * 0x12 + j];
-            u16 dy;
+            s16 dx = gUnk_08357D30[x2->unkB6 * 0x12 + j];
+            s16 dy;
             u8 ex, ey;
             u16 ax, ay;
 
@@ -419,12 +422,12 @@ void sub_08120A40(struct Unknown82 *x)
             dy = gUnk_08357D30[x2->unkB6 * 0x12 + j];
             j++;
 
-            ex = xu + dx;
-            ey = yu + dy;
+            ex = xu + (u16)dx;
+            ey = yu + (u16)dy;
             entry->unk14 = sub_080025AC(unk56, ex, ey);
 
-            ax = (s16)xu + (s16)dx;
-            ay = (s16)yu + (s16)dy;
+            ax = x12 + dx;
+            ay = y12 + dy;
             sub_080015A8(unk56, ax, ay, e8);
             entry->unk0.unk10 = sub_080023E4(unk56, ax, ay);
 
