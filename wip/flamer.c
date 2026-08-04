@@ -92,7 +92,9 @@ void sub_080B89DC(struct Object2 *flamer)
     u32 v;
     u32 collision;
     u32 attr;
-    u8 t;
+    u8 t1;
+    u8 t2;
+    u8 t3;
     u8 st;
     u8 *facing;
     u8 *sub;
@@ -119,8 +121,8 @@ void sub_080B89DC(struct Object2 *flamer)
     v &= 1;
     if (v)
     {
-        t = *facing & 0xC0;
-        if (t == 0x40)
+        t1 = *facing & 0xC0;
+        if (t1 == 0x40)
         {
             *facing = (*facing & 0x3F) | ({ s32 m = -0x40; m; });
             if (!(flamer->base.flags & 1))
@@ -128,7 +130,7 @@ void sub_080B89DC(struct Object2 *flamer)
             else
                 flamer->base.x = (flamer->base.x & 0xFFFFF000) + 0xD00;
         }
-        else if (t == 0)
+        else if (t1 == 0)
         {
             *facing = (*facing & 0x3F) | ({ s32 m = -0x80; m; });
             if (flamer->base.flags & 1)
@@ -136,12 +138,12 @@ void sub_080B89DC(struct Object2 *flamer)
             else
                 flamer->base.x = (flamer->base.x & 0xFFFFF000) + 0xD00;
         }
-        else if (t == 0x80)
+        else if (t1 == 0x80)
         {
             *facing = (*facing & 0x3F) | 0x40;
             flamer->base.y = (flamer->base.y & 0xFFFFF000) + 0xB00;
         }
-        else if (t == 0xC0)
+        else if (t1 == 0xC0)
         {
             *facing = *facing & 0x3F;
             flamer->base.y = (flamer->base.y & 0xFFFFF000) + 0x400;
@@ -164,8 +166,8 @@ void sub_080B89DC(struct Object2 *flamer)
     if ((collision & 0xF0000001) || (attr & 0xF0000000))
         goto dispatch;
 
-    t = *facing & 0xC0;
-    if (t == 0x40)
+    t2 = *facing & 0xC0;
+    if (t2 == 0x40)
     {
         *facing = (*facing & 0x3F) | ({ s32 m = -0x80; m; });
         if (flamer->base.flags & 1)
@@ -173,7 +175,7 @@ void sub_080B89DC(struct Object2 *flamer)
         else
             flamer->base.x = ((flamer->base.x + (flamer->base.unk3E + 1) * 0x100) & 0xFFFFF000) - 0x300;
     }
-    else if (t == 0)
+    else if (t2 == 0)
     {
         *facing = (*facing & 0x3F) | ({ s32 m = -0x40; m; });
         if (flamer->base.flags & 1)
@@ -181,20 +183,20 @@ void sub_080B89DC(struct Object2 *flamer)
         else
             flamer->base.x = ((flamer->base.x + (flamer->base.unk3C - 1) * 0x100) & 0xFFFFF000) + 0x1300;
     }
-    else if (t == 0x80)
+    else if (t2 == 0x80)
     {
         *facing = *facing & 0x3F;
         flamer->base.y = ((flamer->base.y + (flamer->base.unk3D - 1) * 0x100) & 0xFFFFF000) + 0x1300;
     }
-    else if (t == 0xC0)
+    else if (t2 == 0xC0)
     {
         *facing = (*facing & 0x3F) | 0x40;
         flamer->base.y = ((flamer->base.y + (flamer->base.unk3F + 1) * 0x100) & 0xFFFFF000) - 0x300;
     }
 
 dispatch:
-    t = *facing & 0xC0;
-    if (t == 0x40)
+    t3 = *facing & 0xC0;
+    if (t3 == 0x40)
     {
         st = flamer->subtype;
         sub = &flamer->subtype;
@@ -241,7 +243,7 @@ dispatch:
             goto callback;
         }
     }
-    else if (t == 0)
+    else if (t3 == 0)
     {
         st = flamer->subtype;
         sub = &flamer->subtype;
@@ -281,7 +283,7 @@ dispatch:
         }
         mag = -mag;
     }
-    else if (t == 0x80)
+    else if (t3 == 0x80)
     {
         flamer->base.xspeed = 0;
         st = flamer->subtype;
@@ -328,7 +330,7 @@ dispatch:
             goto callback;
         }
     }
-    else if (t == 0xC0)
+    else if (t3 == 0xC0)
     {
         flamer->base.xspeed = 0;
         st = flamer->subtype;
@@ -739,9 +741,9 @@ void sub_080B9AF0(struct Object2 *flamer)
         y1 = flamer->base.y + (flamer->base.unk3D << 8);
         if (y1 <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y1 >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56,
+            collideFlags |= *(u32 *)((u8 *)gUnk_082D88B8 + sub_080023E4(flamer->base.unk56,
                 ((flamer->base.x >> 8) + flamer->base.unk3E) >> 4,
-                ((flamer->base.y >> 8) + flamer->base.unk3D) >> 4)];
+                ((flamer->base.y >> 8) + flamer->base.unk3D) >> 4) * 4);
     }
 
     x2 = flamer->base.x + (flamer->base.unk3C << 8);
@@ -751,9 +753,9 @@ void sub_080B9AF0(struct Object2 *flamer)
         y2 = flamer->base.y + (flamer->base.unk3D << 8);
         if (y2 <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y2 >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56,
+            collideFlags |= *(u32 *)((u8 *)gUnk_082D88B8 + sub_080023E4(flamer->base.unk56,
                 ((flamer->base.x >> 8) + flamer->base.unk3C) >> 4,
-                ((flamer->base.y >> 8) + flamer->base.unk3D) >> 4)];
+                ((flamer->base.y >> 8) + flamer->base.unk3D) >> 4) * 4);
     }
 
     x3 = flamer->base.x + (flamer->base.unk3E << 8);
@@ -763,9 +765,9 @@ void sub_080B9AF0(struct Object2 *flamer)
         y3 = flamer->base.y + (flamer->base.unk3F << 8);
         if (y3 <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y3 >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56,
+            collideFlags |= *(u32 *)((u8 *)gUnk_082D88B8 + sub_080023E4(flamer->base.unk56,
                 ((flamer->base.x >> 8) + flamer->base.unk3E) >> 4,
-                ((flamer->base.y >> 8) + flamer->base.unk3F) >> 4)];
+                ((flamer->base.y >> 8) + flamer->base.unk3F) >> 4) * 4);
     }
 
     x4 = flamer->base.x + (flamer->base.unk3C << 8);
@@ -775,9 +777,9 @@ void sub_080B9AF0(struct Object2 *flamer)
         y4 = flamer->base.y + (flamer->base.unk3F << 8);
         if (y4 <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y4 >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56,
+            collideFlags |= *(u32 *)((u8 *)gUnk_082D88B8 + sub_080023E4(flamer->base.unk56,
                 ((flamer->base.x >> 8) + flamer->base.unk3C) >> 4,
-                ((flamer->base.y >> 8) + flamer->base.unk3F) >> 4)];
+                ((flamer->base.y >> 8) + flamer->base.unk3F) >> 4) * 4);
     }
 
     if (collideFlags == 1)
