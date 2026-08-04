@@ -385,6 +385,9 @@ void sub_08020DDC(struct CutsceneTrigger *x) {
     if ((x->unkD0 & 0xF) == 0) {
         i = (x->unkD0 >> 4) & 1;
         mask = x->unkCE <= 2 ? 0xF : 0x1F;
+#ifndef NONMATCHING
+        asm("" ::"r"(i * 4));
+#endif
         p = &x->unkB8;
         if (p[i].obj4 != NULL)
             p[i].obj4->flags |= 0x1000;
