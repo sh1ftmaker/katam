@@ -2158,6 +2158,167 @@ void sub_080338B4(void)
     }
 }
 
+void sub_0803533C(struct Object5 *);
+
+void sub_08033B9C(void)
+{
+    void *tmp = TaskGetStructPtr(gCurTask);
+    struct Object5 *p = tmp;
+    struct Kirby *kirby = &gKirbys[gUnk_0203AD3C];
+    struct Sprite *s;
+    u16 v;
+    u8 flag;
+    u8 i;
+
+    if (p->unk6 != kirby->hp)
+        sub_0803518C((u8 *)kirby);
+
+    if (p->unk7 != kirby->lives)
+        sub_08036088(kirby);
+
+    if (gUnk_02021580 < gUnk_0203AD44
+        && (gKirbys[gUnk_02021580].base.base.base.unkC & 0x10000
+            || gKirbys[gUnk_02021580].base.base.base.roomId
+                != kirby->base.base.base.roomId)
+        && gRoomProps[kirby->base.base.base.roomId].priorityFlags & 0x10) {
+        flag = 1;
+        for (i = 1; i <= 8; i++) {
+            if (gUnk_0835105C[i] == kirby->base.base.base.roomId
+                && *sub_08002888(1, i, 0) != 0) {
+                flag = 0;
+                break;
+            }
+        }
+        for (i = 9; i <= 0xD; i++) {
+            if (gUnk_0835105C[i] == kirby->base.base.base.roomId
+                && *sub_08002888(1, i + 3, 0) != 0) {
+                flag = 0;
+                break;
+            }
+        }
+
+        if (flag) {
+        PlaySfxAlt(&kirby->base.base.base, 0x1FC);
+
+        if (!(gKirbys[gUnk_02021580].base.base.base.unkC & 0x10000)
+            || kirby->lives != 0) {
+            switch (p->unkE) {
+            case 0:
+                if (gKirbys[gUnk_02021580].base.base.base.unkC & 0x10000)
+                    sub_08034924(1);
+                else
+                    sub_08034828(1);
+                break;
+            case 0x60:
+            case 0xE0:
+                if (gKirbys[gUnk_02021580].base.base.base.unkC & 0x10000)
+                    sub_08034924(0);
+                else
+                    sub_08034828(0);
+                sub_08036194();
+                sub_08034D68(kirby);
+                p->unkD = 0;
+                break;
+            case 0x80:
+                if (gKirbys[gUnk_02021580].base.base.base.unkC & 0x10000)
+                    sub_08034924(2);
+                else
+                    sub_08034828(2);
+                break;
+            }
+
+            if (p->unkE < 0x60 || (u8)(p->unkE + 0x80) < 0x60) {
+                s = &p->unk20[0][gUnk_0203AD3C];
+                s->tilesVram
+                    = gKirbys[gUnk_02021580].base.base.base.sprite.tilesVram
+                    + 0x100;
+                s->palId = gUnk_02021580;
+                s->unk1B = 0xFF;
+                if (gUnk_0203AD20 & 8) {
+                    s->y = 0x91;
+                    s->unk8 |= 0x800;
+                } else {
+                    s->y = 0xF;
+                    s->unk8 &= ~0x800;
+                }
+                sub_08155128(s);
+                sub_0815604C(s);
+            }
+        } else {
+            sub_08034924(0);
+            sub_08036194();
+            sub_08034D68(kirby);
+            p->unkD = 0;
+        }
+
+            p->unkE++;
+            p->unk10 |= 1;
+            goto _08033F5C;
+        }
+    }
+
+    if (p->unk10 & 1) {
+        if (kirby->base.base.base.unk56 == gUnk_0203AD3C)
+                m4aSongNumStop(0x1FC);
+        sub_08034828(0);
+        sub_08036194();
+        sub_08034D68(kirby);
+        p->unkD = 0;
+        p->unkE = 0;
+        p->unk10 &= ~1;
+    }
+
+    if (p->unkC != kirby->battery) {
+        sub_08034D68(kirby);
+        p->unkD = 0;
+    } else if (p->unkC == 1) {
+        p->unkD++;
+        sub_08034D68(kirby);
+    }
+
+    v = gRoomProps[kirby->base.base.base.roomId].priorityFlags & 8;
+    if (p->unkB != v) {
+        if (v != 0)
+            sub_08036194();
+        else
+            sub_080361B0();
+    }
+
+_08033F5C:
+    if (p->unk1C != NULL)
+        sub_0803533C(p);
+    sub_0803557C(p);
+
+    if (p->unk4 <= 0x7D) {
+        if (p->unk4 == 8)
+            sub_08034C9C(2);
+        if (p->unk4 == 9)
+            sub_08034C9C(3);
+        if (p->unk4 == 0xA)
+            sub_08034C9C(4);
+        if (p->unk4 == 0xB)
+            sub_08034C9C(5);
+        if (p->unk4 == 0xC)
+            sub_08034C9C(6);
+        if (p->unk4 == 0x79)
+            sub_08034C9C(5);
+        if (p->unk4 == 0x7A)
+            sub_08034C9C(4);
+        if (p->unk4 == 0x7B)
+            sub_08034C9C(3);
+        if (p->unk4 == 0x7C)
+            sub_08034C9C(2);
+        p->unk4++;
+    }
+
+    p->unk0 = kirby->score;
+    p->unk6 = kirby->hp;
+    p->unk7 = kirby->lives;
+    p->unkC = kirby->battery;
+    p->unkB = gRoomProps[kirby->base.base.base.roomId].priorityFlags & 8;
+    sub_08034304(p);
+}
+
 void sub_080340A8(void)
 {
     void *tmp = TaskGetStructPtr(gCurTask);
