@@ -9,6 +9,7 @@
 #include "save.h"
 #include "multi_08030C94.h"
 #include "code_0806F780.h"
+#include "trig.h"
 #include "constants/songs.h"
 
 union CutsceneVal {
@@ -828,6 +829,74 @@ void sub_080226C4(struct CutsceneTrigger *x) {
         }
     }
     x->obj2.unk78 = sub_08022770;
+}
+
+void sub_08022770(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    s16 v[2];
+    s16 d[2];
+    u8 i;
+    u8 flag = 1;
+
+    x->unkB4.s[0]++;
+    for (i = 0; i < 4; i++) {
+        struct Kirby *kirby = &gKirbys[i];
+
+        if (kirby->hp > 0 && kirby->base.base.base.roomId == x2->obj2.base.roomId) {
+            kirby->base.base.base.flags |= 0x1000000;
+            switch (x->unkDE[i]) {
+            case 0: {
+                s32 t;
+                u8 angle;
+                s32 idx;
+
+                if (++kirby->animationIndex > 0x59)
+                    kirby->animationIndex = 0x4A;
+                t = x->unkB4.s[0] / 2;
+                angle = t > 0xC7 ? 0xC8 : t;
+                v[0] = (&x->unkCE)[i * 2];
+                v[1] = (&x->unkD0)[i * 2];
+                d[0] = 0x7000 - kirby->base.base.base.x;
+                d[1] = -0x2000 - kirby->base.base.base.y;
+                if (d[0] * v[1] - v[0] * d[1] > 0)
+                    angle = -angle;
+                idx = ((s8)angle + 0x400) & 0x3FF;
+                (&x->unkCE)[i * 2] = (v[0] * gSineTable[idx + 0x100] - v[1] * gSineTable[idx]) >> 14;
+                (&x->unkD0)[i * 2] = (v[0] * gSineTable[idx] + v[1] * gSineTable[idx + 0x100]) >> 14;
+                kirby->base.base.base.x += (s16)(&x->unkCE)[i * 2];
+                kirby->base.base.base.y += (s16)(&x->unkD0)[i * 2];
+                if (kirby->base.base.base.x >> 8 >= 0x168 && kirby->base.base.base.x >> 8 <= 0x178) {
+                    if (kirby->base.base.base.y >> 8 > 0xD7 && kirby->base.base.base.y >> 8 <= 0xE8) {
+                        kirby->base.base.base.x = 0x17000;
+                        kirby->base.base.base.y = 0xE000;
+                        kirby->base.base.base.flags |= 0x800;
+                        x->unkDE[i] = 1;
+                    }
+                }
+                flag = 0;
+                break;
+            }
+            case 1:
+                if (++kirby->animationIndex > 0x59)
+                    kirby->animationIndex = 0x4A;
+                if (x->unkE2[i] & 1)
+                    kirby->base.base.base.flags ^= 0x400;
+                if (++x->unkE2[i] > 0x3B) {
+                    kirby->base.base.base.flags |= 0x400;
+                    x->unkDE[i] = 2;
+                }
+                flag = 0;
+                break;
+            }
+        }
+    }
+    if (flag != 0) {
+        m4aMPlayFadeOut(&gMPlayInfo_0, 3);
+        m4aMPlayFadeOut(&gMPlayInfo_1, 3);
+        m4aMPlayFadeOut(&gMPlayInfo_2, 3);
+        m4aMPlayFadeOut(&gMPlayInfo_3, 3);
+        x2->obj2.unk78 = sub_08023268;
+    }
 }
 
 void sub_080229E4(struct CutsceneTrigger *x) {
