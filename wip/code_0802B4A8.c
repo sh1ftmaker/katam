@@ -430,6 +430,7 @@ void sub_0802BCEC(struct Unk_0802B4A8 *x) {
     struct Sprite *s;
     struct Sprite *s2;
     u32 ff = -1;
+    u32 t10 = 0x10;
 
     gDispCnt = 0x1140;
     bg = &x->unk194;
@@ -713,7 +714,11 @@ void sub_0802C360(struct Unk_0802B4A8 *x) {
 }
 
 void sub_0802C3C8(struct Unk_0802B4A8 *x) {
+#ifndef NONMATCHING
+    register struct Sprite *s asm("r0") = &x->unk11C;
+#else
     struct Sprite *s = &x->unk11C;
+#endif
 
     x->unk294 = 0x11800;
     x->unk298 = 0x5000;
@@ -884,8 +889,7 @@ void sub_0802CA78(struct Unk_0802B4A8 *x) {
             }
         }
         if ((s32)x->unk218[i][0] > 0x13000 || (s32)x->unk218[i][1] < -0x4000) {
-            x->unk240[i][1] = 0;
-            x->unk240[i][0] = 0;
+            x->unk240[i][0] = x->unk240[i][1] = 0;
         } else {
             flag = 0;
         }
