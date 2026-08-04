@@ -81,6 +81,50 @@ void sub_080B8954(struct Object2 *flamer)
     flamer->base.unkC &= ~1;
 }
 
+void sub_080B9048(struct Object2 *flamer)
+{
+    ObjectSetFunc(flamer, 3, sub_080BA36C);
+    flamer->base.flags &= ~0x140;
+    flamer->base.unkC &= ~1;
+    flamer->base.xspeed = 0;
+    flamer->base.yspeed = 0;
+
+    if (flamer->base.x <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.x
+        && flamer->base.x >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.x
+        && flamer->base.y <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
+        && flamer->base.y >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
+    {
+        if (*CollisionAttributesAt(flamer, 0, flamer->base.unk3F << 8) & 0xFFFFDEFC)
+        {
+            flamer->unk85 = (flamer->unk85 & 0x3F) | 0x40;
+            sub_080B8954(flamer);
+            return;
+        }
+        if (*CollisionAttributesAt(flamer, 0, flamer->base.unk3D << 8) & 0xFFFFDEFC)
+        {
+            flamer->unk85 &= 0x3F;
+            sub_080B8954(flamer);
+            return;
+        }
+        if (*CollisionAttributesAt(flamer, flamer->base.unk3C << 8, 0) & 0xFFFFDEFC)
+        {
+            if (flamer->base.flags & 1)
+                flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x80; m; });
+            else
+                flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x40; m; });
+            sub_080B8954(flamer);
+            return;
+        }
+        if (*CollisionAttributesAt(flamer, flamer->base.unk3E << 8, 0) & 0xFFFFDEFC)
+        {
+            if (flamer->base.flags & 1)
+                flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x80; m; });
+            else
+                flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x40; m; });
+            sub_080B8954(flamer);
+        }
+    }
+}
 
 void sub_080B937C(struct Object2 *flamer)
 {
