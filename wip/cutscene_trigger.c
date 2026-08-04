@@ -463,8 +463,16 @@ void sub_0802114C(struct CutsceneTrigger *x) {
     struct Object2 *obj = x->unkB4.obj;
     struct Object4 *obj4;
     struct Object4 *o;
+#ifndef NONMATCHING
+    register u16 i asm("r9");
+#else
     u16 i;
+#endif
 
+#ifndef NONMATCHING
+    asm("" ::"m"(x));
+    asm("" ::"m"(x2));
+#endif
     obj4 = sub_0808AE30(&x->obj2.base, 0, 0x292, 0);
     obj4->x = obj->base.x;
     obj4->y = obj->base.y;
