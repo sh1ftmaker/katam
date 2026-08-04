@@ -93,6 +93,9 @@ void sub_080B89DC(struct Object2 *flamer)
     u32 collision;
     u32 attr;
     u8 t;
+    u8 *facing;
+    s32 mag;
+    s16 *speed;
 
     flamer->base.flags |= 4;
     if (flamer->base.x <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.x
@@ -103,16 +106,17 @@ void sub_080B89DC(struct Object2 *flamer)
     else
         flamer->unk85 &= 0xDF;
 
+    facing = &flamer->unk85;
     v = sub_080B75D0(flamer);
     if (v == 0)
         goto end;
 
     if (v & 1)
     {
-        t = flamer->unk85 & 0xC0;
+        t = *facing & 0xC0;
         if (t == 0x40)
         {
-            flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x40; m; });
+            *facing = (*facing & 0x3F) | ({ s32 m = -0x40; m; });
             if (!(flamer->base.flags & 1))
                 flamer->base.x = (flamer->base.x & 0xFFFFF000) + 0x300;
             else
@@ -120,7 +124,7 @@ void sub_080B89DC(struct Object2 *flamer)
         }
         else if (t == 0)
         {
-            flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x80; m; });
+            *facing = (*facing & 0x3F) | ({ s32 m = -0x80; m; });
             if (flamer->base.flags & 1)
                 flamer->base.x = (flamer->base.x & 0xFFFFF000) + 0x300;
             else
@@ -128,12 +132,12 @@ void sub_080B89DC(struct Object2 *flamer)
         }
         else if (t == 0x80)
         {
-            flamer->unk85 = (flamer->unk85 & 0x3F) | 0x40;
+            *facing = (*facing & 0x3F) | 0x40;
             flamer->base.y = (flamer->base.y & 0xFFFFF000) + 0xB00;
         }
         else if (t == 0xC0)
         {
-            flamer->unk85 = flamer->unk85 & 0x3F;
+            *facing = *facing & 0x3F;
             flamer->base.y = (flamer->base.y & 0xFFFFF000) + 0x400;
         }
 
@@ -151,10 +155,10 @@ void sub_080B89DC(struct Object2 *flamer)
     if ((collision & 0xF0000001) || (attr & 0xF0000000))
         goto dispatch;
 
-    t = flamer->unk85 & 0xC0;
+    t = *facing & 0xC0;
     if (t == 0x40)
     {
-        flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x80; m; });
+        *facing = (*facing & 0x3F) | ({ s32 m = -0x80; m; });
         if (flamer->base.flags & 1)
             flamer->base.x = ((flamer->base.x + (flamer->base.unk3C - 1) * 0x100) & 0xFFFFF000) + 0x1300;
         else
@@ -162,7 +166,7 @@ void sub_080B89DC(struct Object2 *flamer)
     }
     else if (t == 0)
     {
-        flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x40; m; });
+        *facing = (*facing & 0x3F) | ({ s32 m = -0x40; m; });
         if (flamer->base.flags & 1)
             flamer->base.x = ((flamer->base.x + (flamer->base.unk3E + 1) * 0x100) & 0xFFFFF000) - 0x300;
         else
@@ -170,203 +174,190 @@ void sub_080B89DC(struct Object2 *flamer)
     }
     else if (t == 0x80)
     {
-        flamer->unk85 = flamer->unk85 & 0x3F;
+        *facing = *facing & 0x3F;
         flamer->base.y = ((flamer->base.y + (flamer->base.unk3D - 1) * 0x100) & 0xFFFFF000) + 0x1300;
     }
     else if (t == 0xC0)
     {
-        flamer->unk85 = (flamer->unk85 & 0x3F) | 0x40;
+        *facing = (*facing & 0x3F) | 0x40;
         flamer->base.y = ((flamer->base.y + (flamer->base.unk3F + 1) * 0x100) & 0xFFFFF000) - 0x300;
     }
 
 dispatch:
-    t = flamer->unk85 & 0xC0;
+    t = *facing & 0xC0;
     if (t == 0x40)
     {
-        s16 mag;
         switch (flamer->subtype)
         {
         case 1: mag = 0x140; break;
         case 2: mag = 0x300; break;
         default: mag = 0xCD; break;
         }
-        flamer->base.xspeed = mag;
+        speed = &flamer->base.xspeed;
+        *speed = mag;
         flamer->base.yspeed = 0;
-        if (attr != 0)
+        if (attr == 0)
+            goto end;
+        if (attr == 0x30000000)
         {
-            s16 corrected;
-            bool8 haveCorrected = TRUE;
-            if (attr == 0x30000000)
+            switch (flamer->subtype)
             {
-                switch (flamer->subtype)
-                {
-                case 1: corrected = 0xE2; break;
-                case 2: corrected = 0x21F; break;
-                default: corrected = 0x90; break;
-                }
+            case 1: mag = 0xE2; break;
+            case 2: mag = 0x21F; break;
+            default: mag = 0x90; break;
             }
-            else if (attr == 0x10000000 || attr == 0x20000000 || attr == 0x50000000 || attr == 0x60000000)
+        }
+        else if (attr == 0x10000000 || attr == 0x20000000 || attr == 0x50000000 || attr == 0x60000000)
+        {
+            switch (flamer->subtype)
             {
-                switch (flamer->subtype)
-                {
-                case 1: corrected = 0x127; break;
-                case 2: corrected = 0x2C4; break;
-                default: corrected = 0xBC; break;
-                }
+            case 1: mag = 0x127; break;
+            case 2: mag = 0x2C4; break;
+            default: mag = 0xBC; break;
             }
-            else if (attr == 0x40000000)
+        }
+        else if (attr == 0x40000000)
+        {
+            switch (flamer->subtype)
             {
-                switch (flamer->subtype)
-                {
-                case 1: corrected = 0xE2; break;
-                case 2: corrected = 0x21F; break;
-                default: corrected = 0x90; break;
-                }
+            case 1: mag = 0xE2; break;
+            case 2: mag = 0x21F; break;
+            default: mag = 0x90; break;
             }
-            else
-            {
-                haveCorrected = FALSE;
-            }
-            if (haveCorrected)
-                flamer->base.xspeed = corrected;
-            gUnk_083547AC[attr >> 0x1C](flamer);
+        }
+        else
+        {
+            goto callback;
         }
     }
     else if (t == 0)
     {
-        s16 mag;
         switch (flamer->subtype)
         {
         case 1: mag = 0x140; break;
         case 2: mag = 0x300; break;
         default: mag = 0xCD; break;
         }
-        flamer->base.xspeed = -mag;
+        mag = -mag;
+        speed = &flamer->base.xspeed;
+        *speed = mag;
         flamer->base.yspeed = 0;
-        if (attr != 0)
+        if (attr == 0)
+            goto end;
+        if (attr == 0x90000000 || attr == 0xA0000000)
         {
-            s16 corrected;
-            bool8 haveCorrected = TRUE;
-            if (attr == 0x90000000 || attr == 0xA0000000)
+            switch (flamer->subtype)
             {
-                switch (flamer->subtype)
-                {
-                case 1: corrected = 0xE2; break;
-                case 2: corrected = 0x21F; break;
-                default: corrected = 0x90; break;
-                }
+            case 1: mag = 0xE2; break;
+            case 2: mag = 0x21F; break;
+            default: mag = 0x90; break;
             }
-            else if (attr == 0x70000000 || attr == 0x80000000 || attr == 0xC0000000)
-            {
-                switch (flamer->subtype)
-                {
-                case 1: corrected = 0x127; break;
-                case 2: corrected = 0x2C4; break;
-                default: corrected = 0xBC; break;
-                }
-            }
-            else
-            {
-                haveCorrected = FALSE;
-            }
-            if (haveCorrected)
-                flamer->base.xspeed = -corrected;
-            gUnk_083547AC[attr >> 0x1C](flamer);
         }
+        else if (attr == 0x70000000 || attr == 0x80000000 || attr == 0xC0000000)
+        {
+            switch (flamer->subtype)
+            {
+            case 1: mag = 0x127; break;
+            case 2: mag = 0x2C4; break;
+            default: mag = 0xBC; break;
+            }
+        }
+        else
+        {
+            goto callback;
+        }
+        mag = -mag;
     }
     else if (t == 0x80)
     {
-        s16 mag;
+        flamer->base.xspeed = 0;
         switch (flamer->subtype)
         {
         case 1: mag = 0x140; break;
         case 2: mag = 0x300; break;
         default: mag = 0xCD; break;
         }
-        flamer->base.xspeed = 0;
-        flamer->base.yspeed = mag;
-        if (attr != 0)
+        speed = &flamer->base.yspeed;
+        *speed = mag;
+        if (attr == 0)
+            goto end;
+        if (attr == 0x30000000 || attr == 0x40000000 || attr == 0x90000000 || attr == 0xA0000000)
         {
-            s16 corrected;
-            bool8 haveCorrected = TRUE;
-            if (attr == 0x30000000 || attr == 0x40000000 || attr == 0x90000000 || attr == 0xA0000000)
+            switch (flamer->subtype)
             {
-                switch (flamer->subtype)
-                {
-                case 1: corrected = 0xE2; break;
-                case 2: corrected = 0x21F; break;
-                default: corrected = 0x90; break;
-                }
+            case 1: mag = 0xE2; break;
+            case 2: mag = 0x21F; break;
+            default: mag = 0x90; break;
             }
-            else if (attr == 0x10000000 || attr == 0x20000000 || attr == 0x50000000 || attr == 0x60000000)
-            {
-                switch (flamer->subtype)
-                {
-                case 1: corrected = 0x127; break;
-                case 2: corrected = 0x2C4; break;
-                default: corrected = 0xBC; break;
-                }
-            }
-            else if (attr == 0x70000000 || attr == 0x80000000 || attr == 0xB0000000 || attr == 0xC0000000)
-            {
-                switch (flamer->subtype)
-                {
-                case 1: corrected = 0x117; break;
-                case 2: corrected = 0x4A; break;
-                default: corrected = 0x74; break;
-                }
-            }
-            else
-            {
-                haveCorrected = FALSE;
-            }
-            if (haveCorrected)
-                flamer->base.yspeed = corrected;
-            gUnk_083547AC[attr >> 0x1C](flamer);
         }
+        else if (attr == 0x10000000 || attr == 0x20000000 || attr == 0x50000000 || attr == 0x60000000)
+        {
+            switch (flamer->subtype)
+            {
+            case 1: mag = 0x127; break;
+            case 2: mag = 0x2C4; break;
+            default: mag = 0xBC; break;
+            }
+        }
+        else if (attr == 0x70000000 || attr == 0x80000000 || attr == 0xB0000000 || attr == 0xC0000000)
+        {
+            switch (flamer->subtype)
+            {
+            case 1: mag = 0x117; break;
+            case 2: mag = 0x4A; break;
+            default: mag = 0x74; break;
+            }
+        }
+        else
+        {
+            goto callback;
+        }
+    }
+    else if (t == 0xC0)
+    {
+        flamer->base.xspeed = 0;
+        switch (flamer->subtype)
+        {
+        case 1: mag = 0x140; break;
+        case 2: mag = 0x300; break;
+        default: mag = 0xCD; break;
+        }
+        mag = -mag;
+        speed = &flamer->base.yspeed;
+        *speed = mag;
+        if (attr == 0)
+            goto end;
+        if (attr == 0x10000000 || attr == 0x60000000 || attr == 0x70000000 || attr == 0xB0000000 || attr == 0xC0000000)
+        {
+            switch (flamer->subtype)
+            {
+            case 1: mag = 0x117; break;
+            case 2: mag = 0x4A; break;
+            default: mag = 0x74; break;
+            }
+        }
+        else if (attr == 0x30000000 || attr == 0x40000000 || attr == 0x90000000)
+        {
+            switch (flamer->subtype)
+            {
+            case 1: mag = 0xE2; break;
+            case 2: mag = 0x21F; break;
+            default: mag = 0x90; break;
+            }
+        }
+        else
+        {
+            goto callback;
+        }
+        mag = -mag;
     }
     else
     {
-        s16 mag;
-        switch (flamer->subtype)
-        {
-        case 1: mag = 0x140; break;
-        case 2: mag = 0x300; break;
-        default: mag = 0xCD; break;
-        }
-        flamer->base.xspeed = 0;
-        flamer->base.yspeed = -mag;
-        if (attr != 0)
-        {
-            s16 corrected;
-            bool8 haveCorrected = TRUE;
-            if (attr == 0x10000000 || attr == 0x60000000 || attr == 0x70000000 || attr == 0xB0000000 || attr == 0xC0000000)
-            {
-                switch (flamer->subtype)
-                {
-                case 1: corrected = 0x117; break;
-                case 2: corrected = 0x4A; break;
-                default: corrected = 0x74; break;
-                }
-            }
-            else if (attr == 0x30000000 || attr == 0x40000000 || attr == 0x90000000)
-            {
-                switch (flamer->subtype)
-                {
-                case 1: corrected = 0xE2; break;
-                case 2: corrected = 0x21F; break;
-                default: corrected = 0x90; break;
-                }
-            }
-            else
-            {
-                haveCorrected = FALSE;
-            }
-            if (haveCorrected)
-                flamer->base.yspeed = -corrected;
-            gUnk_083547AC[attr >> 0x1C](flamer);
-        }
+        goto end;
     }
+    *speed = mag;
+callback:
+    gUnk_083547AC[attr >> 0x1C](flamer);
 
     if (flamer->base.flags & 1)
         flamer->base.xspeed = -flamer->base.xspeed;
