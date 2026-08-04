@@ -598,14 +598,10 @@ void sub_080B976C(struct Object2 *flamer)
     }
     else
     {
-        s32 t = flamer->unk9E + 1;
-        u8 u;
-
-        flamer->unk9E = t;
-        u = t;
-        if ((u & 3) == 3)
+        flamer->unk9E++;
+        if ((flamer->unk9E & 3) == 3)
         {
-            sub_080B9DF0(flamer, (t & 0xFF) >> 2);
+            sub_080B9DF0(flamer, flamer->unk9E >> 2);
             if (flamer->unk9E & 8)
                 flamer->unk9E = c;
         }
