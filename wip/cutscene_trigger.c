@@ -551,6 +551,53 @@ void sub_08021DD4(struct Task *t) {
         sub_08001678(a, b, gCurLevelInfo[id].unk65E, 1);
 }
 
+void sub_08021EB0(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    struct Sprite s;
+    u16 animId = gUnk_082DE9FC[18];
+    u8 variant = gUnk_082DE9FC[19];
+    u16 animId2;
+    u16 variant2;
+    u8 i;
+
+    x->unkBC.obj4 = sub_0808B62C(&x->obj2.base, 1, animId, variant, 0);
+    x->unkBC.obj4->sprite.palId = 0;
+    if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == x->unkBC.obj4->roomId) {
+        if (x->unkBC.obj4->sprite.palId == 0) {
+            x->unkBC.obj4->sprite.palId = sub_0803DF24(animId);
+            if (x->unkBC.obj4->sprite.palId == 0xFF)
+                x->unkBC.obj4->sprite.palId = sub_0803DFAC(animId, variant);
+        }
+    } else {
+        x->unkBC.obj4->sprite.palId = 0;
+    }
+    x2->unkBC.obj4->x = x2->unkBC.obj4->y = -0x4000;
+
+    animId2 = gUnk_082DEA24[18];
+    variant2 = gUnk_082DEA24[19];
+    x2->unkC0.obj4 = sub_0808B62C(&x->obj2.base, 0, animId2, variant2, 0);
+    x2->unkC0.obj4->sprite.palId = x2->unkBC.obj4->sprite.palId + 1;
+    SpriteSomething(&s, 0x6000000, animId2, variant2, 0xFF, 0, 0, 0, 0, 0x10,
+        x2->unkC0.obj4->sprite.palId & 0xF, 0x80000);
+    x2->unkC0.obj4->x = x2->unkC0.obj4->y = -0x4000;
+
+    x2->unkB4.obj4 = sub_0808B62C(&x->obj2.base, 0x14, gUnk_082DE9FC[0], ((const u8 *)gUnk_082DE9FC)[2], 0);
+    x2->unkB4.obj4->sprite.palId = x2->unkBC.obj4->sprite.palId;
+    x2->unkB4.obj4->x = 0xC800;
+    x2->unkB4.obj4->y = 0x8800;
+    x2->unkB8.obj4 = sub_0808B62C(&x->obj2.base, 0x14, gUnk_082DEA24[0], ((const u8 *)gUnk_082DEA24)[2], 0);
+    x2->unkB8.obj4->sprite.palId = x2->unkC0.obj4->sprite.palId;
+    x2->unkB8.obj4->x = 0xC800;
+    x2->unkB8.obj4->y = 0x8800;
+    for (i = 0; i < 4; i++) {
+        struct Kirby *kirby = &gKirbys[i];
+
+        kirby->base.base.base.flags = (kirby->base.base.base.flags | 0x1000800) & ~1;
+        kirby->animationIndex = 0;
+    }
+    x->obj2.unk78 = sub_08022F50;
+}
+
 void sub_08022090(struct CutsceneTrigger *x) {
     struct Sprite *s;
 
