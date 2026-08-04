@@ -735,19 +735,11 @@ skip:
 }
 #endif
 
-// sub_0811F824: functionally equivalent; the remaining diffs are register
-// allocation and instruction-scheduling shapes only.
-#ifndef NONMATCHING
-NAKED void sub_0811F824(struct Task *t)
-{
-    asm(".include \"asm/nonmatching/sub_0811F824.inc\"");
-}
-#else
 void sub_0811F824(struct Task *t)
 {
-    struct Unknown7A *block = TaskGetStructPtr(t);
+    struct Unknown7A *tmp = TaskGetStructPtr(t), *block = tmp;
 
-    if (block->obj2.base.sprite.tilesVram != 0)
+    if (tmp->obj2.base.sprite.tilesVram != 0)
     {
         if (!(block->obj2.base.flags & 0x4000))
         {
@@ -792,7 +784,6 @@ void sub_0811F824(struct Task *t)
         sub_080028CC(block->obj2.base.unk56, sub_08002984(block->obj2.base.unk56, &block->obj2.base.unk56));
     }
 }
-#endif
 
 void sub_0811F918(struct Unknown7A *block)
 {

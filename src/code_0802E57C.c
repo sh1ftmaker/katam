@@ -131,9 +131,9 @@ void sub_0802E71C(struct Task *t) {
     }
 }
 
-// Matches except for local-variable spill choices in the random-spawn block
-// (the original keeps x2/y2 and the 0xF mask constant in stack slots; agbcc
-// register-allocates them here).
+// Matches except for register numbering in the clamp block of the random-spawn
+// path (frame layout, spill slots, instruction sequence and branch layout are
+// now identical; only which of r0/r1/r2 holds each temp still differs).
 #ifndef NONMATCHING
 NAKED void sub_0802E78C(void) {
     asm(".include \"asm/nonmatching/sub_0802E78C.inc\"");
@@ -146,47 +146,46 @@ void sub_0802E78C(void) {
 
     if (!(v & 0x40000000)) {
         if ((v & 0x100) && !(x->unk18C & 0xF)) {
-            u32 idx;
-            u32 dur;
-            struct Unk_0802E57C_Vec v1, v2;
-            s32 x2, y2;
-            u16 diff;
+            u32 idx = Rand16() & 0x1F;
+            u32 dur = (Rand16() & 0xF) + 0x32;
+            s16 v1[2] = { -x->unk180, -x->unk182 };
+            volatile s32 x2 = x->unk178 + (((Rand16() & 0xF) - 8) << 8);
+            volatile s32 y2 = x->unk17C + (((Rand16() & 0xF) - 8) << 8);
+            u16 diff, diff2;
             u16 animId, variant;
 
-            idx = Rand16() & 0x1F;
-            dur = (Rand16() & 0xF) + 0x32;
-            v2.x = -x->unk180;
-            v2.y = -x->unk182;
-            v1 = v2;
-            x2 = x->unk178 + (((Rand16() & 0xF) - 8) << 8);
-            y2 = x->unk17C + (((Rand16() & 0xF) - 8) << 8);
-            if (v1.x > v1.y) {
-                diff = v1.x - v1.y;
+            if (v1[0] > v1[1]) {
+                diff = v1[0] - v1[1];
             } else {
-                diff = v1.y - v1.x;
+                diff = v1[1] - v1[0];
             }
+            diff2 = diff;
             if ((s16)diff < 0) {
                 diff = 0;
+                diff2 = diff;
             }
-            if (diff <= 0xFF) {
-                v1.x = 0;
-                v1.y = 0x80;
+            if (diff2 <= 0xFF) {
+                v1[0] = 0;
+                v1[1] = 0x80;
             } else {
-                u16 uvx = v1.x;
-                s16 svx = v1.x;
+                s16 *p = v1;
                 s32 w;
-                if (svx < -0x400) {
-                    w = -0x400;
-                } else {
-                    w = uvx;
-                    if (svx > 0x400) {
-                        w = 0x400;
-                    }
-                }
-                v1.x = w;
                 {
-                    u16 uvy = v1.y;
-                    s16 svy = v1.y;
+                    u16 uvx = *p;
+                    s16 svx = *p;
+                    if (svx < -0x400) {
+                        w = -0x400;
+                    } else {
+                        w = uvx;
+                        if (svx > 0x400) {
+                            w = 0x400;
+                        }
+                    }
+                    *p = w;
+                }
+                {
+                    u16 uvy = p[1];
+                    s16 svy = p[1];
                     if (svy < -0x400) {
                         w = -0x400;
                     } else {
@@ -195,12 +194,12 @@ void sub_0802E78C(void) {
                             w = 0x400;
                         }
                     }
-                    v1.y = w;
+                    p[1] = w;
                 }
             }
             animId = gUnk_082EB954[gUnk_082EB984[idx] * 2];
-            variant = gUnk_082EB954[gUnk_082EB984[idx] * 2 + 1];
-            sub_0802F8D8(x, animId, variant, x->unk8, x2, y2, v1.x, v1.y, dur);
+            variant = (gUnk_082EB954 + 1)[gUnk_082EB984[idx] * 2];
+            sub_0802F8D8(x, animId, variant, x->unk8, x2, y2, v1[0], v1[1], dur);
         }
         x->unk4(x);
         x->unk18C++;

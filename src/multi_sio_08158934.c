@@ -203,37 +203,27 @@ u32 sub_08158D14(u8 kind) {
     return 0;
 }
 
-// sub_08158D80: functionally equivalent; remaining diff swaps r4/r5.
-#ifndef NONMATCHING
-NAKED u32 sub_08158D80(void) {
-    asm(".include \"asm/nonmatching/sub_08158D80.inc\"");
-}
-#else
 u32 sub_08158D80(void) {
     u32 data = gUnk_03000030 >> 4;
     u32 expected = gUnk_03000030 & 0xF;
-    u32 sum = (gUnk_03000030 >> 4) >> 24;
-    u8 i = 6;
+    u32 sum;
+    u8 i;
 
-    do {
+    /* barrier: stops gcc folding (gUnk >> 4) >> 24 into gUnk >> 28 */
+    asm("" : "+r"(data));
+    sum = data >> 24;
+
+    for (i = 6; i != 0;) {
         sum ^= (data >> ((i - 1) * 4)) & 0xF;
         i--;
-    } while (i != 0);
+    }
 
     if (sum == expected) {
         return 0;
     }
     return 1;
 }
-#endif
 
-// sub_08158DBC: functionally equivalent; remaining diff is register allocation
-// and a folded checksum-seed constant.
-#ifndef NONMATCHING
-NAKED u32 sub_08158DBC(u8 kind) {
-    asm(".include \"asm/nonmatching/sub_08158DBC.inc\"");
-}
-#else
 u32 sub_08158DBC(u8 kind) {
     u32 base;
     u32 ret;
@@ -251,7 +241,14 @@ u32 sub_08158DBC(u8 kind) {
         break;
     case 2:
         base = ((gUnk_03000034 & 0xFFFFFF) << 4) | 0x20000000;
-        sum = base >> 28;
+        /* barriers: keep `base` opaque so base >> 28 is not const-folded,
+           and keep the u8 truncation of the seed nibble */
+        asm("" : "+r"(base));
+        {
+            u32 t = base >> 28;
+            asm("" : "+r"(t));
+            sum = t;
+        }
         for (i = 6; i != 0; i--) {
             sum ^= (base >> (i * 4)) & 0xF;
         }
@@ -259,7 +256,14 @@ u32 sub_08158DBC(u8 kind) {
         break;
     case 3:
         base = (gUnk_0300607C << 4) | 0x40000000;
-        sum = base >> 28;
+        /* barriers: keep `base` opaque so base >> 28 is not const-folded,
+           and keep the u8 truncation of the seed nibble */
+        asm("" : "+r"(base));
+        {
+            u32 t = base >> 28;
+            asm("" : "+r"(t));
+            sum = t;
+        }
         for (i = 6; i != 0; i--) {
             sum ^= (base >> (i * 4)) & 0xF;
         }
@@ -277,7 +281,6 @@ u32 sub_08158DBC(u8 kind) {
     }
     return ret;
 }
-#endif
 
 void Timer3Intr(void) {
     REG_IME = 0;

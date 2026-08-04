@@ -25,12 +25,6 @@ void sub_0811BE64(struct ObjectSpawner *);
 static void sub_0811BEBC(struct Task *);
 static void sub_0811C07C(struct ObjectSpawner *);
 
-// sub_0811BA30: functionally equivalent; remaining diff is register allocation only.
-#ifndef NONMATCHING
-NAKED void sub_0811BA30(struct Object2 *obj2) {
-    asm(".include \"asm/nonmatching/sub_0811BA30.inc\"");
-}
-#else
 void sub_0811BA30(struct Object2 *obj2) {
     struct ObjectSpawner *x = (struct ObjectSpawner *)obj2;
     void *buf;
@@ -41,13 +35,12 @@ void sub_0811BA30(struct Object2 *obj2) {
     }
     buf = EwramMalloc((obj2->object->unk14 >> 8) * 8);
     obj2->unk8C = buf;
-    CpuFill32(0, buf, (obj2->object->unk14 >> 8) * 4);
+    CpuFill32(0, buf, (obj2->object->unk14 >> 8) << 2);
     x->obj2.unk78 = sub_0811BAAC;
     x->unkDE = 0;
     x->unkDF = 0;
     x->unkDC = 0;
 }
-#endif
 
 // sub_0811BAAC: functionally equivalent; remaining diff is register allocation only.
 #ifndef NONMATCHING

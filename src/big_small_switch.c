@@ -250,12 +250,6 @@ void sub_081197D4(struct BigSmallSwitch *x) {
 }
 #endif
 
-// sub_08119980: functionally equivalent; remaining diff is register allocation only.
-#ifndef NONMATCHING
-static NAKED void sub_08119980(struct BigSmallSwitch *x) {
-    asm(".include \"asm/nonmatching/sub_08119980.inc\"");
-}
-#else
 static void sub_08119980(struct BigSmallSwitch *x) {
     struct BigSmallSwitch *x2 = x;
 
@@ -282,7 +276,6 @@ static void sub_08119980(struct BigSmallSwitch *x) {
     }
     x->obj2.base.counter++;
 }
-#endif
 
 void sub_08119A20(struct BigSmallSwitch *x) {
     u32 *p;
@@ -298,27 +291,29 @@ void sub_08119A20(struct BigSmallSwitch *x) {
     }
 }
 
-// sub_08119AA8: functionally equivalent; remaining diff is register allocation only.
-#ifndef NONMATCHING
-NAKED void sub_08119AA8(struct BigSmallSwitch *x) {
-    asm(".include \"asm/nonmatching/sub_08119AA8.inc\"");
-}
-#else
 void sub_08119AA8(struct BigSmallSwitch *x) {
     u8 *q = (u8 *)sub_08002888(0, x->obj2.object->unk4, gCurLevelInfo[x->obj2.base.unk56].unk65E);
-    u16 pressed = 1 & x->unkB6;
+    u32 pressed = x->unkB6 & 1;
 
     if (pressed) {
-        q[0] = x->obj2.object->unk14 >> 8;
+        u8 t0 = x->obj2.object->unk14 >> 8;
+        u8 zero = 0;
+        q[0] = t0;
         q[1] = x->obj2.object->unk14;
         q[2] = x->obj2.object->unk12 >> 8;
-        q[3] = 0;
+        q[3] = zero;
     } else {
         u16 a = x->obj2.object->unk14 >> 8;
         u8 b = x->obj2.object->unk14;
         u16 c = x->obj2.object->unk12 >> 8;
         if (q[0] == a && q[1] == b) {
-            u8 match = q[2] == c;
+            u32 q2 = q[2];
+            u8 match;
+            asm("" : "+r"(q2));
+            match = 1;
+            if (q2 != c) {
+                match = 0;
+            }
             if (match) {
                 q[0] = pressed;
                 q[1] = pressed;
@@ -328,7 +323,6 @@ void sub_08119AA8(struct BigSmallSwitch *x) {
         }
     }
 }
-#endif
 
 void sub_08119B3C(struct BigSmallSwitch *);
 void sub_08119BB8(struct BigSmallSwitch *);
@@ -336,18 +330,13 @@ static void sub_08119C0C(struct BigSmallSwitch *);
 
 extern void (*const gUnk_08357B8C[])(void);
 
-// sub_08119B3C: functionally equivalent; remaining diff is register allocation only.
-#ifndef NONMATCHING
-NAKED void sub_08119B3C(struct BigSmallSwitch *x) {
-    asm(".include \"asm/nonmatching/sub_08119B3C.inc\"");
-}
-#else
 void sub_08119B3C(struct BigSmallSwitch *x) {
     if ((x->unkB6 & 0x3000) == 0x2000) {
         x->obj2.base.flags |= 0xF40;
     }
     if (x->unkB6 & 2) {
-        x->unkB6 |= 0x1000 | 0x2000;
+        x->unkB6 |= 0x1000;
+        x->unkB6 |= 0x2000;
     }
     if (x->unkB6 & 0x1000) {
         if (sub_080395D4()) {
@@ -356,7 +345,6 @@ void sub_08119B3C(struct BigSmallSwitch *x) {
         }
     }
 }
-#endif
 
 void nullsub_127(void) {}
 

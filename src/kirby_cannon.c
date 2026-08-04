@@ -185,14 +185,8 @@ static void sub_08121B70(struct KirbyCannon *x) {
 }
 #endif
 
-// sub_08121FCC: functionally equivalent; remaining diff is register allocation only.
-#ifndef NONMATCHING
-static NAKED void sub_08121FCC(struct KirbyCannon *x) {
-    asm(".include \"asm/nonmatching/sub_08121FCC.inc\"");
-}
-#else
 static void sub_08121FCC(struct KirbyCannon *x) {
-    struct KirbyCannon *x2 = x;
+    register struct KirbyCannon *x2 asm("r8") = x;
     struct Object4 *eff;
 
     if (x->obj2.base.flags & 2) {
@@ -214,13 +208,12 @@ static void sub_08121FCC(struct KirbyCannon *x) {
             sub_080515D4(&gKirbys[2], x->unkBA, x->unkBC, x->unkBD, x->obj2.object->unk22 & 1);
             x->unkB8 &= ~4;
         }
-        if (x2->unkB8 & 8) {
+        if (x->unkB8 & 8) {
             sub_080515D4(&gKirbys[3], x2->unkBA, x2->unkBC, x2->unkBD, x2->obj2.object->unk22 & 1);
             x->unkB8 &= ~8;
         }
     }
 }
-#endif
 
 bool32 sub_0812214C(struct KirbyCannon *x) {
     s32 s;
@@ -267,14 +260,8 @@ bool32 sub_0812214C(struct KirbyCannon *x) {
     return FALSE;
 }
 
-// sub_08122248: functionally equivalent; remaining diff is register allocation only.
-#ifndef NONMATCHING
-static NAKED void sub_08122248(struct KirbyCannon *x) {
-    asm(".include \"asm/nonmatching/sub_08122248.inc\"");
-}
-#else
 static void sub_08122248(struct KirbyCannon *x) {
-    u8 r2 = 4 & x->unkB6;
+    u32 r2 = 4 & x->unkB6;
 
     if (r2 != 0) {
         if (!sub_0812214C(x)) {
@@ -291,7 +278,6 @@ static void sub_08122248(struct KirbyCannon *x) {
     }
     x->obj2.base.counter++;
 }
-#endif
 
 void sub_081222AC(struct ObjectBase *base, u8 dir) {
     struct Object4 *eff;
