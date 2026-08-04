@@ -5,6 +5,8 @@
 #include "task.h"
 #include "data.h"
 #include "gba/m4a.h"
+#include "bg.h"
+#include "functions.h"
 
 struct Unk_0802B4A8 {
     /* 0x000 */ void (*unk0)(struct Unk_0802B4A8 *);
@@ -37,6 +39,12 @@ struct Unk_0802B4A8 {
     /* 0x2BE */ u16 unk2BE;
 }; /* size = 0x2C0 */
 
+struct Unk_0802E390 {
+    /* 0x00 */ struct Background unk0;
+    /* 0x40 */ void (*unk40)(struct Unk_0802E390 *);
+    /* 0x44 */ u16 unk44;
+}; /* size = 0x48 */
+
 struct Unk_0802D898 {
     /* 0x00 */ void (*unk0)(struct Unk_0802D898 *);
     /* 0x04 */ u8 filler4[0x44 - 0x04];
@@ -52,6 +60,7 @@ extern u32 gUnk_082EB564[][2];
 extern u16 gUnk_082EB640[][6][2];
 extern u16 gUnk_082EB5B4[];
 extern u16 gUnk_0300000C;
+extern u16 gUnk_082EB6D0[];
 
 void sub_0802BA6C(void);
 void sub_0802BCEC(struct Unk_0802B4A8 *);
@@ -62,6 +71,18 @@ void sub_0802C3C8(struct Unk_0802B4A8 *);
 void sub_0802C550(struct Unk_0802B4A8 *);
 void sub_0802C8E8(struct Unk_0802B4A8 *);
 void sub_0802D360(struct Task *);
+void sub_0802DE14(struct Unk_0802B4A8 *);
+void sub_0802DE38(struct Unk_0802B4A8 *);
+void sub_0802E270(struct Unk_0802E390 *);
+void sub_0802E390(void);
+void nullsub_11(struct Task *);
+void sub_0802E3C8(struct Unk_0802E390 *);
+void sub_0802E3D4(struct Unk_0802E390 *);
+void sub_0802E450(struct Unk_0802E390 *);
+void sub_0802E470(struct Unk_0802E390 *);
+void sub_0802E484(struct Unk_0802E390 *);
+void sub_0802E500(struct Unk_0802E390 *);
+void sub_0802E55C(struct Unk_0802E390 *);
 void sub_0802D4E0(struct Unk_0802B4A8 *);
 void sub_0802D564(struct Unk_0802B4A8 *);
 void sub_0802D588(struct Unk_0802B4A8 *);
@@ -458,6 +479,19 @@ void sub_0802DB34(struct Unk_0802B4A8 *x) {
     x->unk0 = sub_0802DD18;
 }
 
+void sub_0802DD94(struct Unk_0802D898 *x) {
+    x->unk0 = sub_0802CC7C;
+}
+
+void sub_0802DDA0(struct Unk_0802B4A8 *x) {
+    x->unk2BC = 0;
+    x->unk0 = sub_0802DE14;
+}
+
+void sub_0802DDB4(struct Unk_0802B4A8 *x) {
+    x->unk0 = sub_0802DE38;
+}
+
 void sub_0802DDC0(struct Unk_0802B4A8 *x) {
     gDispCnt = 0x1040;
     x->unk214 &= 0xFAFFFFFF;
@@ -566,4 +600,85 @@ void sub_0802E0E8(struct Unk_0802B4A8 *x) {
     gBldRegs.bldY = 0;
     x->unk214 |= 0x20000000;
     x->unk0 = sub_0802E11C;
+}
+
+void sub_0802E390(void) {
+    struct Unk_0802E390 *x = TaskGetStructPtr(gCurTask);
+
+    x->unk40(x);
+}
+
+void nullsub_11(struct Task *t) {
+}
+
+void sub_0802E3C8(struct Unk_0802E390 *x) {
+    x->unk40 = sub_0802E3D4;
+}
+
+void sub_0802E3D4(struct Unk_0802E390 *x) {
+    const struct TiledBg_082D7850 *ptr = gUnk_082D7850[gUnk_082EB6D0[gLanguage]];
+    u16 white = 0x7FFF;
+    struct Unk_02022930_0 *unkStruct;
+
+    sub_0803D21C(ptr->palette, 0, 0x20);
+    unkStruct = sub_0803C95C(7);
+    unkStruct->unk8 |= 0x180;
+    unkStruct->unk4 = 0xFFFF;
+    unkStruct->unk6 = -1;
+    sub_0803D21C(&white, 0, 1);
+    x->unk44 = 0;
+    x->unk40 = sub_0802E450;
+}
+
+void sub_0802E450(struct Unk_0802E390 *x) {
+    if (x->unk44++ > 0x20) {
+        x->unk40 = sub_0802E470;
+    }
+}
+
+void sub_0802E470(struct Unk_0802E390 *x) {
+    x->unk44 = 0;
+    x->unk40 = sub_0802E484;
+}
+
+void sub_0802E484(struct Unk_0802E390 *x) {
+    u16 i;
+    u8 flag = 0;
+
+    if (gUnk_0203AD10 & 2) {
+        for (i = 0; i < gUnk_0203AD30; i++) {
+            if (gUnk_020382D0.unk8[1][i] & 0xB) {
+                flag = 1;
+                break;
+            }
+        }
+    } else {
+        if (gPressedKeys & 0xB) {
+            flag = 1;
+        }
+    }
+
+    if (flag) {
+        x->unk40 = sub_0802E500;
+    }
+}
+
+void sub_0802E500(struct Unk_0802E390 *x) {
+    u16 white = 0x7FFF;
+    struct Unk_02022930_0 *unkStruct;
+
+    x->unk44 = 0;
+    unkStruct = sub_0803CA20(7);
+    unkStruct->unk8 |= 0x80;
+    unkStruct->unk4 = 0xFFFF;
+    unkStruct->unk6 = -1;
+    sub_0803D21C(&white, 0, 1);
+    m4aMPlayFadeOut(&gMPlayInfo_0, 2);
+    x->unk40 = sub_0802E55C;
+}
+
+void sub_0802E55C(struct Unk_0802E390 *x) {
+    if (x->unk44++ > 0x20) {
+        x->unk40 = sub_0802E270;
+    }
 }
