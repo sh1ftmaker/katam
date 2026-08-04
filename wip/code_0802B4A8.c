@@ -427,10 +427,18 @@ void sub_0802BA6C(void) {
 void sub_0802BCEC(struct Unk_0802B4A8 *x) {
     u16 i;
     struct Background *bg;
+    u32 tbl;
     struct Sprite *s;
+#ifndef NONMATCHING
+    register struct Sprite *s2 asm("r0");
+#else
     struct Sprite *s2;
-    u32 ff = -1;
-    u32 t10 = 0x10;
+#endif
+#ifndef NONMATCHING
+    register u32 ff asm("sl");
+#else
+    u32 ff;
+#endif
 
     gDispCnt = 0x1140;
     bg = &x->unk194;
@@ -448,7 +456,7 @@ void sub_0802BCEC(struct Unk_0802B4A8 *x) {
         x->unk254[i] = gUnk_082EB5B4[i];
         if (i < 4) {
             s->unk14 = 0x100;
-            s->animId = *(u16 *)(gKirbys[i].color * 4 + (u32)gUnk_082EB4B4);
+            s->animId = gUnk_082EB4B4[gKirbys[i].color][0];
             s->variant = *(u16 *)(gKirbys[i].color * 4 + (u32)gUnk_082EB4B6);
             s->unk16 = 0;
             s->unk1B = 0xFF;
@@ -460,8 +468,10 @@ void sub_0802BCEC(struct Unk_0802B4A8 *x) {
             sub_08155128(s);
         } else {
             s->unk14 = 0x100;
-            s->animId = *(u16 *)(i * 4 + (u32)gUnk_082EB4A0);
-            s->variant = *(u16 *)(i * 4 + ((u32)gUnk_082EB4A0 + 2));
+            tbl = (u32)gUnk_082EB4A0;
+            s->animId = *(u16 *)(i * 4 + tbl);
+            tbl += 2;
+            s->variant = *(u16 *)(i * 4 + tbl);
             s->unk16 = 0;
             s->unk1B = 0xFF;
             s->unk1C = 0x10;
@@ -476,6 +486,7 @@ void sub_0802BCEC(struct Unk_0802B4A8 *x) {
         s->animId = 0x2D;
         s->variant = 4;
         s->unk16 = 0;
+        ff = -1;
         s->unk1B = 0xFF;
         s->unk1C = 0x10;
         s->palId = i;
