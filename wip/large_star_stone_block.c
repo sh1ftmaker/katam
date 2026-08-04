@@ -378,19 +378,14 @@ void sub_081209D8(struct Task *t)
 // sub_08120A40: EwramMalloc'd array builder using gUnk_08357D20/gUnk_08357D30
 // tables; entry struct is struct Unk_0888562C_4 (unknown_75.h), same idiom as
 // unknown_75.c:sub_0811C29C but building a whole array instead of one entry.
-#ifndef NONMATCHING
-NAKED void sub_08120A40(struct Unknown82 *x)
-{
-    asm(".include \"asm/nonmatching/sub_08120A40.inc\"");
-}
-#else
 void sub_08120A40(struct Unknown82 *x)
 {
     struct Unk_0888562C_4 *entry;
     struct Unknown82 *x2 = x;
     struct Unk_0888562C_4 *arr;
     u8 unk56;
-    u16 xu, yu;
+    u16 xu;
+    s16 yu;
     s16 x12, y12;
     u32 i, j;
 
@@ -434,7 +429,6 @@ void sub_08120A40(struct Unknown82 *x)
 
     x->obj2.unk78 = sub_08120B90;
 }
-#endif
 
 // sub_08120B90: consumer of sub_08120A40's ewram array; same entry struct
 // (struct Unk_0888562C_4), invoking sub_08001408 on either the whole entry
