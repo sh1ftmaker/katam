@@ -20,6 +20,7 @@ extern void sub_08035FA8(void);
 extern void sub_080340A8(void);
 extern void sub_080006EC(void);
 extern void PauseMenuInitRetained(void);
+extern void sub_08033B9C(void);
 
 struct Unk_08039E04 {
     void (*unk0)(struct Unk_08039E04 *);
@@ -184,7 +185,7 @@ void sub_08036258(void)
     }
 }
 
-void nullsub_119(void)
+void nullsub_119(struct Task *t)
 {
 }
 
@@ -691,4 +692,169 @@ void sub_08039D10(void)
     ((struct Unk_08039E04 *)t)->unk8 = 0x18;
     ((struct Unk_08039E04 *)t)->unk4 = 0;
     gMainFlags |= 0x400;
+}
+
+void sub_08034D68(struct Kirby *);
+void sub_08036470(void);
+
+void sub_08036314(struct ObjectBase *arg0)
+{
+    if (!(gUnk_0203AD10 & 0x10)) {
+        if (gUnk_03000010->main == sub_080340A8) {
+            CpuFill16(0x184, (void *)0x0600E000, 0x500);
+            sub_08034D68(&gKirbys[gUnk_0203AD3C]);
+        }
+    }
+}
+
+void sub_0803641C(void)
+{
+    TaskCreate(sub_08036470, 4, 0xFFFD, 0, nullsub_119);
+    gUnk_0203AD40 = 0;
+    gUnk_02022EB0[0][0] = 0;
+    gUnk_02022EB0[0][1] = 0;
+    gUnk_02022EB0[1][0] = 0;
+    gUnk_02022EB0[1][1] = 0;
+    gUnk_02022EB0[2][0] = 0;
+    gUnk_02022EB0[2][1] = 0;
+    gUnk_02022EB0[3][0] = 0;
+    gUnk_02022EB0[3][1] = 0;
+    gUnk_02022F40[0] = 0;
+    gUnk_02022F40[1] = 0;
+    gUnk_02022F40[2] = 0;
+    gUnk_02022F40[3] = 0;
+}
+
+void sub_08039670(void)
+{
+    struct Unk_08039E04 *s = TaskGetStructPtr(gUnk_0203AD4C);
+    s->unk4 = 1;
+    CpuFill32(0, (void *)0x06000000, 0x10000);
+}
+
+void sub_0803386C(struct Kirby *kirby)
+{
+    DmaFill32(3, 0, kirby->unk124, 0x80);
+    kirby->unk1A0[0] = 0;
+    kirby->unk1A0[1] = 0;
+    kirby->unk1A0[2] = 0;
+    kirby->unk1A4 = 0;
+}
+
+void sub_08035EF8(struct ObjectBase *obj)
+{
+    u16 *p = TaskGetStructPtr(gUnk_03000010);
+    if (!(gUnk_0203AD10 & 0x10)) {
+        if (obj->unk56 == gUnk_0203AD3C) {
+            p[2] = 0xC;
+        }
+    }
+}
+
+void sub_08035F50(struct ObjectBase *obj)
+{
+    u16 *p = TaskGetStructPtr(gUnk_03000010);
+    if (!(gUnk_0203AD10 & 0x10)) {
+        if (obj->unk56 == gUnk_0203AD3C) {
+            p[2] = 0x7C;
+        }
+    }
+}
+
+void sub_0803CD40(void)
+{
+    struct Unk_02022930_0 *arr = gUnk_02022930.unk0;
+    struct Unk_02022930_0 *p;
+    u8 i;
+
+    for (i = 0; i < 8; i++) {
+        p = &arr[i];
+        if (p->unk8 & 4) {
+            if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == (s16)p->unkE) {
+                if (!(p->unk8 & 0x10)) {
+                    p->unk8 |= 2;
+                }
+            }
+        }
+    }
+}
+
+extern const u16 gUnk_0834BB20[];
+extern const u16 gUnk_082EC7A0[];
+extern const u16 *const gUnk_08D60EE4[];
+
+void sub_08035E40(struct ObjectBase *obj)
+{
+    u16 *p = TaskGetStructPtr(gUnk_03000010);
+    if (!(gUnk_0203AD10 & 0x10)) {
+        if (obj->unk56 == gUnk_0203AD3C) {
+            p[2] = 0;
+            sub_08034C9C(2);
+        }
+    }
+}
+
+void sub_08035E9C(struct ObjectBase *obj)
+{
+    u16 *p = TaskGetStructPtr(gUnk_03000010);
+    if (!(gUnk_0203AD10 & 0x10)) {
+        if (obj->unk56 == gUnk_0203AD3C) {
+            p[2] = 0x80;
+            sub_08034C9C(6);
+        }
+    }
+}
+
+void sub_08035FDC(void)
+{
+    u8 c = gKirbys[gUnk_0203AD3C].color;
+    void *dest = (void *)0x060070A0;
+
+    sub_0803D21C(&gUnk_0834BB20[c * 0x10], 0xF0, 0x10);
+    CpuSet(gUnk_082EC7A0, dest, 0x380);
+    dest += 0x700;
+    CpuSet(gUnk_08D60EE4[gLanguage], dest, 0x80);
+}
+
+void sub_080362A4(void)
+{
+    if (!(gUnk_0203AD10 & 0x10)) {
+        if (gUnk_03000010->main == sub_080340A8) {
+            CpuFill16(0x184, (void *)0x0600E000, 0x500);
+            gUnk_03000010->main = sub_08033B9C;
+            sub_08035788(&gKirbys[gUnk_0203AD3C]);
+        }
+    }
+}
+
+extern const u16 *const gUnk_08D60F8C[];
+
+struct Unk_02022930_0 *sub_0803CB64(u8 arg0)
+{
+    struct Unk_02022930_0 *arr = gUnk_02022930.unk0;
+    struct Unk_02022930_0 *p = &arr[arg0];
+
+    p->unk8 = 4;
+    if (arg0 >= gUnk_0203AD44
+     || gKirbys[gUnk_0203AD3C].base.base.base.roomId == gKirbys[arg0].base.base.base.roomId) {
+        p->unk8 = 6;
+    }
+    p->unkA = 0;
+    p->unk2 = 0xFF;
+    return p;
+}
+
+void sub_080363B4(void)
+{
+    vu16 *dst = (vu16 *)0x0600E18E;
+    u8 i, j;
+
+    CpuSet(gUnk_08D60F8C[gLanguage], (void *)0x060070A0, 0x400);
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 16; j++) {
+            *dst = (i * 16 + (((long long)j) + 0x185)) | 0xFFFFF000;
+            dst++;
+        }
+        dst += 0x10;
+    }
 }
