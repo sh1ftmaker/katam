@@ -27,7 +27,7 @@ struct CutsceneTrigger {
     /* 0x0BC */ union CutsceneVal unkBC;
     /* 0x0C0 */ union CutsceneVal unkC0;
     /* 0x0C4 */ union CutsceneVal unkC4;
-    /* 0x0C8 */ union { struct Object4 *obj4; s16 s; u16 h; u8 b[2]; } unkC8;
+    /* 0x0C8 */ union { struct Object4 *obj4; s16 s; u16 h; u8 b[4]; s8 sb[4]; } unkC8;
     /* 0x0CC */ u16 unkCC;
     /* 0x0CE */ u16 unkCE;
     /* 0x0D0 */ u16 unkD0;
@@ -722,6 +722,69 @@ void sub_08022174(struct CutsceneTrigger *x) {
         }
     }
     x->obj2.unk78 = sub_080230DC;
+}
+
+void sub_08022350(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    struct LevelInfo *lvl = &gCurLevelInfo[gUnk_0203AD3C];
+    u8 i;
+
+    x->unkB4.h[0]++;
+    if (x->unkB4.h[0] & 1) {
+        *(u8 *)&x->unkCC = 1;
+        x->unkC8.sb[2] = (Rand32() & 7) - 4;
+        x->unkC8.sb[3] = (Rand32() & 7) - 4;
+        lvl->viewportModX_44 += x->unkC8.sb[2];
+        lvl->viewportModY_46 += x->unkC8.sb[3];
+        for (i = 0; i < 4; i++) {
+            if (gKirbys[i].hp > 0 && gKirbys[i].base.base.base.roomId == x->obj2.base.roomId) {
+                gKirbys[i].base.base.base.x -= x2->unkC8.sb[2] << 8;
+                gKirbys[i].base.base.base.y -= x2->unkC8.sb[3] << 8;
+            }
+        }
+    } else {
+        *(u8 *)&x->unkCC = 0;
+        lvl->viewportModX_44 -= x->unkC8.sb[2];
+        lvl->viewportModY_46 -= x->unkC8.sb[3];
+        for (i = 0; i < 4; i++) {
+            if (gKirbys[i].hp > 0 && gKirbys[i].base.base.base.roomId == x->obj2.base.roomId) {
+                gKirbys[i].base.base.base.x += x2->unkC8.sb[2] << 8;
+                gKirbys[i].base.base.base.y += x2->unkC8.sb[3] << 8;
+            }
+        }
+        x->unkC8.sb[2] = 0;
+        x->unkC8.sb[3] = 0;
+    }
+
+    if (++x->unkC8.b[0] >= x->unkC8.b[1] && x->unkB4.s[0] <= 0x95) {
+        x->unkC8.b[0] = 0;
+        x->unkC8.b[1] = (Rand32() & 0x1F) + 5;
+        gBldRegs.bldY = 0x10;
+        m4aSongNumStart(0x23E);
+    } else if (gBldRegs.bldY != 0) {
+        gBldRegs.bldY--;
+    } else {
+        gBldRegs.bldY = 0;
+    }
+
+    if (x->unkB4.s[0] > 0x95 && gBldRegs.bldY == 0) {
+        if (*(u8 *)&x2->unkCC != 0) {
+            *(u8 *)&x2->unkCC = 0;
+            lvl->viewportModX_44 -= x2->unkC8.sb[2];
+            lvl->viewportModY_46 -= x2->unkC8.sb[3];
+            for (i = 0; i < 4; i++) {
+                if (gKirbys[i].hp > 0 && gKirbys[i].base.base.base.roomId == x->obj2.base.roomId) {
+                    gKirbys[i].base.base.base.x += x2->unkC8.sb[2] << 8;
+                    gKirbys[i].base.base.base.y += x2->unkC8.sb[3] << 8;
+                }
+            }
+            x2->unkC8.sb[2] = 0;
+            x2->unkC8.sb[3] = 0;
+        }
+        gBldRegs.bldCnt = 0;
+        gBldRegs.bldY = 0;
+        x->obj2.unk78 = sub_08023154;
+    }
 }
 
 void sub_0802262C(struct CutsceneTrigger *x) {
