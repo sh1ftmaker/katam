@@ -1,4 +1,5 @@
 #include "master_hand.h"
+#include "portable.h"
 #include "object.h"
 #include "functions.h"
 #include "kirby.h"
@@ -107,7 +108,7 @@ static const s8 gUnk_08356178[] = {
     if ((mh)->subtype) \
     { \
         _r1 = Rand16() ^ 1; \
-        asm(""::"r"(_r1)); \
+        ASM_USE_R(_r1); \
         _r1 &= 1; \
     } \
     else \

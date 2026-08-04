@@ -1,4 +1,5 @@
 #include "pause_area_map.h"
+#include "portable.h"
 #include "bg.h"
 #include "constants/languages.h"
 #include "functions.h"
@@ -3272,8 +3273,8 @@ static void AreaMapUpdateDynamics(struct AreaMap* areamap) {
     areamap->shardRotation--;
     if (areamap->shardRotation < 1) {
 #ifndef NONMATCHING
-        register s16 *shardRotationIdx2, *shardRotationIdx asm("r1");
-        register u32 shardRotation asm("r4");
+        register s16 *shardRotationIdx2, *shardRotationIdx ASM_PIN("r1");
+        register u32 shardRotation ASM_PIN("r4");
 
         shardRotationIdx = &areamap->shardRotationIdx;
         ++*shardRotationIdx;

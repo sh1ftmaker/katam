@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "code_0802E57C.h"
 #include "random.h"
 #include "sprite.h"
@@ -31,7 +32,7 @@ struct Unk_0802F8D8 *sub_0802F8D8(struct Unk_0802E57C *a, u16 animId, u16 varian
 
     s->parent = a;
 #ifndef NONMATCHING
-    asm("" ::: "r8");
+    ASM_CLOBBER("r8");
 #endif
     s->x = x;
     s->y = y;
@@ -121,7 +122,7 @@ void sub_0802FC14(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags;
 
 #ifndef NONMATCHING
-    asm("" : "+r"(v));
+    ASM_INOUT_R(v);
 #endif
     b->unk0.animId = 0;
     b->unk0.variant = v;
@@ -175,7 +176,7 @@ void sub_0802FCDC(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags;
 
 #ifndef NONMATCHING
-    asm("" : "+r"(v));
+    ASM_INOUT_R(v);
 #endif
     b->unk0.animId = 6;
     b->unk0.variant = v;
@@ -329,7 +330,7 @@ void sub_0802FF5C(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
         u32 flags;
 
 #ifndef NONMATCHING
-        asm("" : "+r"(v2));
+        ASM_INOUT_R(v2);
 #endif
         b->unk0.animId = 0;
         b->unk0.variant = v2;
@@ -440,7 +441,7 @@ void sub_080300CC(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
         u16 old = b->unk3A;
         s32 sum = old + 0x26;
 #ifndef NONMATCHING
-        register s32 w asm("r0");
+        register s32 w ASM_PIN("r0");
 #else
         s32 w;
 #endif
@@ -532,7 +533,7 @@ void sub_080301DC(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     UnkCFunc2 f;
 
 #ifndef NONMATCHING
-    asm("" : "+r"(v));
+    ASM_INOUT_R(v);
 #endif
     b->unk0.animId = 0;
     b->unk0.variant = v;

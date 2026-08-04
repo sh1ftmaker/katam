@@ -1,4 +1,5 @@
 #include "cupie.h"
+#include "portable.h"
 #include "kirby.h"
 #include "random.h"
 #include "functions.h"
@@ -197,7 +198,7 @@ void sub_080A2AF0(struct Object2* arg0) {
 static void sub_080A2B6C(struct Object2* arg0) {
     u8 idx;
 #ifndef NONMATCHING
-    register const struct Unk_08353510 *p asm("r1");
+    register const struct Unk_08353510 *p ASM_PIN("r1");
 #else
     const struct Unk_08353510 *p;
 #endif

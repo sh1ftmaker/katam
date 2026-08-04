@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "data.h"
 #include "object.h"
 #include "functions.h"
@@ -373,8 +374,8 @@ void sub_08020DDC(struct CutsceneTrigger *x) {
     union CutsceneVal *p;
     union CutsceneVal *q;
 #ifndef NONMATCHING
-    register union CutsceneVal *r asm("r4");
-    register struct Object4 *o asm("r2");
+    register union CutsceneVal *r ASM_PIN("r4");
+    register struct Object4 *o ASM_PIN("r2");
 #else
     union CutsceneVal *r;
     struct Object4 *o;
@@ -386,7 +387,7 @@ void sub_08020DDC(struct CutsceneTrigger *x) {
         i = (x->unkD0 >> 4) & 1;
         mask = x->unkCE <= 2 ? 0xF : 0x1F;
 #ifndef NONMATCHING
-        asm("" ::"r"(i * 4));
+        ASM_USE_R(i * 4);
 #endif
         p = &x->unkB8;
         if (p[i].obj4 != NULL)
@@ -473,21 +474,21 @@ void sub_08020FA8(struct CutsceneTrigger *x) {
 void sub_0802114C(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
 #ifndef NONMATCHING
-    register struct Object2 *obj asm("r4") = x->unkB4.obj;
+    register struct Object2 *obj ASM_PIN("r4") = x->unkB4.obj;
 #else
     struct Object2 *obj = x->unkB4.obj;
 #endif
     struct Object4 *obj4;
     struct Object4 *o;
 #ifndef NONMATCHING
-    register u32 i asm("r9");
+    register u32 i ASM_PIN("r9");
 #else
     u16 i;
 #endif
 
 #ifndef NONMATCHING
-    asm("" ::"m"(x));
-    asm("" ::"m"(x2));
+    ASM_USE_M(x);
+    ASM_USE_M(x2);
 #endif
     obj4 = sub_0808AE30(&x->obj2.base, 0, 0x292, 0);
     obj4->x = obj->base.x;
@@ -501,7 +502,7 @@ void sub_0802114C(struct CutsceneTrigger *x) {
 
         if ((v >> i) & 1) {
 #ifndef NONMATCHING
-            register union CutsceneVal *p asm("r5");
+            register union CutsceneVal *p ASM_PIN("r5");
 #else
             union CutsceneVal *p;
 #endif
@@ -744,8 +745,8 @@ void sub_08021984(struct CutsceneTrigger *x) {
                         if (v < gUnk_082DEA7C[k][0]) {
                             t = (u16)gUnk_082DEA7C[k][0];
                         } else {
-                            register s32 mx asm("r2") = gUnk_082DEA8C[k][0];
-                            register s32 c asm("r0") = v;
+                            register s32 mx ASM_PIN("r2") = gUnk_082DEA8C[k][0];
+                            register s32 c ASM_PIN("r0") = v;
 
                             if (c > mx) {
                                 c = mx;
@@ -806,8 +807,8 @@ void sub_08021984(struct CutsceneTrigger *x) {
                         if (v < gUnk_082DEA7C[k][1]) {
                             t = (u16)gUnk_082DEA7C[k][1];
                         } else {
-                            register s32 mx asm("r2") = gUnk_082DEA8C[k][1];
-                            register s32 c asm("r0") = v;
+                            register s32 mx ASM_PIN("r2") = gUnk_082DEA8C[k][1];
+                            register s32 c ASM_PIN("r0") = v;
 
                             if (c > mx) {
                                 c = mx;
@@ -901,7 +902,7 @@ void sub_08021DD4(struct Task *t) {
         if (!(gUnk_0203AD10 & 0x10)) {
             if (gUnk_0203AD10 & 2) {
                 if (gUnk_0203AD3C == gUnk_0203AD24) {
-                    register u16 *sav asm("r2") = &gSaveID;
+                    register u16 *sav ASM_PIN("r2") = &gSaveID;
                     u16 v = *sav;
                     u16 off = 0;
 
@@ -912,7 +913,7 @@ void sub_08021DD4(struct Task *t) {
                     sub_08031CE4(8);
                 }
             } else {
-                register u16 *sav asm("r2") = &gSaveID;
+                register u16 *sav ASM_PIN("r2") = &gSaveID;
                 u16 v = *sav;
                 u16 off = 0;
 
@@ -1143,7 +1144,7 @@ void sub_0802262C(struct CutsceneTrigger *x) {
 void sub_080226C4(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
     u16 *p;
-    register u16 *q asm("r1");
+    register u16 *q ASM_PIN("r1");
     u16 *c;
     u32 off;
     u32 v;
@@ -1181,8 +1182,8 @@ void sub_08022770(struct CutsceneTrigger *x) {
     s16 v[2];
     s16 d[2];
 #ifndef NONMATCHING
-    register struct CutsceneTrigger *x2 asm("r9") = x;
-    register s16 *vp asm("r7") = v;
+    register struct CutsceneTrigger *x2 ASM_PIN("r9") = x;
+    register s16 *vp ASM_PIN("r7") = v;
 #else
     struct CutsceneTrigger *x2 = x;
     s16 *vp = v;

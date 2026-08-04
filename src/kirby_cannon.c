@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "data.h"
 #include "functions.h"
 #include "task.h"
@@ -187,7 +188,7 @@ static void sub_08121B70(struct KirbyCannon *x) {
 
 static void sub_08121FCC(struct KirbyCannon *x) {
 #ifndef NONMATCHING
-    register struct KirbyCannon *x2 asm("r8") = x;
+    register struct KirbyCannon *x2 ASM_PIN("r8") = x;
 #else
     struct KirbyCannon *x2 = x;
 #endif

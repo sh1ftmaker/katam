@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "data.h"
 #include "intro.h"
 #include "malloc_vram.h"
@@ -3072,10 +3073,10 @@ static bool32 sub_08149154(struct Unk_08145B64 *a1) {
     a1->unk13F8 = sub_08149270;
 #else
     {
-        register u32 _13F8 asm("r3") = 0x13F8;
-        register bool32 (**unk13F8)(struct Unk_08145B64 *) asm("r1");
+        register u32 _13F8 ASM_PIN("r3") = 0x13F8;
+        register bool32 (**unk13F8)(struct Unk_08145B64 *) ASM_PIN("r1");
 
-        asm("":::"r0");
+        ASM_CLOBBER("r0");
         unk13F8 = (void *)a1 + _13F8;
         *unk13F8 = sub_08149270;
     }

@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "data.h"
 #include "functions.h"
 #include "palette.h"
@@ -304,7 +305,7 @@ bool32 sub_08153184(void) {
                     //@592
                     if (sp10_unk1E_displaced + r6->unk26 + 1 > r6->unk14) {
                         r8 = r6->unk26 + sp10_unk1E_displaced + 1 - r6->unk14;
-                        asm(""); // Suppress tail merging
+                        ASM_BARRIER(); // Suppress tail merging
                     }
                     else {
                         //@5a4

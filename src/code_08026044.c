@@ -1,4 +1,5 @@
 #include "code_08026044.h"
+#include "portable.h"
 #include "code_0814F274.h"
 #include "demo.h"
 #include "malloc_vram.h"
@@ -390,7 +391,7 @@ static void sub_08026698(void) {
         cs->flags |= 0x40000000;
     if (!(cs->flags & 0x40000000) || (cs->flags & 0x20000000)) {
 #ifndef NONMATCHING
-        asm("":::"r6");
+        ASM_CLOBBER("r6");
 #endif
         cs->unk0(cs);
         if (gUnk_03000008) {
@@ -402,7 +403,7 @@ static void sub_08026698(void) {
             const u16 *const *tmp3 = gUnk_082EB2B4[0]->unk4;
 
 #ifndef NONMATCHING
-            asm("":::"r8");
+            ASM_CLOBBER("r8");
 #endif
             if (cs->unk35E >= (*(u8 *)&gUnk_082EB2B4[0]->unk0)) {
                 cs->unk35E = 0;

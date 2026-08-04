@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "code_080332BC.h"
 #include "data.h"
 #include "kirby.h"
@@ -180,7 +181,7 @@ u32 sub_08030FE0(void)
                     r8->unk2A4[sb] = (r8->unk2A4[sb] + 1) & 0xF;
 #else
                     {
-                        register u32 r1 asm("r1");
+                        register u32 r1 ASM_PIN("r1");
 
                         ++r8->unk2A4[sb];
                         r1 = 0xF;
@@ -237,7 +238,7 @@ u32 sub_08030FE0(void)
                 if (sp00 > 0)
                     r8->unk2A4[sb] = (r8->unk2A4[sb] + sp00) & r4;
 #ifndef NONMATCHING
-                asm("":"=r"(r4));
+                ASM_OUT_R(r4);
 #endif
                 for (r7 = (r8->unk2A8[sb] - 1) & 0xF; r7 != r8->unk2A4[sb]; r7 = (r7 - 1) & 0xF)
                 {
@@ -246,7 +247,7 @@ u32 sub_08030FE0(void)
                     r6->unk4 = 0xFFFF;
                 }
 #ifndef NONMATCHING
-                asm("":"=r"(r4));
+                ASM_OUT_R(r4);
 #endif
                 if (r8->unk4 & 2)
                 {

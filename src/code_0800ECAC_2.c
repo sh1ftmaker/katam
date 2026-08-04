@@ -1,4 +1,5 @@
 #include <limits.h>
+#include "portable.h"
 #include "code_0800ECAC.h"
 #include "functions.h"
 #include "kirby.h"
@@ -683,13 +684,13 @@ struct Object2 *sub_08010590(struct Unk_02038590 *a1, s32 a2, s32 a3) {
                     continue;
                 if (ObjType6Dto9A(r3)) {
 #ifndef NONMATCHING
-                    asm("":::"memory");
+                    ASM_CLOBBER_MEM();
 #endif
                     if (r3->type != OBJ_CANNON_FUSE && r3->type != OBJ_STAR_PLATFORM)
                         continue;
                 } else {
 #ifndef NONMATCHING
-                    asm("":::"memory");
+                    ASM_CLOBBER_MEM();
 #endif
                     if (r3->type != OBJ_ABILITY_STAR_1) {
                         if (r3->type == OBJ_ABILITY_STAR_2)

@@ -1,4 +1,5 @@
 #include "malloc_ewram.h"
+#include "portable.h"
 #include "scroll_lock.h"
 #include "object.h"
 #include "kirby.h"
@@ -162,8 +163,8 @@ static void sub_0811CBB8(struct Object2 *scrollLock)
     p->unk0.unk10 = p->unk0.unk8 + ((scrollLock->object->unk12 & 0xFF00) << 4);
     p->unk0.unk14 = p->unk0.unkC + ((scrollLock->object->unk12 & 0xFF) << 12);
 #ifndef NONMATCHING
-    asm(""::"r"(gCurLevelInfo));
-    asm(""::"r"(&scrollLock->base.unk56));
+    ASM_USE_R(gCurLevelInfo);
+    ASM_USE_R(&scrollLock->base.unk56);
 #endif
     p->unk44 = (scrollLock->object->unk18 & 0xFF00) >> 4;
     p->unk46 = scrollLock->object->unk18;
@@ -227,8 +228,8 @@ static void sub_0811CD90(struct Object2 *scrollLock)
     p->unk0.unk10 = p->unk0.unk8 + ((scrollLock->object->unk12 & 0xFF00) << 4);
     p->unk0.unk14 = p->unk0.unkC + ((scrollLock->object->unk12 & 0xFF) << 12);
 #ifndef NONMATCHING
-    asm(""::"r"(gCurLevelInfo));
-    asm(""::"r"(&scrollLock->base.unk56));
+    ASM_USE_R(gCurLevelInfo);
+    ASM_USE_R(&scrollLock->base.unk56);
 #endif
     p->unk44 = (scrollLock->object->unk18 & 0xFF00) >> 4;
     p->unk46 = scrollLock->object->unk18;

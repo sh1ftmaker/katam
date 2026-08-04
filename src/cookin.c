@@ -1,4 +1,5 @@
 #include "cookin.h"
+#include "portable.h"
 
 #include "functions.h"
 #include "kirby.h"
@@ -103,9 +104,9 @@ static void sub_080B5E1C(struct Object2 *cookin) {
             ObjectSetFunc(cookin, 0, sub_080B5BE8);
         else {
 #ifndef NONMATCHING
-            register void (*func)(struct Object2 *) asm("r2") = sub_080B5BE8;
-            register struct Object2 *o asm("r0") = cookin;
-            register s32 m asm("r1") = -1;
+            register void (*func)(struct Object2 *) ASM_PIN("r2") = sub_080B5BE8;
+            register struct Object2 *o ASM_PIN("r0") = cookin;
+            register s32 m ASM_PIN("r1") = -1;
             ObjectSetFunc(o, m, func);
 #else
             ObjectSetFunc(obj, -1, sub_080B5BE8);
@@ -211,9 +212,9 @@ static void sub_080B60AC(struct Object2 *pan) {
                         ObjectSetFunc(parent, 0, sub_080B5BE8);
                     else {
 #ifndef NONMATCHING
-                        register void (*func)(struct Object2 *) asm("r2") = sub_080B5BE8;
-                        register struct Object2 *o asm("r0") = parent;
-                        register s32 m asm("r1") = -1;
+                        register void (*func)(struct Object2 *) ASM_PIN("r2") = sub_080B5BE8;
+                        register struct Object2 *o ASM_PIN("r0") = parent;
+                        register s32 m ASM_PIN("r1") = -1;
                         ObjectSetFunc(o, m, func);
 #else
                         ObjectSetFunc(parent, -1, sub_080B5BE8);

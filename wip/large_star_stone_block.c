@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "data.h"
 #include "kirby.h"
 #include "functions.h"
@@ -146,10 +147,10 @@ void sub_08120438(struct LargeStarStoneBlock *block)
 {
     struct LargeStarStoneBlock *block2 = block;
 #ifndef NONMATCHING
-    register u32 f asm("r2");
-    register u32 g asm("r1");
-    register u32 m asm("r0");
-    register u8 *e4 asm("r1");
+    register u32 f ASM_PIN("r2");
+    register u32 g ASM_PIN("r1");
+    register u32 m ASM_PIN("r0");
+    register u8 *e4 ASM_PIN("r1");
 #else
     u32 f;
     u32 g;
@@ -444,8 +445,8 @@ void sub_08120B90(struct Unknown82 *x)
 {
     struct Unk_0888562C_4 *arr = x->obj2.unk8C;
     u8 unk56 = x->obj2.base.unk56;
-    register struct LevelInfo *li asm("sl");
-    register u32 k asm("sb");
+    register struct LevelInfo *li ASM_PIN("sl");
+    register u32 k ASM_PIN("sb");
 
     if (*sub_08002888(0, x->obj2.object->unk4, (li = gCurLevelInfo, k = sizeof(struct LevelInfo), ((struct LevelInfo *)((u8 *)li + unk56 * k))->unk65E)) != 0) {
         *sub_08002888(0, x->obj2.object->unk4, ((struct LevelInfo *)((u8 *)li + x->obj2.base.unk56 * k))->unk65E) = 0;
@@ -624,7 +625,7 @@ void sub_08120EE0(struct Unknown82 *x)
             u32 q2 = q[2];
             u8 match;
 #ifndef NONMATCHING
-            asm("" : "+r"(q2));
+            ASM_INOUT_R(q2);
 #endif
             match = 1;
             if (q2 != c)
@@ -758,10 +759,10 @@ void sub_08121324(struct LargeStarStoneBlock *block)
 {
     struct LargeStarStoneBlock *block2 = block;
 #ifndef NONMATCHING
-    register u32 f asm("r2");
-    register u32 g asm("r1");
-    register u32 m asm("r0");
-    register u8 *e4 asm("r1");
+    register u32 f ASM_PIN("r2");
+    register u32 g ASM_PIN("r1");
+    register u32 m ASM_PIN("r0");
+    register u8 *e4 ASM_PIN("r1");
 #else
     u32 f;
     u32 g;
@@ -938,10 +939,10 @@ void sub_081217E4(struct LargeStarStoneBlock *block)
 {
     struct LargeStarStoneBlock *block2 = block;
 #ifndef NONMATCHING
-    register u32 f asm("r2");
-    register u32 g asm("r1");
-    register u32 m asm("r0");
-    register u8 *e4 asm("r1");
+    register u32 f ASM_PIN("r2");
+    register u32 g ASM_PIN("r1");
+    register u32 m ASM_PIN("r0");
+    register u8 *e4 ASM_PIN("r1");
 #else
     u32 f;
     u32 g;

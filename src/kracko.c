@@ -1,4 +1,5 @@
 #include "kracko.h"
+#include "portable.h"
 #include "object.h"
 #include "functions.h"
 #include "random.h"
@@ -715,7 +716,7 @@ static void sub_080DC97C(struct Kracko *kracko)
     {
 #ifndef NONMATCHING
         s32 r1 = -0x30;
-        register s8 r2 asm("r2") = Rand32() ? 8 : 8;
+        register s8 r2 ASM_PIN("r2") = Rand32() ? 8 : 8;
 
         sub_080DDC44(&kracko->obj2.base, r1, r2);
 #else
@@ -1355,7 +1356,7 @@ static void sub_080DE658(struct Kracko *kracko, u8 a, bool8 b)
     else
         objBase2 = objBase;
     if (objBase2) {++objBase2; --objBase2;}
-    asm("":::"sb");
+    ASM_CLOBBER("sb");
 #else
     objBase2 = objBase;
 #endif

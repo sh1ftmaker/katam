@@ -1,4 +1,5 @@
 #include "save.h"
+#include "portable.h"
 #include "treasures.h"
 #include "functions.h"
 #include "agb_sram.h"
@@ -150,7 +151,7 @@ s16 VerifySaveByOffset(enum SaveBufferType sbufferType, u16 offset) {
         break;
     }
 #ifndef NONMATCHING
-    asm(""::"r"(sbWorldPropsOffset), "r"(sbSaveFileInfoOffset));
+    ASM_USE_R2(sbWorldPropsOffset, sbSaveFileInfoOffset);
 #endif
     ReadSram(sramPointer, (u8 *)&srcChecksum, sizeof(struct SaveBuffer));
     sramPointer += 8;

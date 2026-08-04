@@ -1,4 +1,5 @@
 #include "data.h"
+#include "portable.h"
 #include "functions.h"
 #include "kirby.h"
 #include "dark_mind.h"
@@ -2526,7 +2527,7 @@ u16 sub_080042BC(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
     switch (arg2 & 0x70) {
         case 0: case 0x10: {
 #ifndef NONMATCHING
-            register s32 r0 asm("r0"), r4 asm("r4");
+            register s32 r0 ASM_PIN("r0"), r4 ASM_PIN("r4");
 
             r0 = arg1->unk1C;
             ++r0;
@@ -2559,8 +2560,8 @@ u16 sub_080042BC(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
 
         case 0x30: case 0x40: {
 #ifndef NONMATCHING
-            register s32 r0 asm("r0") = arg1->unk1C * 0x1000;
-            register s32 r4 asm("r4") = r0 - 1;
+            register s32 r0 ASM_PIN("r0") = arg1->unk1C * 0x1000;
+            register s32 r4 ASM_PIN("r4") = r0 - 1;
 
             r0 = r4 - arg1->unk1A * 0x100;
             arg1->x = r0;
@@ -2900,7 +2901,7 @@ u16 sub_08004DBC(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var0 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -2927,7 +2928,7 @@ u16 sub_08004DBC(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var0 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3071,7 +3072,7 @@ u16 sub_0800520C(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var0 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3098,7 +3099,7 @@ u16 sub_0800520C(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var0 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3357,7 +3358,7 @@ u16 sub_08005A04(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var1 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3384,7 +3385,7 @@ u16 sub_08005A04(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var1 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3442,7 +3443,7 @@ u16 sub_08005BF8(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var1 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3469,7 +3470,7 @@ u16 sub_08005BF8(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var1 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3524,7 +3525,7 @@ u16 sub_08005DE0(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var1 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3551,7 +3552,7 @@ u16 sub_08005DE0(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var1 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3609,7 +3610,7 @@ u16 sub_08005FD8(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var1 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3636,7 +3637,7 @@ u16 sub_08005FD8(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var1 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3690,7 +3691,7 @@ u16 sub_080061C4(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var0 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3717,7 +3718,7 @@ u16 sub_080061C4(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var0 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3777,7 +3778,7 @@ u16 sub_080063B0(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var0 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3805,7 +3806,7 @@ u16 sub_080063B0(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
                 var0 <= arg0->base.base.base.unk4C
             ) {
 #ifndef NONMATCHING
-                asm("":::"r0");
+                ASM_CLOBBER("r0");
 #endif
                 arg1->x = arg0->base.base.base.unk48;
                 arg1->y = arg0->base.base.base.unk4C;
@@ -3841,7 +3842,7 @@ u16 sub_08006598(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
     switch (arg2 & 0x70) {
         case 0: case 0x10: {
 #ifndef NONMATCHING
-            register s32 r0 asm("r0"), r4 asm("r4");
+            register s32 r0 ASM_PIN("r0"), r4 ASM_PIN("r4");
 
             r0 = arg1->unk1C;
             ++r0;
@@ -3874,8 +3875,8 @@ u16 sub_08006598(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2, u8 arg3
 
         case 0x30: case 0x40: {
 #ifndef NONMATCHING
-            register s32 r0 asm("r0") = arg1->unk1C * 0x1000;
-            register s32 r4 asm("r4") = r0 - 1;
+            register s32 r0 ASM_PIN("r0") = arg1->unk1C * 0x1000;
+            register s32 r4 ASM_PIN("r4") = r0 - 1;
 
             r0 = r4 - arg1->unk1A * 0x100;
             arg1->x = r0;
@@ -5547,15 +5548,15 @@ static u16 sub_08009674(struct Kirby *arg0, struct Unk_3007DE0 *arg1, u16 arg2)
             s32 var0 = arg1->unk1C * 0x1000 | 0x800;
             s32 var1 = arg1->unk1E * 0x1000 | 0x800;
 #else
-            register s32 var0 asm("r4"), var1 asm("r5");
-            register s32 r0 asm("r0"), r2;
+            register s32 var0 ASM_PIN("r4"), var1 ASM_PIN("r5");
+            register s32 r0 ASM_PIN("r0"), r2;
             r0 = arg1->unk1C * 0x1000;
-            asm(""::"r"(r0));
+            ASM_USE_R(r0);
             r2 = 0x800;
             var0 = r0;
             var0 |= r2;
             r0 = arg1->unk1E * 0x1000;
-            asm(""::"r"(r0));
+            ASM_USE_R(r0);
             var1 = r0;
             var1 |= r2;
 

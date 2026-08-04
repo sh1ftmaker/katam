@@ -1,4 +1,5 @@
 #include "hot_head.h"
+#include "portable.h"
 #include "functions.h"
 #include "random.h"
 #include "kirby.h"
@@ -34,7 +35,7 @@ extern const s16 gUnk_0835553A[];
             u8 _idx; \
             u32 _temp2 = _temp * 64 + ((objBase)->unk0 - 1) * 32; \
  \
-            asm("":::"memory"); \
+            ASM_CLOBBER_MEM(); \
             _idx = gUnk_02022EB0[_temp][(objBase)->unk0 - 1]++ + _temp2; \
             gUnk_02022F50[_idx] = (objBase); \
             gUnk_02022F50[_idx + 1] = NULL; \

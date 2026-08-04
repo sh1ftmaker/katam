@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "data.h"
 #include "functions.h"
 #include "task.h"
@@ -249,7 +250,7 @@ static void* IwramMalloc(u16 req) {
 static void IwramFree(void* p) {
     struct IwramNode* node = p, *fast;
 #ifndef NONMATCHING
-    register struct IwramNode* slow asm("r1");
+    register struct IwramNode* slow ASM_PIN("r1");
 #else
     struct IwramNode* slow;
 #endif
@@ -341,7 +342,7 @@ void TasksDestroyInPriorityRange(u16 lbound, u16 rbound) {
     struct Task* cur = gTaskPtrs[0];
     u32 curOffset = (u16)cur;
 #ifndef NONMATCHING
-    asm("":::"r5");
+    ASM_CLOBBER("r5");
 #endif
     while (curOffset != 0) {
         if (cur->priority >= lbound) {

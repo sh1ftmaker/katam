@@ -1,4 +1,5 @@
 #include "flamer.h"
+#include "portable.h"
 #include "functions.h"
 #include "random.h"
 #include "kirby.h"
@@ -113,7 +114,7 @@ void sub_080B89DC(struct Object2 *flamer)
     facing = &flamer->unk85;
     v = sub_080B75D0(flamer);
 #ifndef NONMATCHING
-    asm("" ::: "r0");
+    ASM_CLOBBER("r0");
 #endif
     if (v == 0)
         goto end;
@@ -159,7 +160,7 @@ void sub_080B89DC(struct Object2 *flamer)
     collision = sub_080B7E74(flamer);
     attr = sub_080B819C(flamer) & 0xF0000000;
 #ifndef NONMATCHING
-    asm("" ::: "r3");
+    ASM_CLOBBER("r3");
 #endif
     if (collision == 0)
         goto end;
@@ -181,12 +182,12 @@ void sub_080B89DC(struct Object2 *flamer)
         if (flamer->base.flags & 1)
         {
             flamer->base.x = ((flamer->base.x + (flamer->base.unk3E + 1) * 0x100) & 0xFFFFF000) - 0x300;
-            asm("");
+            ASM_BARRIER();
         }
         else
         {
             flamer->base.x = ((flamer->base.x + (flamer->base.unk3C - 1) * 0x100) & 0xFFFFF000) + 0x1300;
-            asm("");
+            ASM_BARRIER();
         }
     }
     else if (t2 == 0x80)
@@ -380,12 +381,12 @@ dispatch:
     }
     *speed = mag;
 callback:
-    asm("" :: "r"(sub));
+    ASM_USE_R(sub);
     gUnk_083547AC[attr >> 0x1C](flamer);
 post:
-    asm("" :: "r"(attr));
-    asm("" :: "r"(sub));
-    asm("" :: "r"(speed));
+    ASM_USE_R(attr);
+    ASM_USE_R(sub);
+    ASM_USE_R(speed);
 
     if (flamer->base.flags & 1)
         flamer->base.xspeed = -flamer->base.xspeed;
@@ -609,7 +610,7 @@ void sub_080B976C(struct Object2 *flamer)
     flamer->base.flags |= 4;
     n = flamer->base.counter;
 #ifndef NONMATCHING
-    asm("" ::: "memory");
+    ASM_CLOBBER_MEM();
 #endif
     c = flamer->base.counter;
     if (c != 0)
@@ -953,7 +954,7 @@ void sub_080BA004(void)
         s32 newX = obj->x + obj->unk3C;
         s32 newY = obj->y - obj->unk3E;
 
-        asm("" ::: "memory");
+        ASM_CLOBBER_MEM();
         obj->x = newX + obj->unk3C;
         obj->y = newY - obj->unk3E;
     }
@@ -1094,12 +1095,12 @@ void sub_080BA5C8(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r2") = flamer->base.unk3E * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r4") = x0 + off;
-        register s32 y asm("r3") = flamer->base.y;
-        register s32 m asm("r1");
-        register s32 xm asm("r0");
+        register s32 off ASM_PIN("r2") = flamer->base.unk3E * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r4") = x0 + off;
+        register s32 y ASM_PIN("r3") = flamer->base.y;
+        register s32 m ASM_PIN("r1");
+        register s32 xm ASM_PIN("r0");
 #else
         s32 off = flamer->base.unk3E * 0x100;
         s32 x0 = flamer->base.x;
@@ -1111,7 +1112,7 @@ void sub_080BA5C8(struct Object2 *flamer)
         x &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         xm = x + m;
         y &= m;
@@ -1120,12 +1121,12 @@ void sub_080BA5C8(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r4") = flamer->base.x;
-        register s32 off asm("r2") = flamer->base.unk3F * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r3") = y0 + off;
-        register s32 m asm("r1");
-        register s32 ym asm("r0");
+        register s32 x ASM_PIN("r4") = flamer->base.x;
+        register s32 off ASM_PIN("r2") = flamer->base.unk3F * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r3") = y0 + off;
+        register s32 m ASM_PIN("r1");
+        register s32 ym ASM_PIN("r0");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3F * 0x100;
@@ -1137,7 +1138,7 @@ void sub_080BA5C8(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         ym = y + m;
         x &= m;
@@ -1153,12 +1154,12 @@ void sub_080BA638(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r1") = flamer->base.unk3C * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r3") = x0 + off;
-        register s32 y asm("r2") = flamer->base.y;
-        register s32 m asm("r0");
-        register s32 xm asm("r0");
+        register s32 off ASM_PIN("r1") = flamer->base.unk3C * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r3") = x0 + off;
+        register s32 y ASM_PIN("r2") = flamer->base.y;
+        register s32 m ASM_PIN("r0");
+        register s32 xm ASM_PIN("r0");
 #else
         s32 off = flamer->base.unk3C * 0x100;
         s32 x0 = flamer->base.x;
@@ -1170,7 +1171,7 @@ void sub_080BA638(struct Object2 *flamer)
         x &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         y &= m;
         xm = x + y;
@@ -1179,12 +1180,12 @@ void sub_080BA638(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r3") = flamer->base.x;
-        register s32 off asm("r1") = flamer->base.unk3F * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r2") = y0 + off;
-        register s32 m asm("r0");
-        register s32 ym asm("r0");
+        register s32 x ASM_PIN("r3") = flamer->base.x;
+        register s32 off ASM_PIN("r1") = flamer->base.unk3F * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r2") = y0 + off;
+        register s32 m ASM_PIN("r0");
+        register s32 ym ASM_PIN("r0");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3F * 0x100;
@@ -1196,7 +1197,7 @@ void sub_080BA638(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         x &= m;
         ym = y + x;
@@ -1212,12 +1213,12 @@ void sub_080BA6A4(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r2") = flamer->base.unk3C * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r4") = x0 + off;
-        register s32 y asm("r3") = flamer->base.y;
-        register s32 m asm("r1");
-        register s32 xm asm("r0");
+        register s32 off ASM_PIN("r2") = flamer->base.unk3C * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r4") = x0 + off;
+        register s32 y ASM_PIN("r3") = flamer->base.y;
+        register s32 m ASM_PIN("r1");
+        register s32 xm ASM_PIN("r0");
 #else
         s32 off = flamer->base.unk3C * 0x100;
         s32 x0 = flamer->base.x;
@@ -1229,7 +1230,7 @@ void sub_080BA6A4(struct Object2 *flamer)
         x &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         xm = x + m;
         y &= m;
@@ -1238,12 +1239,12 @@ void sub_080BA6A4(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r4") = flamer->base.x;
-        register s32 off asm("r2") = flamer->base.unk3D * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r3") = y0 + off;
-        register s32 m asm("r1");
-        register s32 ym asm("r0");
+        register s32 x ASM_PIN("r4") = flamer->base.x;
+        register s32 off ASM_PIN("r2") = flamer->base.unk3D * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r3") = y0 + off;
+        register s32 m ASM_PIN("r1");
+        register s32 ym ASM_PIN("r0");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3D * 0x100;
@@ -1255,7 +1256,7 @@ void sub_080BA6A4(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         ym = y + m;
         x &= m;
@@ -1271,12 +1272,12 @@ void sub_080BA714(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r1") = flamer->base.unk3E * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r3") = x0 + off;
-        register s32 y asm("r2") = flamer->base.y;
-        register s32 m asm("r0");
-        register s32 xm asm("r0");
+        register s32 off ASM_PIN("r1") = flamer->base.unk3E * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r3") = x0 + off;
+        register s32 y ASM_PIN("r2") = flamer->base.y;
+        register s32 m ASM_PIN("r0");
+        register s32 xm ASM_PIN("r0");
 #else
         s32 off = flamer->base.unk3E * 0x100;
         s32 x0 = flamer->base.x;
@@ -1288,7 +1289,7 @@ void sub_080BA714(struct Object2 *flamer)
         x &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         y &= m;
         xm = x + y;
@@ -1297,12 +1298,12 @@ void sub_080BA714(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r3") = flamer->base.x;
-        register s32 off asm("r1") = flamer->base.unk3D * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r2") = y0 + off;
-        register s32 m asm("r0");
-        register s32 ym asm("r0");
+        register s32 x ASM_PIN("r3") = flamer->base.x;
+        register s32 off ASM_PIN("r1") = flamer->base.unk3D * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r2") = y0 + off;
+        register s32 m ASM_PIN("r0");
+        register s32 ym ASM_PIN("r0");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3D * 0x100;
@@ -1314,7 +1315,7 @@ void sub_080BA714(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         x &= m;
         ym = y + x;
@@ -1330,13 +1331,13 @@ void sub_080BA780(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r2") = flamer->base.unk3E * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r4") = x0 + off;
-        register s32 y asm("r3") = flamer->base.y;
-        register s32 m asm("r0");
-        register s32 xm asm("r1");
-        register s32 ys asm("r0");
+        register s32 off ASM_PIN("r2") = flamer->base.unk3E * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r4") = x0 + off;
+        register s32 y ASM_PIN("r3") = flamer->base.y;
+        register s32 m ASM_PIN("r0");
+        register s32 xm ASM_PIN("r1");
+        register s32 ys ASM_PIN("r0");
 #else
         s32 off = flamer->base.unk3E * 0x100;
         s32 x0 = flamer->base.x;
@@ -1349,7 +1350,7 @@ void sub_080BA780(struct Object2 *flamer)
         x &= ~0xFFF;
         m = 0xFFF;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         xm = x + m;
         y &= m;
@@ -1362,12 +1363,12 @@ void sub_080BA780(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r4") = flamer->base.x;
-        register s32 off asm("r2") = flamer->base.unk3F * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r3") = y0 + off;
-        register s32 m asm("r1");
-        register s32 xs asm("r0");
+        register s32 x ASM_PIN("r4") = flamer->base.x;
+        register s32 off ASM_PIN("r2") = flamer->base.unk3F * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r3") = y0 + off;
+        register s32 m ASM_PIN("r1");
+        register s32 xs ASM_PIN("r0");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3F * 0x100;
@@ -1379,7 +1380,7 @@ void sub_080BA780(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         x &= m;
         xs = x >> 1;
@@ -1397,13 +1398,13 @@ void sub_080BA800(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r2") = flamer->base.unk3E * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r4") = x0 + off;
-        register s32 y asm("r5") = flamer->base.y;
-        register s32 m asm("r1");
-        register s32 xm asm("r0");
-        register s32 ys asm("r1");
+        register s32 off ASM_PIN("r2") = flamer->base.unk3E * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r4") = x0 + off;
+        register s32 y ASM_PIN("r5") = flamer->base.y;
+        register s32 m ASM_PIN("r1");
+        register s32 xm ASM_PIN("r0");
+        register s32 ys ASM_PIN("r1");
 #else
         s32 off = flamer->base.unk3E * 0x100;
         s32 x0 = flamer->base.x;
@@ -1416,7 +1417,7 @@ void sub_080BA800(struct Object2 *flamer)
         x &= ~0xFFF;
         m = 0xFFF;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         xm = x + m;
         y &= m;
@@ -1426,13 +1427,13 @@ void sub_080BA800(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r4") = flamer->base.x;
-        register s32 off asm("r2") = flamer->base.unk3F * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r5") = y0 + off;
-        register s32 m asm("r3");
-        register s32 xs asm("r1");
-        register s32 xr asm("r0");
+        register s32 x ASM_PIN("r4") = flamer->base.x;
+        register s32 off ASM_PIN("r2") = flamer->base.unk3F * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r5") = y0 + off;
+        register s32 m ASM_PIN("r3");
+        register s32 xs ASM_PIN("r1");
+        register s32 xr ASM_PIN("r0");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3F * 0x100;
@@ -1445,7 +1446,7 @@ void sub_080BA800(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         x &= m;
         xs = x >> 1;
@@ -1463,11 +1464,11 @@ void sub_080BA880(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r1") = flamer->base.unk3C * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r5") = x0 + off;
-        register s32 y asm("r4") = flamer->base.y;
-        register s32 ys asm("r0");
+        register s32 off ASM_PIN("r1") = flamer->base.unk3C * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r5") = x0 + off;
+        register s32 y ASM_PIN("r4") = flamer->base.y;
+        register s32 ys ASM_PIN("r0");
 #else
         s32 off = flamer->base.unk3C * 0x100;
         s32 x0 = flamer->base.x;
@@ -1484,13 +1485,13 @@ void sub_080BA880(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r5") = flamer->base.x;
-        register s32 off asm("r2") = flamer->base.unk3F * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r4") = y0 + off;
-        register s32 m asm("r3");
-        register s32 xs asm("r0");
-        register s32 b asm("r1");
+        register s32 x ASM_PIN("r5") = flamer->base.x;
+        register s32 off ASM_PIN("r2") = flamer->base.unk3F * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r4") = y0 + off;
+        register s32 m ASM_PIN("r3");
+        register s32 xs ASM_PIN("r0");
+        register s32 b ASM_PIN("r1");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3F * 0x100;
@@ -1503,7 +1504,7 @@ void sub_080BA880(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         x &= m;
         xs = x >> 1;
@@ -1522,11 +1523,11 @@ void sub_080BA908(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r1") = flamer->base.unk3C * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r4") = x0 + off;
-        register s32 y asm("r3") = flamer->base.y;
-        register s32 ys asm("r0");
+        register s32 off ASM_PIN("r1") = flamer->base.unk3C * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r4") = x0 + off;
+        register s32 y ASM_PIN("r3") = flamer->base.y;
+        register s32 ys ASM_PIN("r0");
 #else
         s32 off = flamer->base.unk3C * 0x100;
         s32 x0 = flamer->base.x;
@@ -1542,12 +1543,12 @@ void sub_080BA908(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r4") = flamer->base.x;
-        register s32 off asm("r2") = flamer->base.unk3F * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r3") = y0 + off;
-        register s32 m asm("r1");
-        register s32 xs asm("r0");
+        register s32 x ASM_PIN("r4") = flamer->base.x;
+        register s32 off ASM_PIN("r2") = flamer->base.unk3F * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r3") = y0 + off;
+        register s32 m ASM_PIN("r1");
+        register s32 xs ASM_PIN("r0");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3F * 0x100;
@@ -1559,7 +1560,7 @@ void sub_080BA908(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         x &= m;
         xs = x >> 1;
@@ -1576,11 +1577,11 @@ void sub_080BA97C(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r1") = flamer->base.unk3E * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r4") = x0 + off;
-        register s32 y asm("r3") = flamer->base.y;
-        register s32 ys asm("r0");
+        register s32 off ASM_PIN("r1") = flamer->base.unk3E * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r4") = x0 + off;
+        register s32 y ASM_PIN("r3") = flamer->base.y;
+        register s32 ys ASM_PIN("r0");
 #else
         s32 off = flamer->base.unk3E * 0x100;
         s32 x0 = flamer->base.x;
@@ -1596,12 +1597,12 @@ void sub_080BA97C(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r4") = flamer->base.x;
-        register s32 off asm("r2") = flamer->base.unk3D * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r3") = y0 + off;
-        register s32 m asm("r1");
-        register s32 xs asm("r0");
+        register s32 x ASM_PIN("r4") = flamer->base.x;
+        register s32 off ASM_PIN("r2") = flamer->base.unk3D * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r3") = y0 + off;
+        register s32 m ASM_PIN("r1");
+        register s32 xs ASM_PIN("r0");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3D * 0x100;
@@ -1613,7 +1614,7 @@ void sub_080BA97C(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         x &= m;
         xs = x >> 1;
@@ -1630,11 +1631,11 @@ void sub_080BA9F0(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r1") = flamer->base.unk3E * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r5") = x0 + off;
-        register s32 y asm("r4") = flamer->base.y;
-        register s32 ys asm("r0");
+        register s32 off ASM_PIN("r1") = flamer->base.unk3E * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r5") = x0 + off;
+        register s32 y ASM_PIN("r4") = flamer->base.y;
+        register s32 ys ASM_PIN("r0");
 #else
         s32 off = flamer->base.unk3E * 0x100;
         s32 x0 = flamer->base.x;
@@ -1651,13 +1652,13 @@ void sub_080BA9F0(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r5") = flamer->base.x;
-        register s32 off asm("r2") = flamer->base.unk3D * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r4") = y0 + off;
-        register s32 m asm("r3");
-        register s32 xs asm("r0");
-        register s32 b asm("r1");
+        register s32 x ASM_PIN("r5") = flamer->base.x;
+        register s32 off ASM_PIN("r2") = flamer->base.unk3D * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r4") = y0 + off;
+        register s32 m ASM_PIN("r3");
+        register s32 xs ASM_PIN("r0");
+        register s32 b ASM_PIN("r1");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3D * 0x100;
@@ -1670,7 +1671,7 @@ void sub_080BA9F0(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         x &= m;
         xs = x >> 1;
@@ -1689,13 +1690,13 @@ void sub_080BAA78(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r2") = flamer->base.unk3C * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r4") = x0 + off;
-        register s32 y asm("r5") = flamer->base.y;
-        register s32 m asm("r1");
-        register s32 xm asm("r0");
-        register s32 ys asm("r1");
+        register s32 off ASM_PIN("r2") = flamer->base.unk3C * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r4") = x0 + off;
+        register s32 y ASM_PIN("r5") = flamer->base.y;
+        register s32 m ASM_PIN("r1");
+        register s32 xm ASM_PIN("r0");
+        register s32 ys ASM_PIN("r1");
 #else
         s32 off = flamer->base.unk3C * 0x100;
         s32 x0 = flamer->base.x;
@@ -1708,7 +1709,7 @@ void sub_080BAA78(struct Object2 *flamer)
         x &= ~0xFFF;
         m = 0xFFF;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         xm = x + m;
         y &= m;
@@ -1718,13 +1719,13 @@ void sub_080BAA78(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r4") = flamer->base.x;
-        register s32 off asm("r2") = flamer->base.unk3D * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r5") = y0 + off;
-        register s32 m asm("r3");
-        register s32 xs asm("r1");
-        register s32 xr asm("r0");
+        register s32 x ASM_PIN("r4") = flamer->base.x;
+        register s32 off ASM_PIN("r2") = flamer->base.unk3D * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r5") = y0 + off;
+        register s32 m ASM_PIN("r3");
+        register s32 xs ASM_PIN("r1");
+        register s32 xr ASM_PIN("r0");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3D * 0x100;
@@ -1737,7 +1738,7 @@ void sub_080BAA78(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         x &= m;
         xs = x >> 1;
@@ -1755,13 +1756,13 @@ void sub_080BAAF8(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
 #ifndef NONMATCHING
-        register s32 off asm("r2") = flamer->base.unk3C * 0x100;
-        register s32 x0 asm("r0") = flamer->base.x;
-        register s32 x asm("r4") = x0 + off;
-        register s32 y asm("r3") = flamer->base.y;
-        register s32 m asm("r0");
-        register s32 xm asm("r1");
-        register s32 ys asm("r0");
+        register s32 off ASM_PIN("r2") = flamer->base.unk3C * 0x100;
+        register s32 x0 ASM_PIN("r0") = flamer->base.x;
+        register s32 x ASM_PIN("r4") = x0 + off;
+        register s32 y ASM_PIN("r3") = flamer->base.y;
+        register s32 m ASM_PIN("r0");
+        register s32 xm ASM_PIN("r1");
+        register s32 ys ASM_PIN("r0");
 #else
         s32 off = flamer->base.unk3C * 0x100;
         s32 x0 = flamer->base.x;
@@ -1774,7 +1775,7 @@ void sub_080BAAF8(struct Object2 *flamer)
         x &= ~0xFFF;
         m = 0xFFF;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         xm = x + m;
         y &= m;
@@ -1787,12 +1788,12 @@ void sub_080BAAF8(struct Object2 *flamer)
     else
     {
 #ifndef NONMATCHING
-        register s32 x asm("r4") = flamer->base.x;
-        register s32 off asm("r2") = flamer->base.unk3D * 0x100;
-        register s32 y0 asm("r0") = flamer->base.y;
-        register s32 y asm("r3") = y0 + off;
-        register s32 m asm("r1");
-        register s32 xs asm("r0");
+        register s32 x ASM_PIN("r4") = flamer->base.x;
+        register s32 off ASM_PIN("r2") = flamer->base.unk3D * 0x100;
+        register s32 y0 ASM_PIN("r0") = flamer->base.y;
+        register s32 y ASM_PIN("r3") = y0 + off;
+        register s32 m ASM_PIN("r1");
+        register s32 xs ASM_PIN("r0");
 #else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3D * 0x100;
@@ -1804,7 +1805,7 @@ void sub_080BAAF8(struct Object2 *flamer)
         y &= ~0xF00;
         m = 0xF00;
 #ifndef NONMATCHING
-        asm("" : "+r"(m));
+        ASM_INOUT_R(m);
 #endif
         x &= m;
         xs = x >> 1;

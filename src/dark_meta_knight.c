@@ -1,4 +1,5 @@
 #include "dark_meta_knight.h"
+#include "portable.h"
 #include "object.h"
 #include "functions.h"
 #include "kirby.h"
@@ -2062,7 +2063,7 @@ static void sub_080FA2EC(struct DarkMetaKnight *dmk)
     bool32 r5;
     s32 v;
 #ifndef NONMATCHING
-    register s32 r0 asm("r0"), r1 asm("r1");
+    register s32 r0 ASM_PIN("r0"), r1 ASM_PIN("r1");
 #else
     s32 r0, r1;
 #endif
@@ -2523,7 +2524,7 @@ static void sub_080FB504(struct DarkMetaKnight *dmk)
     {
         u16 r = Rand16() & 7;
 #ifndef NONMATCHING
-        register u32 ip asm("ip") = r;
+        register u32 ip ASM_PIN("ip") = r;
 #else
         u32 ip = r;
 #endif

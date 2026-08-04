@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "data.h"
 #include "functions.h"
 #include "task.h"
@@ -209,10 +210,10 @@ NAKED void sub_081197D4(struct BigSmallSwitch *x) {
 #else
 void sub_081197D4(struct BigSmallSwitch *x) {
     if (sub_081194DC(x)) {
-        register u32 zero asm("r3");
+        register u32 zero ASM_PIN("r3");
         u16 v = x->switchFlags & ~4;
         zero = 0;
-        asm("" : "+r"(zero));
+        ASM_INOUT_R(zero);
         x->switchFlags = (v | 0x100) | zero;
         if (x->switchFlags & 1) {
             x->switchFlags &= ~2;
@@ -225,7 +226,7 @@ void sub_081197D4(struct BigSmallSwitch *x) {
             u32 bit;
             u16 t = x->switchFlags | 1;
             bit = 0x200;
-            asm("" : "+r"(bit));
+            ASM_INOUT_R(bit);
             x->switchFlags = t | bit;
         }
     } else {
@@ -242,7 +243,7 @@ void sub_081197D4(struct BigSmallSwitch *x) {
                     u16 f1 = flags & ~0x20;
                     u16 f2;
                     m = 0xFFEF;
-                    asm("" : "+r"(m));
+                    ASM_INOUT_R(m);
                     f2 = f1 & m;
                     x->switchFlags = f2;
                     if (f2 & 4) {
@@ -327,7 +328,7 @@ void sub_08119AA8(struct BigSmallSwitch *x) {
             u32 q2 = q[2];
             u8 match;
 #ifndef NONMATCHING
-            asm("" : "+r"(q2));
+            ASM_INOUT_R(q2);
 #endif
             match = 1;
             if (q2 != c) {

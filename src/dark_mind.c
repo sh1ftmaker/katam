@@ -1,4 +1,5 @@
 #include "code_080332BC.h"
+#include "portable.h"
 #include "global.h"
 #include "data.h"
 #include "kirby.h"
@@ -743,7 +744,7 @@ static void sub_08100538(struct DarkMindForm1 *r4)
     sb = 2;
     r6 = 2;
 #ifndef NONMATCHING
-    asm(""); // change regalloc
+    ASM_BARRIER(); // change regalloc
 #endif
     ip = 2;
     r7 = 4;
@@ -823,7 +824,7 @@ static void sub_08100538(struct DarkMindForm1 *r4)
     else if ((r3 -= r1) < 0)
     {
 #ifndef NONMATCHING
-        asm(""::"r"(r1)); // prevent r1 from being optimized out
+        ASM_USE_R(r1); // prevent r1 from being optimized out
 #endif
         sub_08103A00(r4);
         r5->unkDA = 3;
@@ -911,7 +912,7 @@ static void sub_08100858(struct DarkMindForm1 *r3)
 #ifdef NONMATCHING
     s32 r0;
 #else
-    register s32 r0 asm("r0");
+    register s32 r0 ASM_PIN("r0");
 #endif
 
     switch (r3->unkD5)
@@ -1080,7 +1081,7 @@ static void sub_08100BD0(struct DarkMindForm1 *r4)
 #ifdef NONMATCHING
     s32 r0, r3_;
 #else
-    register s32 r3_ asm("r3"), r0 asm("r0");
+    register s32 r3_ ASM_PIN("r3"), r0 ASM_PIN("r0");
 #endif
 
     switch (r5->unkD5)
@@ -8660,7 +8661,7 @@ static void sub_08110A20(struct Object12 *r4)
     r4->unk0.unkA0 = r3 >> 8;
     r0 = (r4->unk0.base.y - r6) >> 5;
 #ifndef NONMATCHING
-    asm("":"=r"(r4));
+    ASM_OUT_R(r4);
 #endif
     r4->unk0.base.yspeed = r0;
     r4->unk0.unkA2 = r6 >> 8;

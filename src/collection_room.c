@@ -1,4 +1,5 @@
 #include "data.h"
+#include "portable.h"
 #include "collection_room.h"
 #include "code_08138D64.h"
 #include "functions.h"
@@ -1219,11 +1220,11 @@ static bool32 sub_08144438(struct Unk_081434F8 *a1) {
     u16 unk0;
     s8 r3;
     u8 unk2A;
-    register u8 r0 asm("r0");
+    register u8 r0 ASM_PIN("r0");
 
     memset(&sprite, 0, sizeof(struct Sprite));
     r0 = a1->unk2A;
-    asm(""::"r"(r0));
+    ASM_USE_R(r0);
     unk2A = r0;
     unk0 = gUnk_08386A50[unk2A].unk0;
     r3 = unk0 - 1;

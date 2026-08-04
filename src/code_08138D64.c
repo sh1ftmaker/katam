@@ -1,4 +1,5 @@
 #include "data.h"
+#include "portable.h"
 #include "code_08138D64.h"
 #include "functions.h"
 #include "main.h"
@@ -1061,7 +1062,7 @@ static void sub_0813A464(struct Unk_08138D64 *a1) {
 #ifdef NONMATCHING
     u32 r0;
 #else
-    register u32 r0 asm("r0");
+    register u32 r0 ASM_PIN("r0");
 #endif
     s8 r4;
     u8 i, j;
@@ -2886,7 +2887,7 @@ static void sub_0813E184(struct Unk_08138D64 *a1) {
 #ifdef NONMATCHING
     struct Sprite *sprite;
 #else
-    register struct Sprite *sprite asm("r4");
+    register struct Sprite *sprite ASM_PIN("r4");
 #endif
     u8 i;
 

@@ -1,4 +1,5 @@
 #include "data.h"
+#include "portable.h"
 #include "code_0814A828.h"
 #include "functions.h"
 #include "kirby.h"
@@ -1379,7 +1380,7 @@ static void sub_0814C674(struct Unk_0814E394 *a1) {
     struct Sprite *sprite, *sprite2;
 
 #ifndef NONMATCHING
-    asm("":::"r6");
+    ASM_CLOBBER("r6");
 #endif
     a1->unk68 = -0x30000;
     a1->unk70 = 0x1C00;

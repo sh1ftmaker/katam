@@ -1,4 +1,5 @@
 #include "object.h"
+#include "portable.h"
 #include "prank.h"
 #include "functions.h"
 #include "random.h"
@@ -576,7 +577,7 @@ void sub_080A2080(void)
                     u32 temp2 = temp * 0x40 + (objBase->unk0 - 1) * 0x20;
 
 #ifndef NONMATCHING
-                    asm("":::"memory");
+                    ASM_CLOBBER_MEM();
 #endif
                     idx = gUnk_02022EB0[temp][objBase->unk0 - 1]++ + temp2;
                     gUnk_02022F50[idx] = objBase;

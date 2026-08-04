@@ -1,4 +1,5 @@
 #include "shard.h"
+#include "portable.h"
 #include "constants/kirby.h"
 #include "object.h"
 #include "kirby.h"
@@ -289,7 +290,7 @@ static void sub_0801BE4C(struct Shard *shard) // see sub_0802AE9C
                 break;
             }
 #ifndef NONMATCHING
-            asm(""::"r"(boolean)); // somehow use boolean
+            ASM_USE_R(boolean); // somehow use boolean
 #endif
         }
         if (boolean && sub_0801BB10(shardAlias))

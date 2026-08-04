@@ -1,4 +1,5 @@
 #include "main.h"
+#include "portable.h"
 #include "subgame_menu.h"
 #include "functions.h"
 #include "multi_08032E98.h"
@@ -377,7 +378,7 @@ void sub_0801E754(s32 sb) {
     LZ77UnCompVram(gUnk_082D7850[r4]->tileset, (void *)0x06008000);
     for (r6 = 0; r6 < 20; ++r6) {
 #ifndef NONMATCHING
-        asm("":::"memory");
+        ASM_CLOBBER_MEM();
 #endif
         DmaCopy16(3, gUnk_082D7850[r4]->tilemap + 30 * r6, (void *)0x0600F800 + 64 * r6, 60);
     }

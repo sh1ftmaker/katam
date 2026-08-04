@@ -1,4 +1,5 @@
 #include "special_doors.h"
+#include "portable.h"
 #include "constants/kirby.h"
 #include "functions.h"
 #include "kirby.h"
@@ -202,7 +203,7 @@ static void sub_0802AE9C(struct DoorToHub *door)
                 break;
             }
 #ifndef NONMATCHING
-            asm(""::"r"(r8)); // somehow use r8
+            ASM_USE_R(r8); // somehow use r8
 #endif
         }
         if (r8 && sub_080395D4())

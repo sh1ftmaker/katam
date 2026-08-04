@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "main.h"
 #include "malloc_vram.h"
 #include "sprite.h"
@@ -365,7 +366,7 @@ void sub_0802BA6C(void) {
     u32 k40;
     u32 m;
 #ifndef NONMATCHING
-    register u32 c2ba asm("r0");
+    register u32 c2ba ASM_PIN("r0");
 #else
     u32 c2ba;
 #endif
@@ -377,7 +378,7 @@ void sub_0802BA6C(void) {
     m = x->unk214 & 0x60000000;
     k40 = 0x40000000;
 #ifndef NONMATCHING
-    asm("" : "+r"(k40));
+    ASM_INOUT_R(k40);
 #endif
     if (m != k40) {
         x->unk0(x);
@@ -442,33 +443,33 @@ void sub_0802BCEC(struct Unk_0802B4A8 *x) {
     struct Background *bg;
     u32 tbl;
 #ifndef NONMATCHING
-    register u32 z0 asm("r0");
+    register u32 z0 ASM_PIN("r0");
 #else
     u32 z0;
 #endif
 #ifndef NONMATCHING
-    register u32 qb asm("r2");
+    register u32 qb ASM_PIN("r2");
 #else
     u32 qb;
 #endif
 #ifndef NONMATCHING
-    register u32 rb asm("r5");
+    register u32 rb ASM_PIN("r5");
 #else
     u32 rb;
 #endif
 #ifndef NONMATCHING
-    register u32 pb asm("r2");
+    register u32 pb ASM_PIN("r2");
 #else
     u32 pb;
 #endif
     struct Sprite *s;
 #ifndef NONMATCHING
-    register struct Sprite *s2 asm("r0");
+    register struct Sprite *s2 ASM_PIN("r0");
 #else
     struct Sprite *s2;
 #endif
 #ifndef NONMATCHING
-    register u32 ff asm("sl");
+    register u32 ff ASM_PIN("sl");
 #else
     u32 ff;
 #endif
@@ -486,23 +487,23 @@ void sub_0802BCEC(struct Unk_0802B4A8 *x) {
         s = &x->unk4[i];
         x->unk218[i][0] = *(u32 *)(i * 8 + (pb = (u32)gUnk_082EB4EC));
 #ifndef NONMATCHING
-        asm("" ::"r"(pb));
+        ASM_USE_R(pb);
 #endif
         pb = (u32)gUnk_082EB4F0;
         x->unk218[i][1] = *(u32 *)(i * 8 + pb);
 #ifndef NONMATCHING
-        asm("" ::"r"(pb));
+        ASM_USE_R(pb);
 #endif
         x->unk254[i] = gUnk_082EB5B4[i];
         if (i < 4) {
             s->unk14 = 0x100;
             s->animId = *(u16 *)((gKirbys[i].color << 2) + (qb = (u32)gUnk_082EB4B4));
 #ifndef NONMATCHING
-            asm("" ::"r"(qb));
+            ASM_USE_R(qb);
 #endif
             s->variant = *(u16 *)((gKirbys[i].color << 2) + (rb = (u32)gUnk_082EB4B6));
 #ifndef NONMATCHING
-            asm("" ::"r"(rb));
+            ASM_USE_R(rb);
 #endif
             z0 = 0;
             s->unk16 = z0;
@@ -773,7 +774,7 @@ void sub_0802C360(struct Unk_0802B4A8 *x) {
 
 void sub_0802C3C8(struct Unk_0802B4A8 *x) {
 #ifndef NONMATCHING
-    register struct Sprite *s asm("r0") = &x->unk11C;
+    register struct Sprite *s ASM_PIN("r0") = &x->unk11C;
 #else
     struct Sprite *s = &x->unk11C;
 #endif
@@ -877,7 +878,7 @@ void sub_0802C8E8(struct Unk_0802B4A8 *x) {
     struct Sprite *s;
     struct Sprite *s2;
 #ifndef NONMATCHING
-    register u32 ff asm("sl");
+    register u32 ff ASM_PIN("sl");
 #else
     u32 ff;
 #endif
@@ -895,7 +896,7 @@ void sub_0802C8E8(struct Unk_0802B4A8 *x) {
 
         k100 = 0x100;
 #ifndef NONMATCHING
-        asm("" : "+r"(k100));
+        ASM_INOUT_R(k100);
 #endif
         s->unk14 = k100;
         s->animId = gUnk_082EB4B4[gKirbys[i].color][0];
@@ -904,7 +905,7 @@ void sub_0802C8E8(struct Unk_0802B4A8 *x) {
         s->unk1B = 0xFF;
         k10 = 0x10;
 #ifndef NONMATCHING
-        asm("" : "+r"(k10));
+        ASM_INOUT_R(k10);
 #endif
         s->unk1C = k10;
         s->palId = i;
@@ -915,7 +916,7 @@ void sub_0802C8E8(struct Unk_0802B4A8 *x) {
 
         k100 = 0x100;
 #ifndef NONMATCHING
-        asm("" : "+r"(k100));
+        ASM_INOUT_R(k100);
 #endif
         s->unk14 = k100;
         s->animId = 0x2D;
@@ -951,7 +952,7 @@ void sub_0802C8E8(struct Unk_0802B4A8 *x) {
 void sub_0802CA78(struct Unk_0802B4A8 *x) {
     u16 i;
 #ifndef NONMATCHING
-    register u32 flag asm("sl") = 1;
+    register u32 flag ASM_PIN("sl") = 1;
 #else
     u32 flag = 1;
 #endif
@@ -1079,11 +1080,11 @@ void sub_0802CF2C(void) {
     struct Unk_0802CE64 *s2;
 
 #ifndef NONMATCHING
-    asm("" : "+r"(s));
+    ASM_INOUT_R(s);
 #endif
     s2 = s;
 #ifndef NONMATCHING
-    asm("" : "+r"(s2));
+    ASM_INOUT_R(s2);
 #endif
     s->sprite.x = (s->unk2C - s->unk28->unk2B4) >> 8;
     s->sprite.y = s->unk30 >> 8;
@@ -1124,11 +1125,11 @@ void sub_0802D0B8(void) {
     struct Unk_0802CE64 *s2;
 
 #ifndef NONMATCHING
-    asm("" : "+r"(s));
+    ASM_INOUT_R(s);
 #endif
     s2 = s;
 #ifndef NONMATCHING
-    asm("" : "+r"(s2));
+    ASM_INOUT_R(s2);
 #endif
     s->sprite.x = (s->unk2C - s->unk28->unk2B4) >> 8;
     s->sprite.y = s->unk30 >> 8;

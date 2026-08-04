@@ -1,4 +1,5 @@
 #include "gba/m4a.h"
+#include "portable.h"
 #include "data.h"
 #include "sprite.h"
 #include "main.h"
@@ -240,12 +241,12 @@ void sub_081564D8(struct Sprite *sprite) {
                 /* localOamBufferPtr is very likely to be a real variable as the function itself is a
                  * modified (and manually optimized) version of sub_081569A0. 
                  */
-                register u32 _sp2C asm("r0") = sp2C;
-                register u32 _sp30 asm("r1") = sp30;
+                register u32 _sp2C ASM_PIN("r0") = sp2C;
+                register u32 _sp30 ASM_PIN("r1") = sp30;
 
                 _sp2C = sp2C;
                 _sp30 = sp30;
-                asm("":::"r2");
+                ASM_CLOBBER("r2");
                 if (_sp2C | _sp30) {
 #else
                 if (sp2C | sp30) {
@@ -425,7 +426,7 @@ void sub_081569A0(struct Sprite *sprite, u16 *sp08, u8 sp0C) {
                     oam->all.attr2 += oam->all.attr2 & 0x3FF;
                 oam->all.attr2 += (sprite->tilesVram - 0x6010000u) >> 5;
 #ifndef NONMATCHING
-                asm("":::"r8");
+                ASM_CLOBBER("r8");
 #endif
                 for (i = 0; i < sp0C; ++i) {
                     OamData *r5 = sub_08156D84((sprite->unk14 & 0x7C0) >> 6);

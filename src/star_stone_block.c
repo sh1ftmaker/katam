@@ -1,4 +1,5 @@
 #include "star_stone_block.h"
+#include "portable.h"
 #include "kirby.h"
 #include "functions.h"
 #include "object.h"
@@ -48,7 +49,7 @@ void sub_0811EA60(struct StarStoneBlock *block, u32 i)
     u8 v, v2;
 
 #ifndef NONMATCHING
-    asm("" ::: "r4");
+    ASM_CLOBBER("r4");
 #endif
     if (gKirbys[i].base.base.base.roomId != block->obj2.base.roomId)
         return;

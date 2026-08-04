@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "main.h"
 #include "functions.h"
 #include "multi_sio.h"
@@ -100,12 +101,12 @@ void sub_08158AE4(void) {
 
     switch (gUnk_03006CC0) {
     case 0: {
-        register u32 recv asm("r6") = REG_SIODATA32;
+        register u32 recv ASM_PIN("r6") = REG_SIODATA32;
         struct Unk_03000020 *ptr = &gUnk_03000020;
         struct Unk_03000020 *s;
         u32 slotVal = ptr->slot;
         u32 x = recv << (slotVal * 16);
-        register u32 z asm("r1");
+        register u32 z ASM_PIN("r1");
         u16 a = x >> 16;
         u16 b;
         z = recv << ((1 - slotVal) * 16);
@@ -228,7 +229,7 @@ u32 sub_08158D80(void) {
 
     /* barrier: stops gcc folding (gUnk >> 4) >> 24 into gUnk >> 28 */
 #ifndef NONMATCHING
-    asm("" : "+r"(data));
+    ASM_INOUT_R(data);
 #endif
     sum = data >> 24;
 
@@ -263,12 +264,12 @@ u32 sub_08158DBC(u8 kind) {
         /* barriers: keep `base` opaque so base >> 28 is not const-folded,
            and keep the u8 truncation of the seed nibble */
 #ifndef NONMATCHING
-        asm("" : "+r"(base));
+        ASM_INOUT_R(base);
 #endif
         {
             u32 t = base >> 28;
 #ifndef NONMATCHING
-            asm("" : "+r"(t));
+            ASM_INOUT_R(t);
 #endif
             sum = t;
         }
@@ -282,12 +283,12 @@ u32 sub_08158DBC(u8 kind) {
         /* barriers: keep `base` opaque so base >> 28 is not const-folded,
            and keep the u8 truncation of the seed nibble */
 #ifndef NONMATCHING
-        asm("" : "+r"(base));
+        ASM_INOUT_R(base);
 #endif
         {
             u32 t = base >> 28;
 #ifndef NONMATCHING
-            asm("" : "+r"(t));
+            ASM_INOUT_R(t);
 #endif
             sum = t;
         }

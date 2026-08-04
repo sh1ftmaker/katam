@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "main.h"
 #include "data.h"
 #include "bg.h"
@@ -62,8 +63,8 @@ void sub_08025650(u8 count) {
     bool32 flags[4];
     s32 coords[4][2];
     u16 i;
-    register const s32 *coords28 asm("r8") = gUnk_082DEB28;
-    register const s32 *coords60 asm("ip") = gUnk_082DEB60;
+    register const s32 *coords28 ASM_PIN("r8") = gUnk_082DEB28;
+    register const s32 *coords60 ASM_PIN("ip") = gUnk_082DEB60;
 
     for (i = 0; i <= 3; i++) {
         if (i < count) {

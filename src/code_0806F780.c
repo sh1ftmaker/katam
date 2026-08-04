@@ -1,4 +1,5 @@
 #include "code_0806F780.h"
+#include "portable.h"
 #include "code_080332BC.h"
 #include "task.h"
 #include "kirby.h"
@@ -2028,7 +2029,7 @@ bool8 sub_08072B98(struct Object14 *obj14) {
 #ifdef NONMATCHING
     s32 x, y;
 #else
-    register s32 x asm("r3"), y;
+    register s32 x ASM_PIN("r3"), y;
 #endif
 
     if (objBase->flags & 0x1000)
@@ -2062,7 +2063,7 @@ bool8 sub_08072C0C(struct Object14 *obj14) {
 #ifdef NONMATCHING
     s32 x, y;
 #else
-    register s32 x asm("r4"), y;
+    register s32 x ASM_PIN("r4"), y;
 #endif
 
     if (objBase->flags & 0x1000)
@@ -5765,7 +5766,7 @@ void sub_0807DBCC(struct Object2 *obj2) {
 #ifdef NONMATCHING
     u32 r0;
 #else
-    register u32 r0 asm("r0");
+    register u32 r0 ASM_PIN("r0");
 #endif
 
     sub_0803E380(&var->base);
@@ -10956,7 +10957,7 @@ void sub_0808AF48(void) {
         obj4->x += obj4->unk3C;
         obj4->y -= obj4->unk3E;
 #ifndef NONMATCHING
-        asm("":::"ip");
+        ASM_CLOBBER("ip");
 #endif
         obj4->unk3C += obj4->unk4;
         obj4->unk3E += obj4->unk8;

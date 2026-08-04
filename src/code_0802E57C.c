@@ -1,4 +1,5 @@
 #include "global.h"
+#include "portable.h"
 #include "code_0802E57C.h"
 #include "main.h"
 #include "malloc_vram.h"
@@ -108,7 +109,7 @@ void sub_0802E71C(struct Task *t) {
     u16 i;
 
 #ifndef NONMATCHING
-    asm("" : "+r"(x));
+    ASM_INOUT_R(x);
 #endif
     if (x->unk8 != 0) {
         VramFree(x->unk8);
@@ -143,10 +144,10 @@ void sub_0802E78C(void) {
             s16 v1[2] = { -x->unk180, -x->unk182 };
 #ifndef NONMATCHING
             volatile s32 x2, y2;
-            register u32 diff asm("r0");
-            register u32 diff2 asm("r1");
-            register s32 t asm("r0");
-            register s32 ty asm("r4");
+            register u32 diff ASM_PIN("r0");
+            register u32 diff2 ASM_PIN("r1");
+            register s32 t ASM_PIN("r0");
+            register s32 ty ASM_PIN("r4");
 #else
             s32 x2, y2;
             u32 diff, diff2;
@@ -168,7 +169,7 @@ void sub_0802E78C(void) {
             if ((s16)diff < 0) {
                 diff = 0;
 #ifndef NONMATCHING
-                asm("" :: "r"(diff));
+                ASM_USE_R(diff);
 #endif
                 diff2 = diff;
             }
@@ -177,7 +178,7 @@ void sub_0802E78C(void) {
                 v1[1] = 0x80;
             } else {
 #ifndef NONMATCHING
-                register s32 w asm("r0");
+                register s32 w ASM_PIN("r0");
 #else
                 s32 w;
 #endif
@@ -187,7 +188,7 @@ void sub_0802E78C(void) {
                     u16 uvx;
                     s16 svx;
 #ifndef NONMATCHING
-                    asm("" : "+r"(p));
+                    ASM_INOUT_R(p);
 #endif
                     uvx = *p;
                     svx = *p;
@@ -205,16 +206,16 @@ void sub_0802E78C(void) {
                     s16 *q = v1;
                     s16 *p = q;
 #ifndef NONMATCHING
-                    register u32 uvy asm("r1");
-                    register s32 svy asm("r2");
-                    asm("" : "+r"(p));
+                    register u32 uvy ASM_PIN("r1");
+                    register s32 svy ASM_PIN("r2");
+                    ASM_INOUT_R(p);
 #else
                     u32 uvy;
                     s32 svy;
 #endif
                     uvy = (u16)p[1];
 #ifndef NONMATCHING
-                    asm("" : "+r"(uvy));
+                    ASM_INOUT_R(uvy);
 #endif
                     t = uvy << 16;
                     svy = t >> 16;
@@ -596,7 +597,7 @@ void sub_0802F110(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
             u16 uv = b->unk38;
             s16 sv = b->unk38;
 #ifndef NONMATCHING
-            register s32 w asm("r0");
+            register s32 w ASM_PIN("r0");
 #else
             s32 w;
 #endif
@@ -663,7 +664,7 @@ void sub_0802F240(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
             u16 uv = b->unk38;
             s16 sv = b->unk38;
 #ifndef NONMATCHING
-            register s32 w asm("r0");
+            register s32 w ASM_PIN("r0");
 #else
             s32 w;
 #endif
@@ -744,7 +745,7 @@ void sub_0802F354(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
             u16 uv = b->unk38;
             s16 sv = b->unk38;
 #ifndef NONMATCHING
-            register s32 w asm("r0");
+            register s32 w ASM_PIN("r0");
 #else
             s32 w;
 #endif
@@ -766,7 +767,7 @@ void sub_0802F40C(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u16 old = b->unk3A;
     s32 sum = old + 0x26;
 #ifndef NONMATCHING
-    register s32 w asm("r0");
+    register s32 w ASM_PIN("r0");
 #else
     s32 w;
 #endif
@@ -802,7 +803,7 @@ void sub_0802F464(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
         u16 old = b->unk3A;
         s32 sum = old + 0x26;
 #ifndef NONMATCHING
-        register s32 w asm("r0");
+        register s32 w ASM_PIN("r0");
 #else
         s32 w;
 #endif
@@ -874,7 +875,7 @@ void sub_0802F51C(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
         u16 old = b->unk3A;
         s32 sum = old + 0x26;
 #ifndef NONMATCHING
-        register s32 w asm("r0");
+        register s32 w ASM_PIN("r0");
 #else
         s32 w;
 #endif
@@ -924,7 +925,7 @@ void sub_0802F5B8(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
         u16 old = b->unk3A;
         s32 sum = old + 0x26;
 #ifndef NONMATCHING
-        register s32 w asm("r0");
+        register s32 w ASM_PIN("r0");
 #else
         s32 w;
 #endif
@@ -952,8 +953,8 @@ void sub_0802F638(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
         u16 old = b->unk3A;
         s32 sum = old + 0x26;
 #ifndef NONMATCHING
-        register s32 w asm("r0");
-        register u32 f asm("r2");
+        register s32 w ASM_PIN("r0");
+        register u32 f ASM_PIN("r2");
 #else
         s32 w;
         u32 f;
@@ -974,7 +975,7 @@ void sub_0802F638(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
             u8 v = 4;
 
 #ifndef NONMATCHING
-            asm("" : "+r"(v));
+            ASM_INOUT_R(v);
 #endif
             b->unk0.animId = 4;
             b->unk0.variant = v;
@@ -1010,7 +1011,7 @@ void sub_0802F6A0(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
         u16 old = b->unk3A;
         s32 sum = old + 0x26;
 #ifndef NONMATCHING
-        register s32 w asm("r0");
+        register s32 w ASM_PIN("r0");
 #else
         s32 w;
 #endif
@@ -1047,7 +1048,7 @@ void sub_0802F714(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
         u16 old = b->unk3A;
         s32 sum = old + 0x26;
 #ifndef NONMATCHING
-        register s32 w asm("r0");
+        register s32 w ASM_PIN("r0");
 #else
         s32 w;
 #endif
@@ -1083,7 +1084,7 @@ void sub_0802F77C(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     b->unk0.unk1B = 0xFF;
     b->unk2C = (b->unk2C & ~8) | 0x10;
 #ifndef NONMATCHING
-    asm("" ::: "memory");
+    ASM_CLOBBER_MEM();
 #endif
     if (b->unk30 <= 0x4FFF) {
         b->unk2C &= ~1;
@@ -1106,9 +1107,9 @@ void sub_0802F810(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
         b->unk3A = sum;
         {
 #ifndef NONMATCHING
-            register s32 t asm("r0");
-            register s32 sv asm("r4");
-            register s32 mx asm("r3");
+            register s32 t ASM_PIN("r0");
+            register s32 sv ASM_PIN("r4");
+            register s32 mx ASM_PIN("r3");
 #else
             s32 t, sv, mx;
 #endif
@@ -1126,7 +1127,7 @@ void sub_0802F810(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
         b->unk3A = sum;
         if (v >= b->unk4A) {
 #ifndef NONMATCHING
-            register s32 w asm("r0");
+            register s32 w ASM_PIN("r0");
 #else
             s32 w;
 #endif
@@ -1151,7 +1152,7 @@ void sub_0802F810(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
             u16 uv = b->unk38;
             s16 sv = b->unk38;
 #ifndef NONMATCHING
-            register s32 w2 asm("r0");
+            register s32 w2 ASM_PIN("r0");
 #else
             s32 w2;
 #endif

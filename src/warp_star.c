@@ -1,5 +1,6 @@
 // TODO: need a better file name
 #include "warp_star.h"
+#include "portable.h"
 #include "random.h"
 #include "functions.h"
 #include "kirby.h"
@@ -1867,7 +1868,7 @@ static void sub_0800C270(struct WarpStar *ws)
     s32 a[2];
     u16 i;
 #ifndef NONMATCHING
-    register u32 var asm("r1"), r2 asm("r2");
+    register u32 var ASM_PIN("r1"), r2 ASM_PIN("r2");
 #else
     u32 var, r2;
 #endif

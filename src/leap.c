@@ -1,4 +1,5 @@
 #include "leap.h"
+#include "portable.h"
 #include "functions.h"
 #include "kirby.h"
 #include "object.h"
@@ -289,7 +290,7 @@ static void sub_080B0938(void)
                     u32 temp2 = temp * 0x40 + (shadow->unk0 - 1) * 0x20;
 
 #ifndef NONMATCHING
-                    asm("":::"memory");
+                    ASM_CLOBBER_MEM();
 #endif
                     idx = gUnk_02022EB0[temp][shadow->unk0 - 1]++ + temp2;
                     gUnk_02022F50[idx] = shadow;

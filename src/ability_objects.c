@@ -1,4 +1,5 @@
 #include "code_0806F780.h"
+#include "portable.h"
 #include "ability_objects.h"
 #include "functions.h"
 #include "kirby.h"
@@ -369,7 +370,7 @@ static void sub_080A9CEC(struct Object2* arg0) {
                     iVar5 = (gCurLevelInfo[kirby->base.base.base.unk56].viewportPosition.y >> 8) + 0xa0;
                 }
 #ifndef NONMATCHING
-                asm("":::"r4");
+                ASM_CLOBBER("r4");
 #endif
                 sVar6 = iVar5 + ((gUnk_0203AD40 + (gRngVal >> 16)) & 0x1f);
                 sVar3 = (arg0->base.x >> 8) + arg0->object->unk1A;

@@ -1,4 +1,5 @@
 #include "subgames.h"
+#include "portable.h"
 #include "subgame_menu.h"
 #include "task.h"
 #include "pause_fade.h"
@@ -2446,7 +2447,7 @@ static struct Task *sub_08128F44(const struct AnimInfo *a1, u8 a2, u8 a3, s16 a4
     struct Task *t = TaskCreate(sub_0812A39C, sizeof(struct Unk_08128F44), 0x100, TASK_USE_IWRAM, NULL);
     struct Unk_08128F44 *tmp = TaskGetStructPtr(t), *var = tmp;
 #ifndef NONMATCHING
-    register struct Unk_08128F44_4 *var1 asm("r6"), *var2 asm("r4");
+    register struct Unk_08128F44_4 *var1 ASM_PIN("r6"), *var2 ASM_PIN("r4");
 #else
     struct Unk_08128F44_4 *var1, *var2;
 #endif
@@ -3248,7 +3249,7 @@ void sub_0812A77C(void) {
 static void sub_0812A8F0(void) {
     struct Unk_0812A77C *var;
 #ifndef NONMATCHING
-    register struct Unk_08128F44_4 *r4 asm("r4");
+    register struct Unk_08128F44_4 *r4 ASM_PIN("r4");
 #else
     struct Unk_08128F44_4 *r4;
 #endif
@@ -4407,7 +4408,7 @@ static struct Task *sub_0812D4F4(void) {
     struct Task *t = TaskCreate(sub_0812D988, sizeof(struct Unk_0812D4F4), 0x100, TASK_USE_IWRAM, nullsub_31);
     struct Unk_0812D4F4 *var = TaskGetStructPtr(t);
 #ifndef NONMATCHING
-    register struct Unk_08128F44_4 *r4 asm("r4"), *r6; // probably the same issue as sub_08128F44
+    register struct Unk_08128F44_4 *r4 ASM_PIN("r4"), *r6; // probably the same issue as sub_08128F44
 #else
     struct Unk_08128F44_4 *r4, *r6;
 #endif
@@ -6704,8 +6705,8 @@ static void sub_0812F0E0(struct Unk_0812F91C_20 *a1, s32 *a2, u8 *a3, u8 a4) {
 
 static void sub_0812F404(struct Unk_08128F44_4 a1[], u8 a2, u8 a3, u8 a4, u16 a5) {
 #ifndef NONMATCHING
-    register struct Unk_08128F44_4 *r4 asm("r4");
-    register int var asm("r0");
+    register struct Unk_08128F44_4 *r4 ASM_PIN("r4");
+    register int var ASM_PIN("r0");
 #else
     struct Unk_08128F44_4 *r4;
     int var;
@@ -6929,7 +6930,7 @@ void sub_0812F91C(void) {
 static void sub_0812FA28(void) {
     struct Unk_08128F44_4 *r4;
 #ifndef NONMATCHING
-    register u32 r5 asm("r5"), r6 asm("r6");
+    register u32 r5 ASM_PIN("r5"), r6 ASM_PIN("r6");
 #else
     u32 r5, r6;
 #endif
@@ -7553,7 +7554,7 @@ static void sub_081315AC(struct Unk_0812F91C *a1) {
         }
 #ifndef NONMATCHING
         do {
-            asm(""::"r"(i));
+            ASM_USE_R(i);
             ++i;
         } while (0);
 #else
@@ -8010,7 +8011,7 @@ static void sub_08132498(struct Unk_0812F91C_20 *a1) {
 #ifndef NONMATCHING
 static void sub_08132540(struct Unk_0812F91C_20 *a1) {
     s8 var = (a1->unkC0 - 0x100) >> 10;
-    register s32 r0 asm("r0"), r1 asm("r1");
+    register s32 r0 ASM_PIN("r0"), r1 ASM_PIN("r1");
     u32 mask = 0xFF;
 
     if (var < 0) {
@@ -8542,8 +8543,8 @@ static u8 sub_081332FC(s32 a1, u32 a2, u8 *a3) {
 #ifdef NONMATCHING
     u32 r4 = r3;
 #else
-    register u32 r4 asm("r4") = r3;
-    asm(""::"r"(r3));
+    register u32 r4 ASM_PIN("r4") = r3;
+    ASM_USE_R(r3);
 #endif
     r3 = a1 & r4;
     a2 = a2 & r4;
@@ -10759,7 +10760,7 @@ static void sub_0813683C(void) {
         for (i = 0; i < 4; ++i) {
             struct Unk_08128F44_4 *ptr;
 #ifndef NONMATCHING
-            register uintptr_t cursed asm("r4") __attribute__((unused)) = i * sizeof(struct Unk_08134D64_10) + (uintptr_t)var;
+            register uintptr_t cursed ASM_PIN("r4") __attribute__((unused)) = i * sizeof(struct Unk_08134D64_10) + (uintptr_t)var;
 #endif
 
             ptr = BeYourself(&var->unk10[i].unk88);

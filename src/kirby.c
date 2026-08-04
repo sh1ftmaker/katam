@@ -1,4 +1,5 @@
 #include "code_080332BC.h"
+#include "portable.h"
 #include "global.h"
 #include "data.h"
 #include "functions.h"
@@ -10253,7 +10254,7 @@ void sub_0804EA18(struct Kirby *kirby, s16 a, s16 b)
             if ((kirby->ability != KIRBY_ABILITY_MINI || !(kirby->base.base.base.unk58 & 0x400)) && kirby->ability != KIRBY_ABILITY_SLEEP)
                 sub_080A9038(kirby, FALSE);
 #ifndef NONMATCHING
-            asm("":::"r5");
+            ASM_CLOBBER("r5");
 #endif
             if (gUnk_0203AD3C == kirby->base.base.base.unk56)
             {
@@ -10308,7 +10309,7 @@ void sub_0804EDDC(struct Kirby *kirby, u16 r1)
     kirby->base.base.base.unk62 = 0;
     kirby->animationIndex = r1;
 #ifndef NONMATCHING
-    asm("":::"r5");
+    ASM_CLOBBER("r5");
 #endif
     kirby->base.base.unk78 = sub_0804F080;
     kirby->flyTimer = 0;
@@ -12920,7 +12921,7 @@ void sub_080562D0(struct Kirby *kirby)
         kirby->unkF8 = 0;
         kirby->unkF6 = 0;
 #ifndef NONMATCHING
-        asm("":::"r3");
+        ASM_CLOBBER("r3");
 #endif
         kirby->unkF1 = 0;
     }
@@ -14718,7 +14719,7 @@ void sub_0805B6BC(struct Kirby *kirby)
         else
         {
 #ifndef NONMATCHING
-            register u16 unkD4 = kirby->animationIndex, *fake asm("r5") = &kirby->animationIndex;
+            register u16 unkD4 = kirby->animationIndex, *fake ASM_PIN("r5") = &kirby->animationIndex;
 
             if (unkD4 != 62 && !(kirby->movementState & 0x41)
                 && !kirby->base.base.base.counter)
