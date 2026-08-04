@@ -27,7 +27,7 @@ struct CutsceneTrigger {
     /* 0x0BC */ union CutsceneVal unkBC;
     /* 0x0C0 */ union CutsceneVal unkC0;
     /* 0x0C4 */ union CutsceneVal unkC4;
-    /* 0x0C8 */ union { s16 s; u16 h; u8 b[2]; } unkC8;
+    /* 0x0C8 */ union { struct Object4 *obj4; s16 s; u16 h; u8 b[2]; } unkC8;
     /* 0x0CC */ u16 unkCC;
     /* 0x0CE */ u16 unkCE;
     /* 0x0D0 */ u16 unkD0;
@@ -58,6 +58,7 @@ void sub_0802084C(struct CutsceneTrigger *);
 void sub_08020A90(struct CutsceneTrigger *);
 void sub_08020DDC(struct CutsceneTrigger *);
 void sub_08020FA8(struct CutsceneTrigger *);
+void sub_0802114C(struct CutsceneTrigger *);
 void sub_080212C0(struct CutsceneTrigger *);
 void sub_08021360(struct CutsceneTrigger *);
 void sub_08021424(struct CutsceneTrigger *);
@@ -240,6 +241,45 @@ void sub_0802084C(struct CutsceneTrigger *x) {
         x2->unkCE = j;
         x->obj2.unk78 = sub_08022E6C;
     }
+}
+
+void sub_0802114C(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    struct Object2 *obj = x->unkB4.obj;
+    struct Object4 *obj4;
+    struct Object4 *o;
+    u16 i;
+
+    obj4 = sub_0808AE30(&x->obj2.base, 0, 0x292, 0);
+    obj4->x = obj->base.x;
+    obj4->y = obj->base.y;
+    obj->unk83 = 0x13;
+    obj->base.xspeed = 0x200;
+    obj->base.yspeed = 0x400;
+    x->unkC8.obj4->flags |= 0x1000;
+    for (i = 0; i < 4; i++) {
+        int v = x2->unkCC;
+
+        if ((v >> i) & 1) {
+            gKirbys[i].animationIndex = 0xA;
+            (&x2->unkB8)[i].obj4 = sub_0808B62C(&gKirbys[i].base.base.base, 4, 0x2C3, 1, 0);
+            (&x2->unkB8)[i].obj4->sprite.palId = 0;
+            if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == (&x2->unkB8)[i].obj4->roomId) {
+                if ((&x2->unkB8)[i].obj4->sprite.palId == 0) {
+                    (&x2->unkB8)[i].obj4->sprite.palId = sub_0803DF24(0x2C3);
+                    if ((&x2->unkB8)[i].obj4->sprite.palId == 0xFF)
+                        (&x2->unkB8)[i].obj4->sprite.palId = sub_0803DFAC(0x2C3, 1);
+                }
+            } else {
+                (&x2->unkB8)[i].obj4->sprite.palId = 0;
+            }
+            o = (&x2->unkB8)[i].obj4;
+            o->x = gKirbys[i].base.base.base.x - 0x800;
+            o->y = gKirbys[i].base.base.base.y - 0xC00;
+            o->flags |= 1;
+        }
+    }
+    x->obj2.unk78 = sub_080212C0;
 }
 
 void sub_080212C0(struct CutsceneTrigger *x) {
