@@ -50,6 +50,7 @@ extern const struct Unk_08353510 gUnk_0835477C[];
 extern const s8 gUnk_083547E0[];
 
 void sub_080709F8(struct Object4 *, struct Sprite *, u32, u16, u8, u16);
+bool32 sub_0806FAC8(struct Object4 *);
 
 void sub_080B8954(struct Object2 *flamer)
 {
@@ -456,6 +457,70 @@ void sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
             newObj->sprite.palId = sub_0803DFAC(param, 0);
     }
     PlaySfx(&flamer->base, SE_BASIC_ENEMY_FIRE_ATTACK);
+}
+
+
+void sub_080BA004(void)
+{
+    void *tmp = TaskGetStructPtr(gCurTask);
+    struct Object4 *obj = tmp;
+    struct Object2 *kirbyObj = obj->parent;
+    struct Sprite sprite;
+
+    if (obj->flags & 0x1000)
+    {
+        TaskDestroy(gCurTask);
+        return;
+    }
+
+    Macro_08107BA8_4(obj, &obj->sprite, &sprite, 6, &obj->sprite);
+
+    if (kirbyObj->base.unkC & 0x10)
+        Macro_081050E8(obj, &obj->sprite, gUnk_08351648[OBJ_DROPPY].unk8, obj->sprite.palId == 0);
+    else
+        Macro_081050E8(obj, &obj->sprite, 0x31E, obj->sprite.palId == 0);
+
+    {
+        struct Object2 *parent = obj->parent;
+
+        if (parent && parent->base.unk0 && (parent->base.flags & 0x1000))
+        {
+            obj->parent = NULL;
+            parent = NULL;
+        }
+        if (parent)
+        {
+            if (Macro_0810B1F4(&parent->base) && !(obj->flags & 0x2000))
+            {
+                sub_0803DBC8(obj);
+                return;
+            }
+        }
+        else
+        {
+            KirbySomething(obj);
+        }
+    }
+
+    Macro_0809E55C(obj);
+
+    if (obj->flags & 2)
+    {
+        obj->flags |= 0x1000;
+        return;
+    }
+
+    if (!(obj->flags & 0x800))
+    {
+        s32 newX = obj->x + obj->unk3C;
+        s32 newY = obj->y - obj->unk3E;
+
+        asm("" ::: "memory");
+        obj->x = newX + obj->unk3C;
+        obj->y = newY - obj->unk3E;
+    }
+
+    sub_0806FAC8(obj);
 }
 
 
