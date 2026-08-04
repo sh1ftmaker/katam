@@ -576,10 +576,13 @@ void sub_080B95F0(struct Object2 *flamer)
 
 void sub_080B976C(struct Object2 *flamer)
 {
-    s16 c;
+    s32 c;
 
     flamer->base.flags |= 4;
     c = flamer->base.counter;
+#ifndef NONMATCHING
+    asm("" ::: "memory");
+#endif
     if (c != 0)
     {
         flamer->base.counter++;
