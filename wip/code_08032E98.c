@@ -833,8 +833,9 @@ struct Unk_02022930_0 *sub_0803CB64(u8 arg0)
     struct Unk_02022930_0 *p = &arr[arg0];
 
     p->unk8 = 4;
-    if (arg0 >= gUnk_0203AD44
-     || gKirbys[gUnk_0203AD3C].base.base.base.roomId == gKirbys[arg0].base.base.base.roomId) {
+    if (arg0 >= gUnk_0203AD44) {
+        p->unk8 = 6;
+    } else if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == gKirbys[arg0].base.base.base.roomId) {
         p->unk8 = 6;
     }
     p->unkA = 0;
@@ -1032,4 +1033,290 @@ void sub_08039FF8(struct Unk_02022930_0 *arg0)
         }
     }
     g->unk80[0] = arg0;
+}
+
+extern void sub_0803A078(void);
+
+struct Unk_02022930_0 *sub_0803CAE4(u8 arg0)
+{
+    struct Unk_02022930 *g = &gUnk_02022930;
+    struct Unk_02022930_0 *p = &g->unk0[arg0];
+    u8 i;
+
+    for (i = 0; i < 8; i++) {
+        if (g->unk80[i] == p) {
+            g->unk80[i] = NULL;
+            sub_0803A078();
+        }
+    }
+    p->unk8 = 0x14;
+    p->unkE = gKirbys[arg0].base.base.base.roomId;
+    p->unkA = 0x200;
+    p->unkC = 0;
+    p->unk1 = 0;
+    p->unk2 = 0x1F;
+    p->unk0 = 1;
+    p->unk3 = 0xA;
+    p->unk4 = 0xFFFF;
+    p->unk6 = -1;
+    sub_08039FF8(p);
+    return p;
+}
+
+extern const u32 gUnk_0834BD60[];
+
+void sub_08036088(struct Kirby *kirby)
+{
+    u16 i;
+    u8 v = kirby->lives;
+
+    if (v > 0x63) {
+        v = 0x63;
+    }
+    for (i = 0; i < 2; i++) {
+        u32 off = (i + 0xA) * 2;
+        vu16 *dst = (vu16 *)(off + 0x0600E480);
+        u32 d = gUnk_0834BD60[i + 6];
+        u32 t = v / d;
+        u16 q = t;
+        v = v - d * t;
+        *dst = (((long long)q) + 0x185) | 0xFFFFF000;
+        dst = (vu16 *)(off + 0x0600E4C0);
+        *dst = (((long long)q) + 0x195) | 0xFFFFF000;
+    }
+}
+
+struct Unk_02022930_0 *sub_0803C83C(u8 arg0, u16 arg1)
+{
+    struct Unk_02022930 *g = &gUnk_02022930;
+    struct Unk_02022930_0 *p = &g->unk0[arg0];
+    u8 i;
+
+    for (i = 0; i < 8; i++) {
+        if (g->unk80[i] == p) {
+            g->unk80[i] = NULL;
+            sub_0803A078();
+        }
+    }
+    p->unk8 = 0xC;
+    if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == arg1) {
+        p->unk8 = 0xE;
+    }
+    p->unkE = arg1;
+    p->unkA = 0x200;
+    p->unkC = 0;
+    p->unk1 = 0;
+    p->unk2 = 0x1F;
+    p->unk0 = 1;
+    p->unk3 = 0xF;
+    p->unk4 = 0xFFFF;
+    p->unk6 = -1;
+    sub_08039FF8(p);
+    return p;
+}
+
+struct Unk_02022930_0 *sub_0803C8CC(u8 arg0, u16 arg1)
+{
+    struct Unk_02022930 *g = &gUnk_02022930;
+    struct Unk_02022930_0 *p = &g->unk0[arg0];
+    u8 i;
+
+    for (i = 0; i < 8; i++) {
+        if (g->unk80[i] == p) {
+            g->unk80[i] = NULL;
+            sub_0803A078();
+        }
+    }
+    p->unk8 = 0xC;
+    if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == arg1) {
+        p->unk8 = 0xE;
+    }
+    p->unkE = arg1;
+    p->unkA = 0x200;
+    p->unkC = 0;
+    p->unk1 = 0;
+    p->unk2 = 0x1F;
+    p->unk0 = 1;
+    p->unk3 = 8;
+    p->unk4 = 0xFFFF;
+    p->unk6 = -1;
+    sub_08039FF8(p);
+    return p;
+}
+
+struct Unk_02022930_0 *sub_0803C95C(u8 arg0)
+{
+    struct Unk_02022930 *g = &gUnk_02022930;
+    struct Unk_02022930_0 *p = &g->unk0[arg0];
+    u8 i;
+
+    for (i = 0; i < 8; i++) {
+        if (g->unk80[i] == p) {
+            g->unk80[i] = NULL;
+            sub_0803A078();
+        }
+    }
+    p->unk8 = 4;
+    if (arg0 >= gUnk_0203AD44) {
+        p->unk8 = 6;
+    } else if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == gKirbys[arg0].base.base.base.roomId) {
+        p->unk8 = 6;
+    }
+    p->unkE = gKirbys[arg0].base.base.base.roomId;
+    p->unkA = 0xFE00;
+    p->unkC = 0x1F00;
+    p->unk1 = 0x1F;
+    p->unk2 = 0;
+    p->unk0 = 1;
+    p->unk4 = 0xFFFF;
+    p->unk6 = -1;
+    p->unk3 = 0xA;
+    sub_08039FF8(p);
+    return p;
+}
+
+struct Unk_02022930_0 *sub_0803CA20(u8 arg0)
+{
+    struct Unk_02022930 *g = &gUnk_02022930;
+    struct Unk_02022930_0 *p = &g->unk0[arg0];
+    u8 i;
+
+    for (i = 0; i < 8; i++) {
+        if (g->unk80[i] == p) {
+            g->unk80[i] = NULL;
+            sub_0803A078();
+        }
+    }
+    p->unk8 = 0x4C;
+    if (arg0 >= gUnk_0203AD44) {
+        p->unk8 = 0x4E;
+    } else if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == gKirbys[arg0].base.base.base.roomId) {
+        p->unk8 = 0x4E;
+    }
+    p->unkE = gKirbys[arg0].base.base.base.roomId;
+    p->unkA = 0x200;
+    p->unkC = 0;
+    p->unk1 = 0;
+    p->unk2 = 0x1F;
+    p->unk0 = 1;
+    p->unk3 = 0xA;
+    p->unk4 = 0xFFFF;
+    p->unk6 = -1;
+    sub_08039FF8(p);
+    return p;
+}
+
+struct Unk_02022930_0 *sub_0803CBC4(u8 arg0)
+{
+    struct Unk_02022930 *g = &gUnk_02022930;
+    struct Unk_02022930_0 *p = &g->unk0[arg0];
+    u8 i;
+
+    for (i = 0; i < 8; i++) {
+        if (g->unk80[i] == p) {
+            g->unk80[i] = NULL;
+            sub_0803A078();
+        }
+    }
+    p->unk8 = 0x4C;
+    if (arg0 >= gUnk_0203AD44) {
+        p->unk8 = 0x4E;
+    } else if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == gKirbys[arg0].base.base.base.roomId) {
+        p->unk8 = 0x4E;
+    }
+    p->unkE = gKirbys[arg0].base.base.base.roomId;
+    p->unkA = 0x100;
+    p->unkC = 0;
+    p->unk1 = 0;
+    p->unk2 = 0xA;
+    p->unk0 = 0;
+    p->unk4 = 0x3F00;
+    p->unk6 = 0x3FFF;
+    p->unk3 = 5;
+    sub_08039FF8(p);
+    return p;
+}
+
+struct Unk_02022930_0 *sub_0803CC80(u8 arg0)
+{
+    struct Unk_02022930 *g = &gUnk_02022930;
+    struct Unk_02022930_0 *p = &g->unk0[arg0];
+    u8 i;
+
+    for (i = 0; i < 8; i++) {
+        if (g->unk80[i] == p) {
+            g->unk80[i] = NULL;
+            sub_0803A078();
+        }
+    }
+    p->unk8 = 4;
+    if (arg0 >= gUnk_0203AD44) {
+        p->unk8 = 6;
+    } else if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == gKirbys[arg0].base.base.base.roomId) {
+        p->unk8 = 6;
+    }
+    p->unkE = gKirbys[arg0].base.base.base.roomId;
+    p->unkA = 0xFE00;
+    p->unkC = 0xA00;
+    p->unk1 = 0xA;
+    p->unk2 = 0;
+    p->unk0 = 0;
+    p->unk4 = 0x3F00;
+    p->unk6 = 0x3FFF;
+    p->unk3 = 5;
+    sub_08039FF8(p);
+    return p;
+}
+
+void sub_0803C748(struct Unk_02022930_0 *p)
+{
+    u16 *pal;
+    u16 i;
+    s32 t;
+    s32 sum;
+    u16 dv;
+    s32 v;
+    s32 lim;
+    u8 saved;
+
+    if (p->unk8 & 2) {
+        pal = gBgPalette;
+        for (i = 0; i < 16; i++) {
+            if ((p->unk6 >> i) & 1) {
+                t = -1;
+                CpuSet(&t, pal, 0x05000008);
+            }
+            pal += 0x10;
+        }
+        pal = gObjPalette;
+        for (i = 0; i < 16; i++) {
+            if ((p->unk4 >> i) & 1) {
+                t = -1;
+                CpuSet(&t, pal, 0x05000008);
+            }
+            pal += 0x10;
+        }
+        gMainFlags |= 3;
+    }
+    if (!(p->unk8 & 1)) {
+        sum = (u16)p->unkA + p->unkC;
+        p->unkC = sum;
+        v = (s16)sum >> 8;
+        p->unk1 = v;
+        lim = (s8)p->unk2;
+        saved = p->unk2;
+        if ((v <= lim && (s16)(u16)p->unkA < 0) || (v >= lim && (s16)(u16)p->unkA > 0)) {
+            if (p->unk8 & 0x20) {
+                if (p->unk8 & 0x40) {
+                    p->unkC = (s8)p->unk2 << 8;
+                    p->unk1 = saved;
+                } else {
+                    p->unk8 = (p->unk8 | 1) & 0xFF59;
+                }
+            } else {
+                p->unk1 = saved;
+                p->unk8 |= 0x20;
+            }
+        }
+    }
 }
