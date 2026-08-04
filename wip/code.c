@@ -230,7 +230,6 @@ void FillLevelInfo(u8 playerId, u16 room, const u16 **a, const u16 **b)
 {
     struct Unk_08002E48_2 *var0 = TaskGetStructPtr(gUnk_02023354);
     struct LevelInfo *levelInfo = gCurLevelInfo + playerId;
-    struct Background *bg2 = &levelInfo->unkC0[2];
     struct Background *bg0 = &levelInfo->unkC0[0];
     u32 prevRoom = levelInfo->currentRoom;
     u8 i;
@@ -242,13 +241,14 @@ void FillLevelInfo(u8 playerId, u16 room, const u16 **a, const u16 **b)
     levelInfo->currentRoom = room;
 
     if (room != 0xFFFF) {
-        const struct RoomProps *props = gRoomProps + room;
 
-        CpuSet(gForegroundTilemaps[props->mapDataIdx], &levelInfo->unk180[0], 0x10);
-        CpuSet(gRoomTiledBGs[props->backgroundIdx], &levelInfo->unk180[1], 0x10);
+        struct Background *bg2 = &levelInfo->unkC0[2];
 
-        if (props->objectList2Idx != 0xFFFF)
-            CpuSet(gLevelObjLists[props->objectList2Idx].unk, &levelInfo->unk180[2], 0x10);
+        CpuSet(gForegroundTilemaps[gRoomProps[room].mapDataIdx], &levelInfo->unk180[0], 0x10);
+        CpuSet(gRoomTiledBGs[gRoomProps[room].backgroundIdx], &levelInfo->unk180[1], 0x10);
+
+        if (gRoomProps[room].objectList2Idx != 0xFFFF)
+            CpuSet(gLevelObjLists[gRoomProps[room].objectList2Idx].unk, &levelInfo->unk180[2], 0x10);
         else
             CpuFill16(0xFFFF, &levelInfo->unk180[2], 0x20);
 
@@ -294,18 +294,20 @@ void FillLevelInfo(u8 playerId, u16 room, const u16 **a, const u16 **b)
         levelInfo->altViewport_24.y = (levelInfo->unk180[2].height << 11) - 0xA000;
         levelInfo->unk2C = 0;
         levelInfo->unk30 = 0;
-        levelInfo->altViewport_34.x = props->unk0A;
-        levelInfo->altViewport_34.y = ((levelInfo->unk180[1].height << 3) - (props->unk0C + 0xA0)) << 8;
+        levelInfo->altViewport_34.x = gRoomProps[room].unk0A;
+        levelInfo->altViewport_34.y = ((levelInfo->unk180[1].height << 3) - (gRoomProps[room].unk0C + 0xA0)) << 8;
         levelInfo->unk3C = 0;
         levelInfo->unk40 = 0;
         levelInfo->viewportModX_44 = 0;
         levelInfo->viewportModY_46 = 0;
 
-        levelInfo->unk1E0 = gSolidityMaps[props->solidityMapIdx]->unk4;
+        levelInfo->unk1E0 = gSolidityMaps[gRoomProps[room].solidityMapIdx]->unk4;
         levelInfo->objlistPtr = gLevelObjLists[gRoomProps[levelInfo->currentRoom].objectListIdx].obj;
         levelInfo->unk1E8 = gUnk_08D63C28[gRoomProps[levelInfo->currentRoom].unk22];
-        CpuFill32(0, levelInfo->unk5FC, 0x40);
-        CpuFill32(0, levelInfo->unk63C, 0x20);
+        {
+            CpuFill32(0, levelInfo->unk5FC, 0x40);
+            CpuFill32(0, levelInfo->unk63C, 0x20);
+        }
 
         if (levelInfo->unk180[1].width <= 0x20 && levelInfo->unk180[1].height <= 0x20) {
             bg2->unk26 = levelInfo->unk180[1].width;
