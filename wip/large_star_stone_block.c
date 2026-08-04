@@ -440,19 +440,59 @@ void sub_08120E1C(struct Unknown82 *x)
 }
 #endif
 
-// sub_08120EE0: not yet reverse engineered; the #else body below is an
-// unverified placeholder — do not trust it as correct.
-#ifndef NONMATCHING
-NAKED void sub_08120EE0(struct Unknown82 *x)
-{
-    asm(".include \"asm/nonmatching/sub_08120EE0.inc\"");
-}
-#else
 void sub_08120EE0(struct Unknown82 *x)
 {
-    (void)x;
-}
+    u8 *q = (u8 *)sub_08002888(0, x->obj2.object->unk4, gCurLevelInfo[x->obj2.base.unk56].unk65E);
+    u32 pressed = x->unkB6 & 1;
+
+    if (pressed)
+    {
+        if (x->unkB8 != 0)
+        {
+            u8 t0 = x->obj2.object->unk14 >> 8;
+            u8 zero = 0;
+            q[0] = t0;
+            q[1] = x->obj2.object->unk14;
+            q[2] = x->obj2.object->unk12 >> 8;
+            q[3] = zero;
+        }
+        else
+        {
+            u8 t0 = x->obj2.object->unk18 >> 8;
+            u8 zero = 0;
+            q[0] = t0;
+            q[1] = x->obj2.object->unk18;
+            q[2] = x->obj2.object->unk16 >> 8;
+            q[3] = zero;
+        }
+    }
+    else
+    {
+        u16 a = x->obj2.object->unk14 >> 8;
+        u8 b = x->obj2.object->unk14;
+        u16 c = x->obj2.object->unk12 >> 8;
+        if (q[0] == a && q[1] == b)
+        {
+            u32 q2 = q[2];
+            u8 match;
+#ifndef NONMATCHING
+            asm("" : "+r"(q2));
 #endif
+            match = 1;
+            if (q2 != c)
+            {
+                match = 0;
+            }
+            if (match)
+            {
+                q[0] = pressed;
+                q[1] = pressed;
+                q[2] = pressed;
+                q[3] = pressed;
+            }
+        }
+    }
+}
 
 void *CreateUnknown87(struct Object *template, u8 a2)
 {
@@ -523,8 +563,6 @@ void sub_08121194(struct LargeStarStoneBlock *block)
     targetX = (s32)block->obj2.object->x << 8;
     if (block->unkE8 <= block->obj2.base.x >> 0xc)
     {
-        u8 *u56p;
-
         if (block->obj2.base.xspeed < 0)
         {
             block->obj2.base.xspeed += 0x200;
@@ -537,14 +575,13 @@ void sub_08121194(struct LargeStarStoneBlock *block)
             if (block->obj2.base.xspeed < 0)
                 block->obj2.base.xspeed = 0;
         }
-        u56p = &block->obj2.base.unk56;
-        *sub_08002888(0, block->obj2.object->unk4, gCurLevelInfo[*u56p].unk65E) = 0;
-        sub_081214B8(*u56p, (block->obj2.base.x >> 0xc) - 1, (block->obj2.base.y >> 0xc) - 1);
-        sub_081214B8(*u56p, block->obj2.base.x >> 0xc, (block->obj2.base.y >> 0xc) - 1);
-        sub_081214B8(*u56p, (block->obj2.base.x >> 0xc) - 1, block->obj2.base.y >> 0xc);
-        sub_081214B8(*u56p, block->obj2.base.x >> 0xc, block->obj2.base.y >> 0xc);
-        sub_081214B8(*u56p, (block->obj2.base.x >> 0xc) - 1, (block->obj2.base.y >> 0xc) + 1);
-        sub_081214B8(*u56p, block->obj2.base.x >> 0xc, (block->obj2.base.y >> 0xc) + 1);
+        *sub_08002888(0, block->obj2.object->unk4, gCurLevelInfo[block->obj2.base.unk56].unk65E) = 0;
+        sub_081214B8(block->obj2.base.unk56, (block->obj2.base.x >> 0xc) - 1, (block->obj2.base.y >> 0xc) - 1);
+        sub_081214B8(block->obj2.base.unk56, block->obj2.base.x >> 0xc, (block->obj2.base.y >> 0xc) - 1);
+        sub_081214B8(block->obj2.base.unk56, (block->obj2.base.x >> 0xc) - 1, block->obj2.base.y >> 0xc);
+        sub_081214B8(block->obj2.base.unk56, block->obj2.base.x >> 0xc, block->obj2.base.y >> 0xc);
+        sub_081214B8(block->obj2.base.unk56, (block->obj2.base.x >> 0xc) - 1, (block->obj2.base.y >> 0xc) + 1);
+        sub_081214B8(block->obj2.base.unk56, block->obj2.base.x >> 0xc, (block->obj2.base.y >> 0xc) + 1);
         block2->unkE8 = (block->obj2.base.y >> 0xc) + 7;
         block2->unkE7 = (block->obj2.base.y >> 0xc) + 2;
         block->obj2.base.flags = (block->obj2.base.flags & ~0x40) | 0x100;
@@ -706,8 +743,6 @@ void sub_08121654(struct LargeStarStoneBlock *block)
     targetX = (s32)block->obj2.object->x << 8;
     if (block->unkE8 >= block->obj2.base.x >> 0xc)
     {
-        u8 *u56p;
-
         if (block->obj2.base.xspeed < 0)
         {
             block->obj2.base.xspeed += 0x200;
@@ -720,14 +755,13 @@ void sub_08121654(struct LargeStarStoneBlock *block)
             if (block->obj2.base.xspeed < 0)
                 block->obj2.base.xspeed = 0;
         }
-        u56p = &block->obj2.base.unk56;
-        *sub_08002888(0, block->obj2.object->unk4, gCurLevelInfo[*u56p].unk65E) = 0;
-        sub_08121978(*u56p, block->obj2.base.x >> 0xc, (block->obj2.base.y >> 0xc) - 1);
-        sub_08121978(*u56p, (block->obj2.base.x >> 0xc) + 1, (block->obj2.base.y >> 0xc) - 1);
-        sub_08121978(*u56p, block->obj2.base.x >> 0xc, block->obj2.base.y >> 0xc);
-        sub_08121978(*u56p, (block->obj2.base.x >> 0xc) + 1, block->obj2.base.y >> 0xc);
-        sub_08121978(*u56p, block->obj2.base.x >> 0xc, (block->obj2.base.y >> 0xc) + 1);
-        sub_08121978(*u56p, (block->obj2.base.x >> 0xc) + 1, (block->obj2.base.y >> 0xc) + 1);
+        *sub_08002888(0, block->obj2.object->unk4, gCurLevelInfo[block->obj2.base.unk56].unk65E) = 0;
+        sub_08121978(block->obj2.base.unk56, block->obj2.base.x >> 0xc, (block->obj2.base.y >> 0xc) - 1);
+        sub_08121978(block->obj2.base.unk56, (block->obj2.base.x >> 0xc) + 1, (block->obj2.base.y >> 0xc) - 1);
+        sub_08121978(block->obj2.base.unk56, block->obj2.base.x >> 0xc, block->obj2.base.y >> 0xc);
+        sub_08121978(block->obj2.base.unk56, (block->obj2.base.x >> 0xc) + 1, block->obj2.base.y >> 0xc);
+        sub_08121978(block->obj2.base.unk56, block->obj2.base.x >> 0xc, (block->obj2.base.y >> 0xc) + 1);
+        sub_08121978(block->obj2.base.unk56, (block->obj2.base.x >> 0xc) + 1, (block->obj2.base.y >> 0xc) + 1);
         block2->unkE8 = (block->obj2.base.y >> 0xc) + 7;
         block2->unkE7 = (block->obj2.base.y >> 0xc) + 2;
         block->obj2.base.flags = (block->obj2.base.flags & ~0x40) | 0x100;
