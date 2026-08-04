@@ -79,7 +79,9 @@ struct Unk_0802D898 {
     /* 0x4C */ u16 unk4C;
 };
 
+extern u16 gUnk_082EB4A0[][2];
 extern u32 gUnk_082EB4EC[][2];
+extern u32 gUnk_082EB4F0[][2];
 extern u32 gUnk_082EB53C[][2];
 extern u32 gUnk_082EB58C[][2];
 extern u32 gUnk_082EB514[][2];
@@ -99,6 +101,7 @@ extern u16 gUnk_082EB6D0[];
 void sub_0802BA6C(void);
 void sub_0802BCEC(struct Unk_0802B4A8 *);
 void sub_0802BF68(struct Unk_0802B4A8 *);
+void sub_0802D3E0(struct Unk_0802B4A8 *);
 void sub_0802C1D8(struct Unk_0802B4A8 *);
 void sub_0802C26C(struct Unk_0802B4A8 *);
 void sub_0802D408(struct Unk_0802B4A8 *);
@@ -236,6 +239,98 @@ void sub_0802B4A8(void) {
     x->unk144.tilesVram = VramMalloc(0x10);
     gUnk_0300000C = 0;
     x->unk0 = sub_0802BCEC;
+}
+
+void sub_0802BCEC(struct Unk_0802B4A8 *x) {
+    u16 i;
+    struct Background *bg;
+    struct Sprite *s;
+    struct Sprite *s2;
+    u32 ff = -1;
+
+    gDispCnt = 0x1140;
+    bg = &x->unk194;
+    gBgScrollRegs[0][0] = 0;
+    gBgScrollRegs[0][1] = 0;
+    gBgCntRegs[0] = 0x1F0A;
+    BgInit(bg, 0x06008000, 0, 0x0600F800, 0, 0, 0x2B0, 0, 0, 0, 0, 0x20, 0x20, 0, 0, 0, 8, 0, 0, 0x7FFF, 0x7FFF);
+    LZ77UnCompVram(gUnk_082D7850[0x2B0]->tileset, (void *)0x06008000);
+    sub_08153060(bg);
+
+    for (i = 0; i < 5; i++) {
+        s = &x->unk4[i];
+        x->unk218[i][0] = gUnk_082EB4EC[i][0];
+        x->unk218[i][1] = gUnk_082EB4F0[i][0];
+        x->unk254[i] = gUnk_082EB5B4[i];
+        if (i < 4) {
+            s->unk14 = 0x100;
+            s->animId = *(u16 *)(gKirbys[i].color * 4 + (u32)gUnk_082EB4B4);
+            s->variant = *(u16 *)(gKirbys[i].color * 4 + (u32)gUnk_082EB4B6);
+            s->unk16 = 0;
+            s->unk1B = 0xFF;
+            s->unk1C = 0x10;
+            s->palId = i;
+            s->x = 0;
+            s->y = 0;
+            s->unk8 = 0x81000;
+            sub_08155128(s);
+        } else {
+            s->unk14 = 0x100;
+            s->animId = *(u16 *)(i * 4 + (u32)gUnk_082EB4A0);
+            s->variant = *(u16 *)(i * 4 + ((u32)gUnk_082EB4A0 + 2));
+            s->unk16 = 0;
+            s->unk1B = 0xFF;
+            s->unk1C = 0x10;
+            s->palId = i;
+            s->x = 0;
+            s->y = 0;
+            s->unk8 = 0x81000;
+            sub_08155128(s);
+        }
+
+        s->unk14 = 0x100;
+        s->animId = 0x2D;
+        s->variant = 4;
+        s->unk16 = 0;
+        s->unk1B = 0xFF;
+        s->unk1C = 0x10;
+        s->palId = i;
+        s->x = (s32)x->unk218[i][0] >> 8;
+        s->y = (s32)x->unk218[i][1] >> 8;
+        s->unk8 = 0x41000;
+        sub_08155128(s);
+    }
+
+    s2 = &x->unkCC;
+    s2->unk14 = 0x140;
+    s2->animId = 0x2DE;
+    s2->variant = 0;
+    s2->unk16 = 0;
+    s2->unk1B |= ff;
+    s2->unk1C = 0x10;
+    s2->palId = 0xF;
+    s2->x = 0xFF00;
+    s2->y = 0xFF00;
+    s2->unk8 = 0x1000;
+    sub_08155128(s2);
+
+    s2 = &x->unkF4;
+    s2->unk14 = 0x300;
+    s2->animId = 0x2D3;
+    s2->variant = 1;
+    s2->unk16 = 0;
+    s2->unk1B |= ff;
+    s2->unk1C = 0x10;
+    s2->palId = 0xE;
+    s2->x = 0xFF00;
+    s2->y = 0xFF00;
+    s2->unk8 = 0x1000;
+    sub_08155128(s2);
+
+    x->unk214 |= 0x01005B6D;
+    x->unk214 |= 0x20000000;
+    m4aSongNumStart(0x12);
+    x->unk0 = sub_0802D3E0;
 }
 
 void sub_0802BF68(struct Unk_0802B4A8 *x) {
