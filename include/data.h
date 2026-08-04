@@ -305,9 +305,18 @@ struct ObjectBase {
                             //         platform (crouch on one; cleared once
                             //         past it or moving up)
                             // 0x40000: set on this object when it is hit
-                            // 0x400000: hit response enabled
-                            // 0x2000000: participates in the collision sweep
-                            //            (attacker side)
+                            // 0x4000000: hit-response REQUEST pending. Servicing
+                            //            it latches 0x40000 and clears this bit;
+                            //            the paired clear mask 0xFBFFFFFF in the
+                            //            pool is what pins the constant.
+                            // 0x10000000: participates in the object-vs-Kirby
+                            //             collision blocks
+                            // 0x20000000: participates in the object-vs-list-A
+                            //             collision blocks
+                            // 0x40000000: participates in the list-B-vs-list-B
+                            //             collision block
+                            // 0x80000000: tested as a signed (s32)flags < 0;
+                            //             gates the sub_08036CBC cleanup call
     u32 unkC;               // 0x1000 gates the second inner loop of
                             // sub_08037314's per-room object sweep
     struct Sprite sprite;

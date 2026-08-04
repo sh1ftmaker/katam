@@ -2109,27 +2109,89 @@ _noHit:
     }
 }
 
-extern u8 (*const gUnk_0834BD88[])(struct ObjectBase *);
-extern void sub_08038010(struct Kirby *, struct ObjectBase *);
+// gUnk_0834BD88 is a per-object-kind collision-response handler table indexed
+// by ObjectBase::unk0. It is declared in no header. data/data_6.s:1188 sizes
+// the .incbin at 0xC = 3 entries, and 3 IS CORRECT -- the words that follow
+// belong to gUnk_0834BD94, a DIFFERENT table with a different signature
+// (void(void), indexed by a halfword at +8, dispatched from sub_08039ED4).
+// They merely abut. ObjectBase::unk0 is bounded to {0,1,2} because
+// include/object.h:86 registers objects via gUnk_02022EB0[room][unk0 - 1]
+// and that array is [][2]. Do not "extend" this table.
+// Handlers take (other, self) -- the asm always loads the *partner* into r0
+// and the object whose unk0 selected the entry into r1. The return is wider
+// than u8: one call site truncates with lsls#24/lsrs#24 and the other with
+// lsls#16, so the element returns a word and the source casts at the use site.
+extern u32 (*const gUnk_0834BD88[])(struct ObjectBase *, struct ObjectBase *);
+extern void sub_08038010(struct ObjectBase *, struct ObjectBase *);
 
-// !!! INCOMPLETE BODY -- NOT BEHAVIOURALLY AUTHORITATIVE. DO NOT SHIP. !!!
+// Tile-collision box origin of `o` in whole pixels, into (bx, by).
+// unk38..unk3B is origin + DOUBLED half-extent, and when flags & 1 (facing
+// left) the x origin is mirrored to -unk38 - unk3A * 2.
+#define TILEBOX_ORIGIN(o, bx, by)                                              \
+    do {                                                                       \
+        if ((o)->flags & 1)                                                    \
+            bx = ((o)->x >> 8) + (-(o)->unk38 - (o)->unk3A * 2);                \
+        else                                                                   \
+            bx = ((o)->x >> 8) + (o)->unk38;                                   \
+        by = ((o)->y >> 8) + (o)->unk39;                                       \
+    } while (0)
+
+// Interval overlap of [lo, lo + ext] against [hi, hi + oext], written the way
+// the codegen tests it: near-edge-first, with each side using its own extent.
+#define SPAN_HIT(lo, ext, hi, oext)                                            \
+    (((lo) <= (hi) && (lo) + (ext) >= (hi)) || ((lo) >= (hi) && (hi) + (oext) >= (lo)))
+
+// Primary test: a's doubled tile box against b's doubled tile box.
+#define TILEBOX_HIT(a, b)                                                      \
+    (SPAN_HIT(x1, (a)->unk3A * 2, x2, (b)->unk3A * 2)                          \
+     && SPAN_HIT(y1, (a)->unk3B * 2, y2, (b)->unk3B * 2))
+
+// Fallback test: a's sprite box (sprite.unk20[0], near/far encoding, so the
+// width is unk6 - unk4) against b's tile box. Only consulted when unk20[0].unk0
+// is zero. Note the mixed encoding is deliberate -- b keeps the doubled form.
+#define SPRITEBOX_HIT(a, b)                                                    \
+    ((a)->sprite.unk20[0].unk0 == 0                                            \
+     && (ax = ((a)->x >> 8) + (a)->sprite.unk20[0].unk4,                       \
+         ay = ((a)->y >> 8) + (a)->sprite.unk20[0].unk5, 1)                    \
+     && SPAN_HIT(ax, (a)->sprite.unk20[0].unk6 - (a)->sprite.unk20[0].unk4, x2,\
+                 (b)->unk3A * 2)                                               \
+     && SPAN_HIT(ay, (a)->sprite.unk20[0].unk7 - (a)->sprite.unk20[0].unk5, y2,\
+                 (b)->unk3B * 2))
+
+// The shared predicate the six collision blocks all evaluate. Reads x1/y1
+// (a's tile-box origin, hoisted out of the inner loop) and x2/y2 (b's, set by
+// TILEBOX_ORIGIN at the top of each iteration); writes ax/ay.
+#define HITBOX_OVERLAP(a, b)                                                   \
+    (((a)->unk3A != 0 && (a)->unk3B != 0 && TILEBOX_HIT(a, b))                 \
+     || SPRITEBOX_HIT(a, b))
+
+// Consume a pending hit-response request: 0x4000000 means "response enabled",
+// and servicing it latches 0x40000 ("was hit") and clears the request.
+#define TAKE_HIT_RESPONSE(o)                                                   \
+    do {                                                                       \
+        if ((o)->flags & 0x4000000)                                            \
+            (o)->flags = ((o)->flags | 0x40000) & 0xFBFFFFFF;                  \
+    } while (0)
+
+// Object-vs-object collision sweep, run once per frame over every loaded room.
 //
-// The reference is ~1731 asm lines: an outer sweep plus SIX near-identical
-// bounding-box collision blocks. Decoded and written here: the outer sweep,
-// and collision block 1 (ref _0803740C.._080376B0). Blocks 2-6
-// (ref _080376D2.._08037B72, asm lines 7986-9254) are NOT written -- they
-// re-apply the same predicate against gKirbys[], against gUnk_02022F50[i][..]
-// a second time, and against gUnk_02022EC0.
+// Three passes per room i:
+//   pass 1  gUnk_02022EC0[i][] (Object2) vs every Kirby, then vs list A --
+//           dispatched to sub_08038010, no bounding-box work here.
+//   pass 2  every object in list B (gUnk_02022F50[i][32..]) against list A
+//           (block 1), the Kirbies (block 2) and list B itself (block 3).
+//   pass 3  every object in list A (gUnk_02022F50[i][0..]) against list A
+//           itself (block 4) and the Kirbies (block 5).
+// Blocks 1-5 all evaluate HITBOX_OVERLAP; they differ in which list they walk,
+// which flag bit gates them, and what they do with the two handler results.
 //
-// This links and it DIFFs, which unblocks the port's build. It does NOT do
-// all the collision work the real function does. A caller will get partial
-// collision resolution that looks plausible and is wrong -- a worse failure
-// mode than an obvious stub, which is why this warning is here and not only
-// in the commit message. Filling in blocks 2-6 is the highest-value
-// follow-up on this file.
-//
-// Confidence: outer sweep HIGH; block 1 control flow HIGH; block 1's
-// sprite-hitbox fallback predicate MEDIUM.
+// Status: outer sweep and blocks 1-5 are all written (ref _08037326.._08037FEA,
+// the whole function). Nothing is stubbed. Byte match not achieved, so the
+// codegen still DIFFs, but no branch of the reference is unrepresented.
+// Confidence: control flow HIGH throughout (derived label by label from the
+// asm); the sprite-hitbox fallback predicate HIGH; the two-argument handler
+// signature MEDIUM-HIGH (block 2 and block 5 set r1 explicitly right before
+// the call, which is why it is not read as a one-argument table).
 void sub_08037314(void)
 {
     u32 i;
@@ -2142,13 +2204,14 @@ void sub_08037314(void)
     struct Object2 *o2;
     struct ObjectBase *obj;
     struct ObjectBase *other;
-    struct Kirby *kirby;
+    struct ObjectBase *kb;
     s32 x1, y1, x2, y2;
     s32 ax, ay;
     u8 res;
-    u8 hit;
 
     for (i = 0; i < gUnk_0203AD44; i++) {
+
+        /* ---- pass 1: gUnk_02022EC0[i][] handed to sub_08038010 ---- */
         pp = &gUnk_02022EC0[i][0];
         count = gUnk_02022F40[i];
         while (count != 0) {
@@ -2157,97 +2220,205 @@ void sub_08037314(void)
             count--;
             if (o2 != NULL) {
                 for (j = 0; j < gUnk_0203AD44; j++) {
-                    kirby = &gKirbys[j];
-                    if (o2->base.roomId == kirby->base.base.base.roomId
-                     && !(kirby->base.base.base.flags & 0x100))
-                        sub_08038010(kirby, &o2->base);
+                    kb = &gKirbys[j].base.base.base;
+                    if (o2->base.roomId == kb->roomId && !(kb->flags & 0x100))
+                        sub_08038010(kb, &o2->base);
                 }
                 q = &gUnk_02022F50[i * 64];
                 n = gUnk_02022EB0[i][0];
                 while (n != 0) {
                     other = *q;
-                    if ((other->unkC & 0x1000)
-                     && o2->base.roomId == other->roomId
+                    if ((other->unkC & 0x1000) && o2->base.roomId == other->roomId
                      && !(other->flags & 0x100))
-                        sub_08038010((struct Kirby *)other, &o2->base);
+                        sub_08038010(other, &o2->base);
                     n--;
                     q++;
                 }
             }
         }
 
-        q = &gUnk_02022F50[i * 64 + 32];
-        count = gUnk_02022EB0[i][1];
-        while (count != 0) {
+        /* ---- pass 2: list B objects, blocks 1-3 (ref _0803740C) ---- */
+        for (q = &gUnk_02022F50[i * 64 + 32], count = gUnk_02022EB0[i][1];
+             count != 0; count--, q++) {
             obj = *q;
-            count--;
-            if (obj != NULL) {
-                if (obj->flags & 1)
-                    x1 = (obj->x >> 8) + (-obj->unk38 - obj->unk3A * 2);
-                else
-                    x1 = (obj->x >> 8) + obj->unk38;
-                y1 = (obj->y >> 8) + obj->unk39;
+            if (obj == NULL)
+                continue;
+            TILEBOX_ORIGIN(obj, x1, y1);
 
-                if (obj->flags & 0x2000000) {
-                    r = &gUnk_02022F50[i * 64];
-                    n = gUnk_02022EB0[i][0];
-                    while (n != 0) {
-                        other = *r;
-                        if (other != NULL) {
-                            if (obj->flags & 0x200)
-                                break;
-                            if (!(other->flags & 0x200)) {
-                                if (other->flags & 1)
-                                    x2 = (other->x >> 8) + (-other->unk38 - other->unk3A * 2);
-                                else
-                                    x2 = (other->x >> 8) + other->unk38;
-                                y2 = (other->y >> 8) + other->unk39;
-
-                                ax = (obj->x >> 8) + obj->sprite.unk20[0].unk4;
-                                ay = (obj->y >> 8) + obj->sprite.unk20[0].unk5;
-                                hit = 0;
-                                if (obj->unk3A != 0 && obj->unk3B != 0) {
-                                    if (((x1 <= x2 && x1 + obj->unk3A * 2 >= x2)
-                                      || (x1 >= x2 && x2 + other->unk3A * 2 >= x1))
-                                     && ((y1 <= y2 && y1 + obj->unk3B * 2 >= y2)
-                                      || (y1 >= y2 && y2 + other->unk3B * 2 >= y1)))
-                                        hit = 1;
-                                }
-                                if (hit == 0 && obj->sprite.unk20[0].unk0 == 0) {
-                                    if (((ax <= x2 && ax + (obj->sprite.unk20[0].unk6 - obj->sprite.unk20[0].unk4) >= x2)
-                                      || (ax >= x2 && x2 + other->unk3A * 2 >= ax))
-                                     && ((ay <= y2 && ay + (obj->sprite.unk20[0].unk7 - obj->sprite.unk20[0].unk5) >= y2)
-                                      || (ay >= y2 && y2 + other->unk3B * 2 >= ay)))
-                                        hit = 1;
-                                }
-                                if (hit != 0) {
-                                    res = gUnk_0834BD88[obj->unk0](other);
-                                    if ((u16)gUnk_0834BD88[other->unk0](obj) != 0)
-                                        *r = NULL;
-                                    obj = *q;
-                                    if (res != 0) {
-                                        if (obj->flags & 0x400000)
-                                            obj->flags = (obj->flags | 0x40000) & 0xFBFFFFFF;
-                                        *q = NULL;
-                                        break;
-                                    }
-                                }
-                            }
+            /* block 1: vs list A, ref _080374B6 */
+            if (obj->flags & 0x20000000) {
+                for (r = &gUnk_02022F50[i * 64], n = gUnk_02022EB0[i][0];
+                     n != 0; n--, r++) {
+                    other = *r;
+                    if (other == NULL)
+                        continue;
+                    if (obj->flags & 0x200)
+                        break;
+                    if (other->flags & 0x200)
+                        continue;
+                    TILEBOX_ORIGIN(other, x2, y2);
+                    if (HITBOX_OVERLAP(obj, other)) {
+                        res = (u8)gUnk_0834BD88[(*q)->unk0](other, *q);
+                        if ((u16)gUnk_0834BD88[(*r)->unk0](*q, *r) != 0)
+                            *r = NULL;
+                        obj = *q;
+                        if (res != 0) {
+                            TAKE_HIT_RESPONSE(obj);
+                            *q = NULL;
+                            break;
                         }
-                        n--;
-                        r++;
                     }
                 }
-                obj = *q;
-                if (obj != NULL) {
-                    if (obj->flags & 0x400000)
-                        obj->flags = (obj->flags | 0x40000) & 0xFBFFFFFF;
-                }
+                obj = *q;                       /* ref _080376B0 */
+                if (obj == NULL)
+                    continue;
+                TAKE_HIT_RESPONSE(obj);
             }
-            q++;
+
+            /* block 2: vs the Kirbies, ref _080376D2 */
+            if (obj->flags & 0x10000000) {
+                for (j = 0; j < gUnk_0203AD44; j++) {
+                    kb = &gKirbys[j].base.base.base;
+                    if (obj->roomId != kb->roomId)
+                        continue;
+                    if (obj->flags & 0x200)
+                        break;
+                    if (kb->flags & 0x200)
+                        continue;
+                    TILEBOX_ORIGIN(kb, x2, y2);
+                    if (HITBOX_OVERLAP(obj, kb)) {
+                        res = (u8)gUnk_0834BD88[(*q)->unk0](kb, *q);
+                        gUnk_0834BD88[kb->unk0](*q, kb);   /* result discarded */
+                        obj = *q;
+                        if (res != 0) {
+                            TAKE_HIT_RESPONSE(obj);
+                            *q = NULL;
+                            break;
+                        }
+                    }
+                }
+                obj = *q;                       /* ref _08037920 */
+                if (obj == NULL)
+                    continue;
+                TAKE_HIT_RESPONSE(obj);
+            }
+
+            /* block 3: vs list B itself, self-excluded, ref _08037944 */
+            if (obj->flags & 0x40000000) {
+                for (r = &gUnk_02022F50[i * 64 + 32], n = gUnk_02022EB0[i][1];
+                     n != 0; n--, r++) {
+                    other = *r;
+                    if (other == NULL)
+                        continue;
+                    if (other == obj)
+                        continue;
+                    if (obj->flags & 0x200)
+                        break;
+                    if (other->flags & 0x200)
+                        continue;
+                    TILEBOX_ORIGIN(other, x2, y2);
+                    if (HITBOX_OVERLAP(obj, other)) {
+                        res = (u8)gUnk_0834BD88[(*q)->unk0](other, *q);
+                        if ((u16)gUnk_0834BD88[(*r)->unk0](*q, *r) != 0) {
+                            *r = NULL;
+                            break;
+                        }
+                        if (res != 0) {
+                            *q = NULL;
+                            break;
+                        }
+                    }
+                }
+                obj = *q;                       /* ref _08037B34 */
+                if (obj == NULL)
+                    continue;
+                TAKE_HIT_RESPONSE(obj);
+            }
+
+            if ((s32)obj->flags < 0)            /* ref _08037B56 */
+                sub_08036CBC(obj);
+        }
+
+        /* ---- pass 3: list A objects, blocks 4-5 (ref _08037B72) ---- */
+        for (q = &gUnk_02022F50[i * 64], count = gUnk_02022EB0[i][0];
+             count != 0; count--, q++) {
+            obj = *q;
+            if (obj == NULL)
+                continue;
+            TILEBOX_ORIGIN(obj, x1, y1);
+
+            /* block 4: vs list A itself, self-excluded, ref _08037C12 */
+            if (obj->flags & 0x20000000) {
+                for (r = &gUnk_02022F50[i * 64], n = gUnk_02022EB0[i][0];
+                     n != 0; n--, r++) {
+                    other = *r;
+                    if (other == NULL)
+                        continue;
+                    if (other == obj)
+                        continue;
+                    if (obj->flags & 0x200)
+                        break;
+                    if (other->flags & 0x200)
+                        continue;
+                    TILEBOX_ORIGIN(other, x2, y2);
+                    if (HITBOX_OVERLAP(obj, other)) {
+                        res = (u8)gUnk_0834BD88[(*q)->unk0](other, *q);
+                        if ((u16)gUnk_0834BD88[(*r)->unk0](*q, *r) != 0) {
+                            *r = NULL;
+                            break;
+                        }
+                        if (res != 0) {
+                            *q = NULL;
+                            break;
+                        }
+                    }
+                }
+                obj = *q;                       /* ref _08037DE0 */
+                if (obj == NULL)
+                    continue;
+            }
+
+            /* block 5: vs the Kirbies, ref _08037DEA */
+            if (obj->flags & 0x10000000) {
+                /* the reference reloads obj = *q on every advance here
+                   (ref _08037FA2); block 2's Kirby loop does not. */
+                for (j = 0; j < gUnk_0203AD44; j++, obj = *q) {
+                    kb = &gKirbys[j].base.base.base;
+                    if (obj->roomId != kb->roomId)
+                        continue;
+                    if (obj->flags & 0x200)
+                        break;
+                    if (kb->flags & 0x200)
+                        continue;
+                    TILEBOX_ORIGIN(kb, x2, y2);
+                    if (HITBOX_OVERLAP(obj, kb)) {
+                        res = (u8)gUnk_0834BD88[(*q)->unk0](kb, *q);
+                        if ((u16)gUnk_0834BD88[kb->unk0](*q, kb) != 0)
+                            break;
+                        if (res != 0) {
+                            *q = NULL;
+                            break;
+                        }
+                    }
+                }
+                obj = *q;                       /* ref _08037FBA */
+                if (obj == NULL)
+                    continue;
+            }
+
+            /* ref _08037FC4 */
+            if ((s32)obj->flags < 0 && !(obj->flags & 0x40000))
+                sub_08036CBC(obj);
         }
     }
 }
+
+#undef TILEBOX_ORIGIN
+#undef SPAN_HIT
+#undef TILEBOX_HIT
+#undef SPRITEBOX_HIT
+#undef HITBOX_OVERLAP
+#undef TAKE_HIT_RESPONSE
 
 u8 sub_0803912C(struct ObjectBase *a, struct ObjectBase *b)
 {
@@ -4081,5 +4252,377 @@ void sub_0803A450(struct Unk_02022930_0 *arg)
     } else {
         p->accum += p->step;
         p->level = p->accum >> 8;
+    }
+}
+
+
+// Resolves a physical (solid) overlap between object `a` and object `b` and
+// pushes `a` out of `b`. `a` is the object being moved; `b` is the obstacle.
+// Both hitboxes are the unk3C..unk3F interaction box, mirrored when facing
+// left. The routine compares the overlap at the PREVIOUS position
+// (unk48/unk4C) against the overlap at the CURRENT position (x/y) to decide
+// which axis the contact came in on, then snaps a->x / a->y flush against
+// b's box, zeroes the relevant speed and ORs contact bits into unk62
+// (1 = wall ahead, 2 = wall behind, 4 = grounded, 8 = ceiling, 0x10 = the
+// "b is a mouthful/carry target" hand-off).
+// NO RETURN VALUE -- the result is communicated entirely through the two
+// objects' unk62 contact bits, a->x/a->y, a->xspeed/a->yspeed, a->unk6C and
+// a->kirby2. A port may safely implement it as void.
+#define OVR_NEAR(u, v, lim) (((u) - (v) >= 0) ? ((u) - (v) < (lim)) : ((v) - (u) < (lim)))
+#define OVR_FAR(u, v, lim)  (((u) - (v) >= 0) ? ((u) - (v) > (lim)) : ((v) - (u) > (lim)))
+
+#define OVR_TOP_TEST()  (lim = 0x300 - a->yspeed, OVR_NEAR(a->y + (boxA[3] << 8), b->y + (boxB[1] << 8), lim))
+#define OVR_BOT_TEST()  (lim = a->yspeed + 0x300, OVR_NEAR(a->y + (boxA[1] << 8), b->y + (boxB[3] << 8), lim))
+#define OVR_SIDE_TEST() (lim = 0x200 - a->yspeed, OVR_FAR(a->y + (boxA[3] << 8), b->y + (boxB[1] << 8), lim))
+
+/* a lands on top of b */
+#define OVR_TOP_BODY()                                          \
+    {                                                           \
+        a->unk62 |= 4;                                          \
+        b->unk62 |= 8;                                          \
+        a->y = b->y + ((boxB[1] - boxA[3] + 1) << 8);           \
+        if ((a->flags & 0x40) && a->yspeed > 0)                 \
+            a->yspeed = a->yspeed & 0xFF;                       \
+        else                                                    \
+            a->yspeed = 0;                                      \
+        a->kirby2 = (struct Kirby *)b;                          \
+    }
+
+/* a bumps its head on the underside of b */
+#define OVR_BOT_BODY()                                          \
+    {                                                           \
+        a->unk62 |= 8;                                          \
+        b->unk62 |= 4;                                          \
+        a->y = b->y + ((boxB[3] - boxA[1]) << 8) + 0x100 + b->yspeed; \
+        a->yspeed = 0;                                          \
+    }
+
+/* a runs into b's left or right face */
+#define OVR_SIDE_BODY()                                                     \
+    {                                                                       \
+        if (a->x > b->x) {                                                  \
+            lim = b->xspeed + 0x400;                                        \
+            lim -= a->xspeed;                                               \
+            if (OVR_NEAR(a->x + (boxA[0] << 8), b->x + (boxB[2] << 8), lim)) {  \
+                if (a->flags & 1)                                           \
+                    a->unk62 |= 1;                                          \
+                else                                                        \
+                    a->unk62 |= 2;                                          \
+                if (b->flags & 1)                                           \
+                    b->unk62 |= 2;                                          \
+                else                                                        \
+                    b->unk62 |= 1;                                          \
+                a->x = b->x + ((boxB[2] - boxA[0]) << 8);                   \
+            } else if (a->yspeed == 0) {                                    \
+                a->x = a->x + 0x100;                                        \
+            }                                                               \
+        } else {                                                            \
+            lim = a->xspeed - (b->xspeed - 0x400);                          \
+            if (OVR_NEAR(a->x + (boxA[2] << 8), b->x + (boxB[0] << 8), lim)) {  \
+                if (a->flags & 1)                                           \
+                    a->unk62 |= 2;                                          \
+                else                                                        \
+                    a->unk62 |= 1;                                          \
+                if (b->flags & 1)                                           \
+                    b->unk62 |= 1;                                          \
+                else                                                        \
+                    b->unk62 |= 2;                                          \
+                a->x = b->x + ((boxB[0] - boxA[2]) << 8);                   \
+            } else if (a->yspeed == 0) {                                    \
+                a->x = a->x - 0x100;                                        \
+            }                                                               \
+        }                                                                   \
+    }
+
+void sub_08038010(struct ObjectBase *a, struct ObjectBase *b)
+{
+    s8 boxA[4];
+    s8 boxB[4];
+    u32 bFlags;
+    s32 wA, wB, hA, hB;
+    u32 prevX, prevY, curX, curY;
+    s32 la, lb, lim;
+
+    if (a->flags & 1) {
+        boxA[2] = -a->unk3C;
+        boxA[0] = -a->unk3E;
+    } else {
+        boxA[0] = a->unk3C;
+        boxA[2] = a->unk3E;
+    }
+    boxA[1] = a->unk3D;
+    boxA[3] = a->unk3F;
+
+    bFlags = b->flags;
+    if (bFlags & 1) {
+        boxB[2] = -b->unk3C;
+        boxB[0] = -b->unk3E;
+    } else {
+        boxB[0] = b->unk3C;
+        boxB[2] = b->unk3E;
+    }
+    boxB[1] = b->unk3D;
+    boxB[3] = b->unk3F;
+
+    wA = (u8)(boxA[2] - boxA[0]);
+    wB = (u8)(boxB[2] - boxB[0]);
+    hA = (u8)(boxA[3] - boxA[1]);
+    hB = (u8)(boxB[3] - boxB[1]);
+
+    /* overlap of the two boxes at the PREVIOUS position */
+    prevX = 0;
+    la = a->unk48 + (boxA[0] << 8);
+    lb = b->unk48 + (boxB[0] << 8);
+    if ((la <= lb && la + (wA << 8) >= lb) || (la >= lb && lb + (wB << 8) >= la))
+        prevX = 1;
+
+    prevY = 0;
+    la = a->unk4C + (boxA[1] << 8);
+    lb = b->unk4C + (boxB[1] << 8);
+    if ((la <= lb && la + (hA << 8) >= lb) || (la >= lb && lb + (hB << 8) >= la))
+        prevY = 1;
+
+    /* overlap of the two boxes at the CURRENT position */
+    curX = 0;
+    la = a->x + (boxA[0] << 8);
+    lb = b->x + (boxB[0] << 8);
+    if ((la <= lb && la + (wA << 8) >= lb) || (la >= lb && lb + (wB << 8) >= la))
+        curX = 1;
+
+    curY = 0;
+    la = a->y + (boxA[1] << 8);
+    lb = b->y + (boxB[1] << 8);
+    if ((la <= lb && la + (hA << 8) >= lb) || (la >= lb && lb + (hB << 8) >= la))
+        curY = 1;
+
+    if (curX == 0)
+        return;
+    if (curY == 0)
+        return;
+
+    /* b is a carry/mouthful target: just record the contact and leave */
+    if (bFlags & 0x80) {
+        a->unk62 |= 0x10;
+        a->unk6C = b;
+        return;
+    }
+
+    /* only the x spans overlapped last frame -> the contact is vertical */
+    if (prevX != 0 && prevY == 0) {
+        if (a->x != b->x + ((boxB[2] - boxA[0]) << 8)
+         && a->x != b->x + ((boxB[0] - boxA[2]) << 8)) {
+            if (a->yspeed > 0) {
+                if (OVR_BOT_TEST())
+                    OVR_BOT_BODY()
+                if (a->yspeed > 0 && b->yspeed == 0)
+                    goto end_vert_only;
+            }
+            if (OVR_TOP_TEST())
+                OVR_TOP_BODY()
+        }
+    end_vert_only:
+        ;
+    }
+
+    /* only the y spans overlapped last frame -> the contact is horizontal */
+    if (prevX == 0 && prevY != 0) {
+        if (OVR_SIDE_TEST())
+            OVR_SIDE_BODY()
+    }
+
+    /* neither axis overlapped last frame -> corner contact */
+    if (prevX == 0 && prevY == 0) {
+        if (a->y > b->y) {
+            if (a->yspeed > 0) {
+                if (OVR_BOT_TEST())
+                    OVR_BOT_BODY()
+            }
+        } else {
+            if (a->yspeed <= 0) {
+                if (OVR_TOP_TEST())
+                    OVR_TOP_BODY()
+            }
+        }
+        if (OVR_SIDE_TEST())
+            OVR_SIDE_BODY()
+    }
+
+    /* both axes already overlapped last frame -> already embedded in b */
+    if (prevX != 0 && prevY != 0) {
+        if (a->x != b->x + ((boxB[2] - boxA[0]) << 8)
+         && a->x != b->x + ((boxB[0] - boxA[2]) << 8)) {
+            if (OVR_TOP_TEST()) {
+                OVR_TOP_BODY()
+            } else if (a->yspeed > 0) {
+                if (OVR_BOT_TEST())
+                    OVR_BOT_BODY()
+            }
+        }
+        if (OVR_SIDE_TEST())
+            OVR_SIDE_BODY()
+    }
+}
+
+
+void sub_08053DAC(struct Kirby *, u8);
+void sub_08054414(struct Kirby *, u8);
+void sub_080566E0(struct Kirby *);
+
+// The same "is this Kirby in a state that can hand over an ability?" test is
+// written out at three call sites in the original; it is a macro rather than a
+// helper because there is no `bl` and because the operand spellings differ
+// (pointer at the gKirbys[i] sites, subscript at the gKirbys[j] sites).
+#define ABILITY_ANIM_OK(k, faillbl)                                                                                    \
+    do {                                                                                                               \
+        if ((k)->ability != 0xE) {                                                                                     \
+            if ((k)->animationIndex <= 0x15 || (k)->animationIndex == 0x19 || (k)->animationIndex == 0x2F) {            \
+                if ((k)->animationIndex != 0xD)                                                                        \
+                    break;                                                                                             \
+            }                                                                                                          \
+            if ((u16)((k)->animationIndex - 0x38) <= 7)                                                                \
+                break;                                                                                                 \
+            if ((k)->ability != 0xE)                                                                                   \
+                goto faillbl;                                                                                          \
+        }                                                                                                              \
+        if ((k)->animationIndex <= 0x12)                                                                               \
+            break;                                                                                                     \
+        if ((u16)((k)->animationIndex - 0x21) <= 0xD)                                                                  \
+            break;                                                                                                     \
+        goto faillbl;                                                                                                  \
+    } while (0)
+
+void sub_08038B34(void)
+{
+    u8 i;
+    u8 j;
+    struct Kirby *k;
+    struct Kirby *b;
+    u8 v;
+
+    for (i = 0; i < gUnk_0203AD44; i++) {
+        k = &gKirbys[i];
+        if (gUnk_03000510.unk4 & ((1 << i) | 0x10))
+            continue;
+        if (k->base.base.base.flags & 0x03800F00)
+            continue;
+        if (k->base.base.unk78 == sub_080566E0)
+            continue;
+        if ((u16)(k->animationIndex - 0x4A) <= 0xF)
+            continue;
+        if (k->base.base.base.sprite.animId == 0x220)
+            continue;
+        for (j = i + 1; j < gUnk_0203AD44; j++) {
+            b = &gKirbys[j];
+            if (b->base.base.base.flags & 0x03800F00)
+                continue;
+            if (b->base.base.unk78 == sub_080566E0)
+                continue;
+            if ((u16)(k->animationIndex - 0x4A) <= 0xF)
+                continue;
+            if (b->base.base.base.sprite.animId == 0x220)
+                continue;
+            if (b->base.base.base.roomId != k->base.base.base.roomId)
+                continue;
+            v = sub_0803912C(&k->base.base.base, &b->base.base.base);
+            if (v != 0 && k->ability != 0x17) {
+                if (gKirbys[j].ability != 0x17 && k->unkE5 != 0 && !((k->unkE1 >> j) & 1)) {
+                    ABILITY_ANIM_OK(k, _tail);
+                    ABILITY_ANIM_OK(&gKirbys[j], _tail);
+                    if (k->base.base.base.unk56 >= gUnk_0203AD30
+                        && gKirbys[j].base.base.base.unk56 >= gUnk_0203AD30)
+                        goto _tail;
+                    sub_08053DAC(k, j);
+                    sub_08054414(&gKirbys[j], i);
+                    k->unkE1 |= 1 << j;
+                    continue;
+                } else {
+                    if (k->ability == 0x17)
+                        goto _tail;
+                    if (gKirbys[j].ability == 0x17)
+                        goto _tail;
+                    if (gKirbys[j].unkE5 == 0)
+                        goto _tail;
+                    if ((gKirbys[j].unkE1 >> i) & 1)
+                        goto _tail;
+                    ABILITY_ANIM_OK(k, _tail);
+                    ABILITY_ANIM_OK(&gKirbys[j], _tail);
+                    if (k->base.base.base.unk56 >= gUnk_0203AD30
+                        && gKirbys[j].base.base.base.unk56 >= gUnk_0203AD30)
+                        goto _tail;
+                    sub_08053DAC(&gKirbys[j], i);
+                    sub_08054414(k, j);
+                    gKirbys[j].unkE1 |= 1 << i;
+                    continue;
+                }
+            }
+        _tail:
+            if ((k->base.base.base.unk62 & 4) && (b->base.base.base.unk62 & 4)) {
+                if (v != 0) {
+                    if (k->base.base.base.x > b->base.base.base.x) {
+                        if (!(k->base.base.base.unk62 & 1) || (k->base.base.base.flags & 1)) {
+                            if (!(k->base.base.base.unk62 & 2) || !(k->base.base.base.flags & 1))
+                                k->unkF4 += 0x80;
+                        }
+                        if (!(k->base.base.base.unk62 & 1) || !(k->base.base.base.flags & 1)) {
+                            if (!(k->base.base.base.unk62 & 2) || (k->base.base.base.flags & 1))
+                                b->unkF4 -= 0x40;
+                        }
+                    } else {
+                        if (!(k->base.base.base.unk62 & 1) || !(k->base.base.base.flags & 1)) {
+                            if (!(k->base.base.base.unk62 & 2) || (k->base.base.base.flags & 1))
+                                k->unkF4 -= 0x80;
+                        }
+                        if (!(k->base.base.base.unk62 & 1) || (k->base.base.base.flags & 1)) {
+                            if (!(k->base.base.base.unk62 & 2) || !(k->base.base.base.flags & 1))
+                                b->unkF4 += 0x40;
+                        }
+                    }
+                } else {
+                    k->unk104 |= 7 << (j * 4);
+                }
+                continue;
+            }
+            if (k->unk104 & (7 << (j * 4))) {
+                if (v != 0) {
+                    if (k->base.base.base.y < b->base.base.base.y) {
+                        k->base.base.base.unkC |= 0x100;
+                        k->base.base.base.unk62 |= 4;
+                        k->base.base.base.yspeed = 0;
+                        k->unk104 -= 1 << (j * 4);
+                    } else {
+                        k->base.base.base.objBase55++;
+                    }
+                }
+            }
+            if (v == 0) {
+                if ((k->unk104 & (7 << (j * 4))) == (7 << (j * 4)))
+                    k->unk104 |= k->unk104 & (7 << (j * 4));
+                else if (k->base.base.base.y > b->base.base.base.y - 0x1000)
+                    k->unk104 &= ~(7 << (j * 4));
+                else
+                    k->unk104 |= 7 << (j * 4);
+            }
+            v = sub_0803912C(&b->base.base.base, &k->base.base.base);
+            if (gKirbys[j].unk104 & (7 << (i * 4))) {
+                if (v != 0) {
+                    if (k->base.base.base.y > b->base.base.base.y) {
+                        b->base.base.base.unkC |= 0x100;
+                        b->base.base.base.unk62 |= 4;
+                        b->base.base.base.yspeed = 0;
+                        gKirbys[j].unk104 -= 1 << (i * 4);
+                    } else {
+                        b->base.base.base.objBase55++;
+                    }
+                }
+            }
+            if (v == 0) {
+                if ((gKirbys[j].unk104 & (7 << (i * 4))) == (7 << (i * 4)))
+                    gKirbys[j].unk104 |= gKirbys[j].unk104 & (7 << (i * 4));
+                else if (b->base.base.base.y > k->base.base.base.y - 0x1000)
+                    gKirbys[j].unk104 &= ~(7 << (i * 4));
+                else
+                    gKirbys[j].unk104 |= 7 << (i * 4);
+            }
+        }
     }
 }
