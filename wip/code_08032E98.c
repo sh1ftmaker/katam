@@ -35,12 +35,101 @@ void sub_08039E58(struct Unk_08039E04 *);
 void sub_08039F04(struct Unk_08039E04 *);
 void sub_08039F38(struct Unk_08039E04 *);
 void sub_08039F94(struct Unk_08039E04 *);
+void sub_08039FE4(struct Unk_08039E04 *);
 void sub_08039DB0(struct Task *);
+extern void m4aSongNumContinue(u16);
+extern void sub_08034304(void *);
+extern void sub_08035788(struct Kirby *);
+extern void sub_08020370(void);
+extern void sub_08000798(void);
+void sub_08039504(struct Unk_08039E04 *);
 void sub_0803D2D0(void);
+void sub_0803D2EC(void);
 void sub_0803D324(struct Unk_02022930_0 *, u8);
 
 void nullsub_30(void)
 {
+}
+
+void sub_08035FA8(void)
+{
+    sub_08034304(TaskGetStructPtr(gCurTask));
+}
+
+void *sub_08039490(struct ObjectBase *obj)
+{
+    u32 temp;
+
+    temp = obj->unk56 != 0xFF ? gCurLevelInfo[obj->unk56].unk65E : 0xFF;
+    return &gUnk_02022F50[temp * 64];
+}
+
+struct Object2 **sub_080394C8(struct ObjectBase *obj)
+{
+    u32 temp;
+
+    temp = obj->unk56 != 0xFF ? gCurLevelInfo[obj->unk56].unk65E : 0xFF;
+    return gUnk_02022EC0[temp];
+}
+
+void sub_08036378(void)
+{
+    u8 *p = TaskGetStructPtr(gUnk_03000010);
+
+    if (p != NULL && p[0xF] != 0)
+        p[0xF] = 0x31;
+}
+
+bool32 sub_0803D1C8(void)
+{
+    u32 m = 4;
+
+    if (!(m & gUnk_02022930.unk0[0].unk8) && !(m & gUnk_02022930.unk0[1].unk8)
+        && !(m & gUnk_02022930.unk0[2].unk8) && !(m & gUnk_02022930.unk0[3].unk8))
+        return TRUE;
+    return FALSE;
+}
+
+void sub_08036048(void)
+{
+    vu16 *dst = (vu16 *)0x0600E48E;
+    s32 v = 0xF18F;
+
+    *dst = v;
+    dst++;
+    v++;
+    *dst = v;
+    dst++;
+    v++;
+    *dst = v;
+    dst += 30;
+    v += 14;
+    *dst = v;
+    dst++;
+    v = 0xF59F;
+    *dst = v;
+    v = 0xF1A1;
+    dst[1] = v;
+}
+
+void sub_08039DB0(struct Task *t)
+{
+    m4aSongNumContinue(0x16);
+    m4aSongNumContinue(0x17);
+    m4aMPlayVolumeControl(&gMPlayInfo_1, 0xFFFF, 0x100);
+    m4aMPlayVolumeControl(&gMPlayInfo_2, 0xFFFF, 0x100);
+    m4aMPlayVolumeControl(&gMPlayInfo_3, 0xFFFF, 0x100);
+    gUnk_0203AD4C = NULL;
+}
+
+void sub_08039F38(struct Unk_08039E04 *s)
+{
+    sub_08020370();
+    sub_0803D2EC();
+    sub_08000798();
+    sub_08035788(&gKirbys[gUnk_0203AD3C]);
+    sub_0806F734();
+    s->unk0 = sub_08039504;
 }
 
 void sub_08035E28(u8 arg0)
@@ -166,9 +255,25 @@ void sub_08039F74(struct Unk_08039E04 *arg0)
     }
 }
 
-void sub_08039FE4(void)
+void sub_08039FE4(struct Unk_08039E04 *arg0)
 {
     TaskDestroy(gCurTask);
+}
+
+void sub_08039F94(struct Unk_08039E04 *arg0)
+{
+    struct Unk_02022930_0 *r0;
+    u16 c;
+
+    arg0->unkA = 0;
+    r0 = sub_0803C95C(7);
+    r0->unk8 |= 0x80;
+    r0->unk4 = 0xFFFF;
+    r0->unk6 = -1;
+    c = 0x7FFF;
+    sub_0803D21C(&c, 0, 1);
+    arg0->unk0 = sub_08039FE4;
+    arg0->unk0(arg0);
 }
 
 bool8 sub_0803D1A4(u8 arg0)
