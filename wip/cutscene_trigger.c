@@ -63,6 +63,7 @@ void sub_08022174(struct CutsceneTrigger *);
 void sub_08022350(struct CutsceneTrigger *);
 void sub_0802262C(struct CutsceneTrigger *);
 void sub_080226C4(struct CutsceneTrigger *);
+void sub_08022770(struct CutsceneTrigger *);
 void sub_080229E4(struct CutsceneTrigger *);
 void sub_08022D78(struct CutsceneTrigger *);
 void sub_08022DE4(struct CutsceneTrigger *);
@@ -430,6 +431,29 @@ void sub_0802262C(struct CutsceneTrigger *x) {
     obj->y = 0xE000;
     obj->sprite.unk14 = 0x7C0;
     x->obj2.unk78 = sub_0802318C;
+}
+
+void sub_080226C4(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    u16 *p;
+    u8 i;
+
+    x->unkB4.s[0] = 0;
+    p = &x->unkD0;
+    for (i = 0; i < 4; i++) {
+        struct Kirby *kirby = &gKirbys[i];
+
+        if (kirby->hp > 0 && kirby->base.base.base.roomId == x->obj2.base.roomId) {
+            (&x2->unkCE)[i * 2] = 0;
+            if (kirby->base.base.base.y >> 8 > 0xDF)
+                p[i * 2] = 0xFD00;
+            else
+                p[i * 2] = 0x300;
+            kirby->animationIndex = i + 0x4A;
+            kirby->base.base.base.flags |= 0x100;
+        }
+    }
+    x->obj2.unk78 = sub_08022770;
 }
 
 void sub_08022D78(struct CutsceneTrigger *x) {
