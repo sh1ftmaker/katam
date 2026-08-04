@@ -8,6 +8,7 @@
 #include "bg.h"
 #include "functions.h"
 #include "trig.h"
+#include "palette.h"
 
 struct Unk_0802B4A8 {
     /* 0x000 */ void (*unk0)(struct Unk_0802B4A8 *);
@@ -60,6 +61,7 @@ struct Unk_0802CE64 {
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
     /* 0x38 */ u16 unk38;
+    /* 0x3A */ s16 unk3A;
 }; /* size = 0x3C */
 
 struct Unk_0802D898 {
@@ -93,6 +95,7 @@ void sub_0802C308(struct Unk_0802B4A8 *);
 void sub_0802C3C8(struct Unk_0802B4A8 *);
 void sub_0802C4BC(struct Unk_0802B4A8 *);
 void sub_0802D458(struct Unk_0802B4A8 *);
+void sub_0802D46C(struct Unk_0802B4A8 *);
 void sub_0802C550(struct Unk_0802B4A8 *);
 void sub_0802C8E8(struct Unk_0802B4A8 *);
 void sub_0802D360(struct Task *);
@@ -179,6 +182,8 @@ void sub_0802DD3C(void);
 void sub_0802DD94(struct Unk_0802D898 *);
 struct Unk_0802CE64 *sub_0802CFF0(struct Unk_0802B4A8 *, u16, u16, u32, s32, s32, u16, u16, u16);
 void sub_0802D0B8(void);
+void sub_0802D288(void);
+void sub_0802D550(struct Unk_0802B4A8 *);
 void sub_0802CF2C(void);
 void sub_0802D528(struct Unk_0802B4A8 *);
 void sub_0802D53C(struct Unk_0802B4A8 *);
@@ -270,6 +275,37 @@ void sub_0802C5E4(struct Unk_0802B4A8 *x) {
     LZ77UnCompVram(gUnk_082D7850[0x306]->tileset, (void *)bg->tilesVram);
     sub_08153060(bg);
     x->unk0 = sub_0802C68C;
+}
+
+void sub_0802C68C(struct Unk_0802B4A8 *x) {
+    const struct RoomTiledBG *bg = gRoomTiledBGs[gRoomProps[0x321].backgroundIdx];
+    const u16 *src;
+    u16 *dst;
+    u16 i;
+
+    gBgScrollRegs[1][0] = 0;
+    gBgScrollRegs[1][1] = 0;
+    gBgCntRegs[1] = 0x1E03;
+    LZ77UnCompVram(bg->tileset, (void *)0x06000000);
+
+    src = bg->tilemap;
+    dst = (u16 *)0x0600F000;
+    src += bg->width * 8;
+    for (i = 0; i <= 0x13; i++) {
+        CpuCopy16(src, dst, 0x3C);
+        src += bg->width;
+        dst += 0x20;
+    }
+
+    if (gMainFlags & MAIN_FLAG_BG_PALETTE_TRANSFORMATION_ENABLE) {
+        LoadBgPaletteWithTransformation(bg->palette, bg->paletteOffset, bg->paletteSize);
+    } else {
+        DmaSet(3, bg->palette, gBgPalette + bg->paletteOffset, bg->paletteSize | ((DMA_ENABLE | DMA_16BIT) << 16));
+        gMainFlags |= MAIN_FLAG_BG_PALETTE_SYNC_ENABLE;
+    }
+
+    gDispCnt |= 0x300;
+    x->unk0 = sub_0802D46C;
 }
 
 void sub_0802C550(struct Unk_0802B4A8 *x) {
@@ -506,6 +542,28 @@ void sub_0802D0B8(void) {
     }
     if (s->unk28->unk214 & 0x4000000) {
         gCurTask->main = (TaskMain)sub_0802D53C;
+    }
+}
+
+void sub_0802D288(void) {
+    struct Unk_0802CE64 *tmp = TaskGetStructPtr(gCurTask);
+    struct Unk_0802CE64 *s = tmp;
+
+    s->sprite.x = (s->unk2C + ((gSineTable[s->unk38] >> 6) * s->unk3A >> 8)) >> 8;
+    s->sprite.y = s->unk30 >> 8;
+    if (sub_08155128(&s->sprite) == 0) {
+        s->sprite.unk1B = 0xFF;
+    }
+    sub_0815604C(&s->sprite);
+    s->unk2C += s->unk34;
+    s->unk30 += s->unk36;
+    s->unk38 += 8;
+    s->unk38 &= 0x3FF;
+    if ((u16)(s->sprite.x + 0x40) > 0x170 || (s16)s->sprite.y < -0x40 || (s16)s->sprite.y > 0xE0) {
+        gCurTask->main = (TaskMain)sub_0802D550;
+    }
+    if (s->unk28->unk214 & 0x4000000) {
+        gCurTask->main = (TaskMain)sub_0802D550;
     }
 }
 
