@@ -111,6 +111,14 @@ void sub_0802DC34(struct Unk_0802B4A8 *);
 void sub_0802DC58(struct Unk_0802B4A8 *);
 void sub_0802DCC4(struct Unk_0802B4A8 *);
 void sub_0802DD18(struct Unk_0802B4A8 *);
+void sub_0802DCA0(struct Unk_0802B4A8 *);
+void sub_0802DDA0(struct Unk_0802B4A8 *);
+void sub_0802DDB4(struct Unk_0802B4A8 *);
+void sub_0802DDC0(struct Unk_0802B4A8 *);
+void sub_0802DDEC(struct Unk_0802B4A8 *);
+void sub_0802DE00(struct Unk_0802B4A8 *);
+void sub_0802DF0C(struct Unk_0802B4A8 *);
+void sub_0802CB60(struct Unk_0802B4A8 *);
 void sub_0802BFBC(struct Unk_0802B4A8 *);
 void sub_0802C064(struct Unk_0802B4A8 *);
 void sub_0802CC7C(struct Unk_0802D898 *);
@@ -479,6 +487,70 @@ void sub_0802DB34(struct Unk_0802B4A8 *x) {
     x->unk0 = sub_0802DD18;
 }
 
+void sub_0802DBC0(struct Unk_0802B4A8 *x) {
+    if (x->unk278 <= 0x63FF) {
+        if (x->unk280 != 0) {
+            x->unk280 += 4;
+            if (x->unk280 > 0) {
+                x->unk280 = 0;
+            }
+        } else {
+            x->unk0 = sub_0802DDA0;
+        }
+    }
+    x->unk278 += x->unk280;
+}
+
+void sub_0802DC10(struct Unk_0802B4A8 *x) {
+    if (x->unk2BC++ > 0x3C) {
+        x->unk0 = sub_0802DDB4;
+    }
+}
+
+void sub_0802DC34(struct Unk_0802B4A8 *x) {
+    if (x->unk2BC++ > 0x3C) {
+        x->unk0 = sub_0802DDC0;
+    }
+}
+
+void sub_0802DC58(struct Unk_0802B4A8 *x) {
+    x->unk2B0 += 8;
+    if (x->unk2B0 > 0x800) {
+        x->unk2B0 = 0x800;
+    }
+    if (x->unk2A8 > 0x8000) {
+        x->unk2B0 = 0;
+        x->unk2A8 = 0x8000;
+        x->unk0 = sub_0802DCA0;
+    }
+    x->unk2A8 += x->unk2B0;
+}
+
+void sub_0802DCA0(struct Unk_0802B4A8 *x) {
+    x->unk144.animId = 0x2C3;
+    x->unk144.variant = 4;
+    x->unk0 = sub_0802DDEC;
+}
+
+void sub_0802DCC4(struct Unk_0802B4A8 *x) {
+    u32 t = x->unk2BC + 1;
+
+    x->unk2BC = t;
+    if ((u16)t > 0x3F) {
+        gBldRegs.bldY = 0;
+        x->unk214 &= 0xDFFFFFFF;
+        x->unk0 = sub_0802DE00;
+    } else {
+        gBldRegs.bldY = 0x10 - ((t << 16) >> 18);
+    }
+}
+
+void sub_0802DD18(struct Unk_0802B4A8 *x) {
+    if (x->unk2BC++ > 0x3C) {
+        x->unk0 = sub_0802CB60;
+    }
+}
+
 void sub_0802DD94(struct Unk_0802D898 *x) {
     x->unk0 = sub_0802CC7C;
 }
@@ -512,6 +584,19 @@ void sub_0802DE14(struct Unk_0802B4A8 *x) {
     if (x->unk2BC++ > 0x3C) {
         x->unk0 = sub_0802DEE0;
     }
+}
+
+void sub_0802DE38(struct Unk_0802B4A8 *x) {
+    x->unk280 -= 4;
+    if (x->unk280 < -0x100) {
+        x->unk280 = -0x100;
+    }
+    if (x->unk278 < -0x3C00) {
+        x->unk214 &= 0xFFFE7FFF;
+        x->unk280 = 0;
+        x->unk0 = sub_0802DF0C;
+    }
+    x->unk278 += x->unk280;
 }
 
 void sub_0802DE94(struct Unk_0802B4A8 *x) {
