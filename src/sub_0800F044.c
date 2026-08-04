@@ -9,6 +9,24 @@ struct Object2 **sub_080394C8(struct ObjectBase *);
 // (a1->unk1C/unk26/unk2B cells) from the tile attribute table, then widens the
 // cells with the hitboxes of the objects returned by sub_080394C8.
 //
+// Semantics below from zalo's contrib-field-docs branch, verified there
+// against runtime behaviour in a behaviour-accurate port. It is the AI's
+// terrain-awareness grid around the buddy's tile:
+//   grid index = (dy + 2) * 5 + (dx + 2), base pointer unk1C -- rows run
+//   contiguously across unk1C/unk26/unk2B, which is what makes the pointer
+//   arithmetic here look out-of-bounds when it is not.
+//   cell values: 0 = air, 1 = hazard (attr 0x2000), 2 = solid (0x200; also
+//   0x400 semisolids unless KIRBY_ABILITY_MINI), 3 = destructible
+//   (0x200|0x1000), 0xFF = outside the room bounds.
+//   Only the 13 cells of the centre row/column and inner diagonals are
+//   written each frame; distant cells inherit the nearer cell's value when
+//   it is nonzero. The trailing loops merge moving platforms into the grid
+//   as value 2, split by travel direction (yspeed sign) and facing.
+//
+// That answers the "why do we have out-of-bounds r/w here?" question the
+// old code_0800ECAC.c comment raised: the reads are in bounds, the three
+// arrays are contiguous.
+//
 // The C below is believed functionally equivalent (control flow, memory
 // accesses and arithmetic all line up instruction-for-instruction), but the
 // original's register allocation could not be reproduced: the ~10 long-lived

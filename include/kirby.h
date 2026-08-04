@@ -82,9 +82,11 @@ struct Kirby {
     /* 0x10C */ union LevelInfo_1E0 unk10C;
     /* 0x110 */ const struct Kirby_110 *unk110;
     /* 0x114 */ const struct Unk_08353510 *unk114;
-    /* 0x118 */ u16 movementState;
-    /* 0x11A */ u16 unk11A;
-    /* 0x11C */ u16 unk11C;
+    // input latch (sub_0803F324): the raw pad word for humans, the AI's
+    // synthesized word (gUnk_02038590[player].unk9E) for CPU buddies
+    /* 0x118 */ u16 movementState; // held buttons
+    /* 0x11A */ u16 unk11A;        // newly pressed this frame
+    /* 0x11C */ u16 unk11C;        // newly released this frame
     /* 0x11E */ u16 unk11E;
     /* 0x120 */ u16 unk120;
     /* 0x122 */ u16 unk122;

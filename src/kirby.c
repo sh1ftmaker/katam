@@ -455,6 +455,7 @@ const struct Unk_08357260 gUnk_0834C2A4[] = {
     {          RGB_BLACK, 0, 0 },
 };
 
+// per-ability control callbacks, indexed by KIRBY_ABILITY_*
 void (*const gUnk_0834C2AC[])(struct Kirby *) = {
     sub_0805474C,
     sub_0806A468,
@@ -709,6 +710,8 @@ void (*const gUnk_0834C5C0[4])(struct Kirby *) = {
 const u16 gUnk_0834C5D0[] = { 0x4A, 0x4A };
 
 // TODO: a few of these arrays have out-of-bounds read, so maybe combine all of them?
+// KIRBY_ABILITY_NORMAL animationIndex -> AnimInfo table (185 entries);
+// copied into gUnk_02021590[player] by sub_0806E4EC
 const struct AnimInfo gUnk_0834C5D4[] = {
     {   0x0, 0x0, 0x0 },
     {   0x0, 0x1, 0x0 },
@@ -897,6 +900,9 @@ const struct AnimInfo gUnk_0834C5D4[] = {
     {  0x45, 0x1, 0x0 },
 };
 
+// mouthful overrides: while kirby->flags & 0x80, sub_0806E4EC replaces
+// specific animationIndices of the NORMAL table with these stuffed-cheek
+// variants (several indices share one entry)
 const struct AnimInfo gUnk_0834C8B8[] = {
     {  0xE,  0x0, 0x0 },
     {  0xE,  0x1, 0x0 },
@@ -961,6 +967,9 @@ const struct AnimInfo gUnk_0834C8B8[] = {
     { 0x34,  0xC, 0x0 },
 };
 
+// KIRBY_ABILITY_SWORD / KIRBY_ABILITY_MASTER animationIndex -> AnimInfo
+// table; sub_0806F358 copies only the first 0x7A entries (the rest keep
+// NORMAL's values)
 const struct AnimInfo gUnk_0834C9AC[] = {
     {  0xBA, 0x0, 0x0 },
     {  0xBA, 0x1, 0x0 },

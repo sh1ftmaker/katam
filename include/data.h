@@ -281,35 +281,87 @@ struct ObjectBase {
     u16 unk2;
     s16 counter;
     u8 filler6[2];
+    // Flag bits. The first block is from zalo's contrib-field-docs branch,
+    // verified against runtime behaviour in a behaviour-accurate port; the
+    // second block was established here by reading sub_08037314's collision
+    // sweep. Neither list is known to be complete.
     u32 flags;              // bit 0: x-direction (right = 0, left = 1)
-    u32 unkC;
+                            // 0x2: sprite animation finished (sub_0803F46C)
+                            // 0x4: restart the animation when it finishes
+                            //      (looping states re-set it every frame)
+                            // 0x10: Kirby dashing (narrows the horizontal
+                            //       collision probe in sub_0800385C)
+                            // 0x20: airborne; cleared on floor snap
+                            // 0x40: flying/inflated (Kirby)
+                            // 0x80: mouthful (set by sub_080547C4; blocks
+                            //       flying; DOWN swallows, B spits a star)
+                            // 0x100: in a door/warp transition (physics and
+                            //        collision are skipped) -- this is the
+                            //        gate sub_08037314 tests before calling
+                            //        sub_08038010 at all
+                            // 0x200: collision disabled for this object
+                            // 0x800: frozen (no movement integration)
+                            // 0x1000: Kirby dropping through a semisolid
+                            //         platform (crouch on one; cleared once
+                            //         past it or moving up)
+                            // 0x40000: set on this object when it is hit
+                            // 0x400000: hit response enabled
+                            // 0x2000000: participates in the collision sweep
+                            //            (attacker side)
+    u32 unkC;               // 0x1000 gates the second inner loop of
+                            // sub_08037314's per-room object sweep
     struct Sprite sprite;
+    // TWO SEPARATE BOXES IN TWO DIFFERENT ENCODINGS -- do not normalise one
+    // into the other, the difference is directly visible in the codegen.
+    // unk38..unk3B is the TILE-COLLISION box (set via sub_0803E308), written
+    // as origin + doubled half-extent: the x extent is unk3A * 2 (lsls #1).
     s8 unk38;
     s8 unk39;
     s8 unk3A;
     s8 unk3B;
+    // unk3C..unk3F is the INTERACTION hitbox (set via sub_0803E2B0), written
+    // as x0, y0, x1, y1 in px relative to the origin. When flags & 1
+    // (facing left) the x pair is mirrored about the origin: x0 = -unk3E and
+    // x1 = -unk3C, while the y pair is never mirrored. Confirmed against
+    // sub_08038010's prologue.
     s8 unk3C;
     s8 unk3D;
     s8 unk3E;
     s8 unk3F;
-    s32 x;
+    s32 x;                  // Q(24.8) px; >> 8 = px, >> 12 = 16px tile
     s32 y;
     s32 unk48;
     s32 unk4C;
-    s16 xspeed;
+    s16 xspeed;             // Q8 px/frame
     s16 yspeed;
     s8 objBase54;
     s8 objBase55;
-    u8 unk56;
-    u8 unk57;
-    u32 unk58;
-    u32 unk5C;
+    u8 unk56;               // player id for Kirbies (compared against the
+                            // player count gUnk_0203AD30)
+    u8 unk57;               // metatile index currently stood on
+    u32 unk58;              // gUnk_082D88B8 attribute word of the occupied
+                            // tile(s); rebuilt each frame by collision
+    u32 unk5C;              // vulnerability word: low 3 bits = hit class
+                            // (mercy invulnerability raises Kirby's to 6 for
+                            // 120 frames, sub_080880AC), higher bits =
+                            // attack-type immunities matched against an
+                            // attacker's unk68; 0x20 = inhalable gate
     u16 roomId;
-    u8 unk62;
-    s8 unk63;
-    s16 unk64;
-    s16 unk66;
-    s32 unk68;
+    u8 unk62;               // contact bits, zeroed + rewritten by
+                            // sub_0800385C every frame: 1 = wall in facing
+                            // direction, 2 = wall behind, 4 = grounded,
+                            // 8 = ceiling, 0x10 = mirror tile.
+                            // sub_08038B34 requires bit 4 (grounded) on BOTH
+                            // Kirbies before they interact.
+    s8 unk63;               // contact damage this object deals
+    s16 unk64;              // knockback x override (0x180 default path)
+    s16 unk66;              // knockback y override
+    s32 unk68;              // attack word: low 3 bits = attack level
+                            // (must be >= target's hit class), type bits
+                            // 0x3FFFF8 matched against target unk5C
+                            // immunities, 0x80 = plain contact attack,
+                            // 0x20000000 = Kirby attack object (triggers
+                            // e.g. Sword Knight guards)
     void *unk6C; // can be ObjectBase */Kirby */?
     void *parent;
     struct Kirby *kirby2;
