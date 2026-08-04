@@ -577,10 +577,22 @@ void sub_08121194(struct LargeStarStoneBlock *block)
 
 void sub_08121324(struct LargeStarStoneBlock *block)
 {
-    s32 y12 = block->obj2.base.y >> 0xc;
-    u8 f;
+    struct LargeStarStoneBlock *block2 = block;
+#ifndef NONMATCHING
+    register u32 f asm("r2");
+    register u32 g asm("r1");
+    register u32 m asm("r0");
+    register u8 *e4 asm("r1");
+#else
+    u32 f;
+    u32 g;
+    u32 m;
+    u8 *e4;
+#endif
+    u32 t;
+    u8 *p;
 
-    if (block->unkE8 >= y12 && block->unkE7 == y12)
+    if (block->unkE8 >= (block->obj2.base.y >> 0xc) && block->unkE7 == (block->obj2.base.y >> 0xc))
     {
         u8 unk56 = block->obj2.base.unk56;
         u8 x12 = (block->obj2.base.x >> 0xc) - 1;
@@ -595,26 +607,32 @@ void sub_08121324(struct LargeStarStoneBlock *block)
         sub_08001408(unk56, sub_080025AC(unk56, x12, y12b), 0, 0);
         block->unkE7++;
     }
-    f = block->unkE4;
-    if (f & 1)
-        f |= 4;
+    e4 = &block2->unkE4;
+    f = *e4;
+    t = f & 1;
+    p = e4;
+    if (t)
+    {
+        m = 4;
+        *p = m | f;
+    }
     else
-        f &= 0xFB;
-    block->unkE4 = f;
+    {
+        m = 0xFB;
+        *p = m & f;
+    }
     if ((block->obj2.base.y >> 8) > 0x70)
     {
         block->obj2.base.sprite.unk8 = (block->obj2.base.sprite.unk8 & ~0x3000) | 0x3000;
-        f = block->unkE4;
-        f |= 1;
-        block->unkE4 = f;
+        g = *p;
+        m = 1;
+        *p = m | g;
     }
-    f = block->unkE4;
-    if (!(f & 4) && (f & 1))
-        f |= 2;
+    if (!(*p & 4) && (*p & 1))
+        *p |= 2;
     else
-        f &= 0xFD;
-    block->unkE4 = f;
-    if (block->unkE4 & 2)
+        *p &= 0xFD;
+    if (*p & 2)
     {
         sub_08089864(&block->obj2.base, -0x10, 5, 0);
         sub_08089864(&block->obj2.base, -0x10, 5, 1);
@@ -745,10 +763,22 @@ void sub_08121654(struct LargeStarStoneBlock *block)
 
 void sub_081217E4(struct LargeStarStoneBlock *block)
 {
-    s32 y12 = block->obj2.base.y >> 0xc;
-    u8 f;
+    struct LargeStarStoneBlock *block2 = block;
+#ifndef NONMATCHING
+    register u32 f asm("r2");
+    register u32 g asm("r1");
+    register u32 m asm("r0");
+    register u8 *e4 asm("r1");
+#else
+    u32 f;
+    u32 g;
+    u32 m;
+    u8 *e4;
+#endif
+    u32 t;
+    u8 *p;
 
-    if (block->unkE8 >= y12 && block->unkE7 == y12)
+    if (block->unkE8 >= (block->obj2.base.y >> 0xc) && block->unkE7 == (block->obj2.base.y >> 0xc))
     {
         u8 unk56 = block->obj2.base.unk56;
         u8 x12 = block->obj2.base.x >> 0xc;
@@ -763,26 +793,32 @@ void sub_081217E4(struct LargeStarStoneBlock *block)
         sub_08001408(unk56, sub_080025AC(unk56, x12, y12b), 0, 0);
         block->unkE7++;
     }
-    f = block->unkE4;
-    if (f & 1)
-        f |= 4;
+    e4 = &block2->unkE4;
+    f = *e4;
+    t = f & 1;
+    p = e4;
+    if (t)
+    {
+        m = 4;
+        *p = m | f;
+    }
     else
-        f &= 0xFB;
-    block->unkE4 = f;
+    {
+        m = 0xFB;
+        *p = m & f;
+    }
     if ((block->obj2.base.y >> 8) > 0x70)
     {
         block->obj2.base.sprite.unk8 = (block->obj2.base.sprite.unk8 & ~0x3000) | 0x3000;
-        f = block->unkE4;
-        f |= 1;
-        block->unkE4 = f;
+        g = *p;
+        m = 1;
+        *p = m | g;
     }
-    f = block->unkE4;
-    if (!(f & 4) && (f & 1))
-        f |= 2;
+    if (!(*p & 4) && (*p & 1))
+        *p |= 2;
     else
-        f &= 0xFD;
-    block->unkE4 = f;
-    if (block->unkE4 & 2)
+        *p &= 0xFD;
+    if (*p & 2)
     {
         sub_08089864(&block->obj2.base, -0x10, 5, 0);
         sub_08089864(&block->obj2.base, -0x10, 5, 1);
