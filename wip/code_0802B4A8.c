@@ -362,12 +362,24 @@ void sub_0802B62C(struct Unk_0802B4A8 *x) {
 void sub_0802BA6C(void) {
     struct Unk_0802B4A8 *tmp = TaskGetStructPtr(gCurTask);
     struct Unk_0802B4A8 *x = tmp;
+    u32 k40;
+    u32 m;
+#ifndef NONMATCHING
+    register u32 c2ba asm("r0");
+#else
+    u32 c2ba;
+#endif
 
     if ((x->unk214 & 0x8000000) && (gPressedKeys & 0xB)) {
         x->unk214 |= 0x40000000;
     }
 
-    if ((x->unk214 & 0x60000000) != 0x40000000) {
+    m = x->unk214 & 0x60000000;
+    k40 = 0x40000000;
+#ifndef NONMATCHING
+    asm("" : "+r"(k40));
+#endif
+    if (m != k40) {
         x->unk0(x);
         if (gUnk_0300000C != 0)
             return;
@@ -391,8 +403,9 @@ void sub_0802BA6C(void) {
             sub_0802D198(x, gUnk_082EB5E0[gUnk_082EB630[b]][0], gUnk_082EB5E0[gUnk_082EB630[b]][1],
                 x->unk16C.tilesVram, xpos, (-((Rand16() & 0xF) + 0x20)) << 8, (s16)dx, 0x40);
         }
-        x->unk2BA++;
-    } else if (x->unk214 & 0x60000000) {
+        c2ba = 0x2BA;
+        *(u16 *)((u32)x + c2ba) += 1;
+    } else if (m & x->unk214) {
         if ((x->unk214 & 0x80000000) == 0) {
             gBldRegs.bldCnt = 0xBF;
             gBldRegs.bldY = 0;
