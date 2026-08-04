@@ -876,7 +876,13 @@ void sub_0802C8E8(struct Unk_0802B4A8 *x) {
     u16 i;
     struct Sprite *s;
     struct Sprite *s2;
-    u32 ff = -1;
+#ifndef NONMATCHING
+    register u32 ff asm("sl");
+#else
+    u32 ff;
+#endif
+    u32 k100;
+    u32 k10;
 
     for (i = 0; i < 4; i++) {
         s = &x->unk4[i];
@@ -887,24 +893,37 @@ void sub_0802C8E8(struct Unk_0802B4A8 *x) {
         x->unk25E[i] = 0;
         x->unk268[i] = 0;
 
-        s->unk14 = 0x100;
+        k100 = 0x100;
+#ifndef NONMATCHING
+        asm("" : "+r"(k100));
+#endif
+        s->unk14 = k100;
         s->animId = gUnk_082EB4B4[gKirbys[i].color][0];
         s->variant = gUnk_082EB4B6[gKirbys[i].color][0];
         s->unk16 = 0;
         s->unk1B = 0xFF;
-        s->unk1C = 0x10;
+        k10 = 0x10;
+#ifndef NONMATCHING
+        asm("" : "+r"(k10));
+#endif
+        s->unk1C = k10;
         s->palId = i;
         s->x = 0;
         s->y = 0;
         s->unk8 = 0x81000;
         sub_08155128(s);
 
-        s->unk14 = 0x100;
+        k100 = 0x100;
+#ifndef NONMATCHING
+        asm("" : "+r"(k100));
+#endif
+        s->unk14 = k100;
         s->animId = 0x2D;
         s->variant = 0;
         s->unk16 = 0;
+        ff = -1;
         s->unk1B = ff;
-        s->unk1C = 0x10;
+        s->unk1C = k10;
         s->palId = i;
         s->x = (s32)x->unk218[i][0] >> 8;
         s->y = (s32)x->unk218[i][1] >> 8;
@@ -918,7 +937,7 @@ void sub_0802C8E8(struct Unk_0802B4A8 *x) {
     s2->variant = 0;
     s2->unk16 = 0;
     s2->unk1B |= ff;
-    s2->unk1C = 0x10;
+    s2->unk1C = k10;
     s2->palId = 0xF;
     s2->x = 0xFF00;
     s2->y = 0xFF00;
