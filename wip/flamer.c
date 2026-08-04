@@ -14,7 +14,7 @@ void sub_080B976C(struct Object2 *);
 void sub_080B9810(struct Object2 *);
 void sub_080B998C(struct Object2 *);
 void sub_080B9AF0(struct Object2 *);
-void sub_080B9DF0(struct Object2 *, u8);
+struct Object4 *sub_080B9DF0(struct Object2 *, u8);
 void sub_080BA004(void);
 void sub_080BA334(struct Object2 *);
 void sub_080BA36C(struct Object2 *);
@@ -794,12 +794,13 @@ void sub_080B9AF0(struct Object2 *flamer)
     }
 }
 
-void sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
+struct Object4 *sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
 {
     struct Task *t = TaskCreate(sub_080BA004, sizeof(struct Object4), 0x3500, TASK_USE_IWRAM, sub_0803DCCC);
     struct Object4 *tmp = TaskGetStructPtr(t), *newObj = tmp;
     u16 gfxId;
     u16 param;
+    u8 dy;
     register u32 z asm("sl");
 
     sub_0803E3B0(tmp);
@@ -809,7 +810,8 @@ void sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
     newObj->parent = flamer;
     newObj->roomId = flamer->base.roomId;
     z = 0;
-    newObj->y += (s8)gUnk_083547E0[dirIndex & 3] << 8;
+    dy = ((const u8 *)gUnk_083547E0)[dirIndex & 3];
+    newObj->y += (s8)dy << 8;
     if (Macro_0810B1F4(&flamer->base))
         newObj->flags |= 0x2000;
     newObj->flags |= 0x4000;
@@ -817,16 +819,30 @@ void sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
     sub_080709F8(newObj, &newObj->sprite, 6, gfxId, 12, 12);
     newObj->sprite.palId = (u8)z;
     if (flamer->base.unkC & 0x10)
-        param = gUnk_08351648[OBJ_DROPPY].unk8;
-    else
-        param = gfxId;
-    if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == newObj->roomId)
     {
-        newObj->sprite.palId = sub_0803DF24(param);
-        if (newObj->sprite.palId == 0xFF)
-            newObj->sprite.palId = sub_0803DFAC(param, 0);
+        if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == newObj->roomId)
+        {
+            param = gUnk_08351648[OBJ_DROPPY].unk8;
+            newObj->sprite.palId = sub_0803DF24(param);
+            if (newObj->sprite.palId == 0xFF)
+                newObj->sprite.palId = sub_0803DFAC(param, 0);
+        }
+        else
+            newObj->sprite.palId = (u8)z;
+    }
+    else
+    {
+        if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == newObj->roomId)
+        {
+            newObj->sprite.palId = sub_0803DF24(gfxId);
+            if (newObj->sprite.palId == 0xFF)
+                newObj->sprite.palId = sub_0803DFAC(gfxId, 0);
+        }
+        else
+            newObj->sprite.palId = (u8)z;
     }
     PlaySfx(&flamer->base, SE_BASIC_ENEMY_FIRE_ATTACK);
+    return newObj;
 }
 
 
