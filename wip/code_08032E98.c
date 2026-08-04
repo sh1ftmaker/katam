@@ -1508,3 +1508,113 @@ void sub_08034D68(struct Kirby *kirby)
     t = y | 0xFFFFF800;
     dst[1] = t;
 }
+
+extern const u16 *const gUnk_08D60B64[];
+extern const u32 *const gUnk_08D60BE4[][32];
+
+void sub_080356AC(u32 arg0, u8 arg1, u8 arg2)
+{
+    sub_0803D21C(gUnk_08D60B64[arg2], arg1 * 0x10, 0x10);
+    gMainFlags |= 1;
+    if (arg2 > 0x1B) {
+        gUnk_03002EC0[gUnk_030039A4].unk0 = (uintptr_t)gUnk_08D60BE4[gLanguage][arg2];
+        gUnk_03002EC0[gUnk_030039A4].unk4 = arg0;
+        gUnk_03002EC0[gUnk_030039A4].unk8 = 0x140;
+    } else {
+        gUnk_03002EC0[gUnk_030039A4].unk0 = (uintptr_t)gUnk_08D60BE4[gLanguage][arg2];
+        gUnk_03002EC0[gUnk_030039A4].unk4 = arg0;
+        gUnk_03002EC0[gUnk_030039A4].unk8 = 0x3C0;
+    }
+    gUnk_030039A4 = (gUnk_030039A4 + 1) & 0x3F;
+}
+
+extern void sub_0804E09C(struct Kirby *);
+extern void sub_0804A728(struct Kirby *);
+
+u32 sub_080364E4(struct ObjectBase *arg0, struct Kirby *kirby)
+{
+    u32 flags = kirby->base.base.base.flags;
+    u32 f2;
+    u32 m;
+    struct Object2 *p;
+
+    if (flags & 0x200)
+        return 0;
+    p = arg0->parent;
+    if (p == (struct Object2 *)kirby)
+        return 0;
+    if (arg0->unk68 & 0x20) {
+        if (p->base.flags & 0x200)
+            return 0;
+        m = 0x3FFFF8 & ~(kirby->base.base.base.unk5C & -8);
+        if ((m & arg0->unk68) == 0)
+            return 0;
+        if ((arg0->unk68 & 7) < (kirby->base.base.base.unk5C & 7))
+            return 0;
+        if (flags & 0x8000)
+            return 0;
+        if (p != NULL && p->base.unk0 == 1 && p->type == 0x32) {
+            if (kirby->ability == 0)
+                return 0;
+        }
+        kirby->base.base.base.unk6C = p;
+        if (p == NULL)
+            kirby->base.base.base.unk6C = arg0;
+        kirby->base.base.base.flags |= 0x40000;
+        sub_0804E09C(kirby);
+    } else {
+        kirby->base.base.base.unk6C = arg0;
+        f2 = flags | 0x40000;
+        kirby->base.base.base.flags = f2;
+        m = 0x3FFFF8 & ~(kirby->base.base.base.unk5C & -8);
+        if ((m & arg0->unk68) == 0)
+            return 0;
+        if ((arg0->unk68 & 7) < (kirby->base.base.base.unk5C & 7))
+            return 0;
+        if (f2 & 0x8000)
+            return 0;
+        if (arg0->unk68 & 0x800000)
+            return 0;
+        sub_0804A728(kirby);
+    }
+    return 0;
+}
+
+u8 sub_0803925C(struct ObjectBase *a, struct ObjectBase *b)
+{
+    s32 ax, ay, bx, by;
+
+    if (a->flags & 1)
+        ax = (a->x >> 8) + (-a->unk38 - a->unk3A * 2);
+    else
+        ax = (a->x >> 8) + a->unk38;
+    ay = (a->y >> 8) + a->unk39;
+    if (b->flags & 1)
+        bx = (b->x >> 8) + (-b->unk38 - b->unk3A * 2);
+    else
+        bx = (b->x >> 8) + b->unk38;
+    by = (b->y >> 8) + b->unk39;
+
+    if (((ax <= bx && ax + a->unk3A * 2 >= bx) || (ax >= bx && bx + b->unk3A * 2 >= ax))
+     && ((ay <= by && ay + a->unk3B * 2 >= by) || (ay >= by && by + b->unk3B * 2 >= ay)))
+        return TRUE;
+    return FALSE;
+}
+
+u8 sub_08039358(struct ObjectBase *obj, s32 x, s32 y, u16 offX, u16 offY, u16 w, u16 h)
+{
+    s32 ax, ay, bx, by;
+
+    if (obj->flags & 1)
+        ax = (obj->x >> 8) + (-obj->unk38 - obj->unk3A * 2);
+    else
+        ax = (obj->x >> 8) + obj->unk38;
+    ay = (obj->y >> 8) + obj->unk39;
+    bx = (x >> 8) + (s16)offX;
+    by = (y >> 8) + (s16)offY;
+
+    if (((ax <= bx && ax + obj->unk3A * 2 >= bx) || (ax >= bx && bx + w >= ax))
+     && ((ay <= by && ay + obj->unk3B * 2 >= by) || (ay >= by && by + h >= ay)))
+        return TRUE;
+    return FALSE;
+}
