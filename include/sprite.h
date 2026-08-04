@@ -271,7 +271,7 @@ void sub_081548A8(u16, s16, s16, s16, s16, s16, s16, struct BgAffineReg *);
 u32 sub_08154B14(void);
 u16 sub_08154FE8(s16, s16); // TODO: return s16?
 u32 sub_08155128(struct Sprite *);
-void sub_0815521C(struct Sprite *, u16);
+s32 sub_0815521C(struct Sprite *, u16); // return value is load-bearing: propagates an anim-command handler's status
 void sub_08155604(struct Sprite *, s16 *);
 void sub_0815604C(struct Sprite *);
 void sub_081564D8(struct Sprite *);
