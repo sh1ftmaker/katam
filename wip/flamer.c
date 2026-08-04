@@ -211,35 +211,33 @@ dispatch:
         flamer->base.yspeed = 0;
         if (attr == 0)
             goto end;
-        if (attr == 0x30000000)
+        switch (attr)
         {
+        case 0x30000000:
             switch (*sub)
             {
             case 1: mag = 0xE2; break;
             case 2: mag = 0x21F; break;
             default: mag = 0x90; break;
             }
-        }
-        else if (attr == 0x10000000 || attr == 0x20000000 || attr == 0x50000000 || attr == 0x60000000)
-        {
+            break;
+        case 0x10000000: case 0x20000000: case 0x50000000: case 0x60000000:
             switch (*sub)
             {
             case 1: mag = 0x127; break;
             case 2: mag = 0x2C4; break;
             default: mag = 0xBC; break;
             }
-        }
-        else if (attr == 0x40000000)
-        {
+            break;
+        case 0x40000000:
             switch (*sub)
             {
             case 1: mag = 0xE2; break;
             case 2: mag = 0x21F; break;
             default: mag = 0x90; break;
             }
-        }
-        else
-        {
+            break;
+        default:
             goto callback;
         }
     }
@@ -259,29 +257,30 @@ dispatch:
         flamer->base.yspeed = 0;
         if (attr == 0)
             goto end;
-        if (attr == 0x90000000 || attr == 0xA0000000)
+        switch (attr)
         {
+        case 0x90000000: case 0xA0000000:
             switch (*sub)
             {
             case 1: mag = 0xE2; break;
             case 2: mag = 0x21F; break;
             default: mag = 0x90; break;
             }
-        }
-        else if (attr == 0x70000000 || attr == 0x80000000 || attr == 0xC0000000)
-        {
+            break;
+        case 0x70000000: case 0x80000000: case 0xC0000000:
             switch (*sub)
             {
             case 1: mag = 0x127; break;
             case 2: mag = 0x2C4; break;
             default: mag = 0xBC; break;
             }
-        }
-        else
-        {
+            break;
+        default:
             goto callback;
         }
-        mag = -mag;
+        *speed = -mag;
+        gUnk_083547AC[attr >> 0x1C](flamer);
+        goto post;
     }
     else if (t3 == 0x80)
     {
@@ -298,35 +297,33 @@ dispatch:
         *speed = mag;
         if (attr == 0)
             goto end;
-        if (attr == 0x30000000 || attr == 0x40000000 || attr == 0x90000000 || attr == 0xA0000000)
+        switch (attr)
         {
+        case 0x30000000: case 0x40000000: case 0x90000000: case 0xA0000000:
             switch (*sub)
             {
             case 1: mag = 0xE2; break;
             case 2: mag = 0x21F; break;
             default: mag = 0x90; break;
             }
-        }
-        else if (attr == 0x10000000 || attr == 0x20000000 || attr == 0x50000000 || attr == 0x60000000)
-        {
+            break;
+        case 0x10000000: case 0x20000000: case 0x50000000: case 0x60000000:
             switch (*sub)
             {
             case 1: mag = 0x127; break;
             case 2: mag = 0x2C4; break;
             default: mag = 0xBC; break;
             }
-        }
-        else if (attr == 0x70000000 || attr == 0x80000000 || attr == 0xB0000000 || attr == 0xC0000000)
-        {
+            break;
+        case 0x70000000: case 0x80000000: case 0xB0000000: case 0xC0000000:
             switch (*sub)
             {
             case 1: mag = 0x117; break;
             case 2: mag = 0x4A; break;
             default: mag = 0x74; break;
             }
-        }
-        else
-        {
+            break;
+        default:
             goto callback;
         }
     }
@@ -346,29 +343,30 @@ dispatch:
         *speed = mag;
         if (attr == 0)
             goto end;
-        if (attr == 0x10000000 || attr == 0x60000000 || attr == 0x70000000 || attr == 0xB0000000 || attr == 0xC0000000)
+        switch (attr)
         {
+        case 0x10000000: case 0x60000000: case 0x70000000: case 0xB0000000: case 0xC0000000:
             switch (*sub)
             {
             case 1: mag = 0x117; break;
             case 2: mag = 0x4A; break;
             default: mag = 0x74; break;
             }
-        }
-        else if (attr == 0x30000000 || attr == 0x40000000 || attr == 0x90000000)
-        {
+            break;
+        case 0x30000000: case 0x40000000: case 0x90000000:
             switch (*sub)
             {
             case 1: mag = 0xE2; break;
             case 2: mag = 0x21F; break;
             default: mag = 0x90; break;
             }
-        }
-        else
-        {
+            break;
+        default:
             goto callback;
         }
-        mag = -mag;
+        *speed = -mag;
+        gUnk_083547AC[attr >> 0x1C](flamer);
+        goto post;
     }
     else
     {
@@ -377,6 +375,7 @@ dispatch:
     *speed = mag;
 callback:
     gUnk_083547AC[attr >> 0x1C](flamer);
+post:
 
     if (flamer->base.flags & 1)
         flamer->base.xspeed = -flamer->base.xspeed;
@@ -391,12 +390,28 @@ callback:
     {
         s32 dx = flamer->kirby3->base.base.base.x - flamer->base.x;
         s32 dy;
-        if (dx >= -0x3FFF && dx <= 0x3FFF
-            && (dy = flamer->kirby3->base.base.base.y - flamer->base.y, dy >= -0x3FFF && dy <= 0x3FFF))
+        if (dx < 0)
         {
-            sub_080BA39C(flamer);
+            if (flamer->base.x - flamer->kirby3->base.base.base.x > 0x3FFF)
+                goto retarget;
         }
-        else
+        else if (dx > 0x3FFF)
+        {
+            goto retarget;
+        }
+        dy = flamer->kirby3->base.base.base.y - flamer->base.y;
+        if (dy < 0)
+        {
+            if (flamer->base.y - flamer->kirby3->base.base.base.y > 0x3FFF)
+                goto retarget;
+        }
+        else if (dy > 0x3FFF)
+        {
+            goto retarget;
+        }
+        sub_080BA39C(flamer);
+        goto end;
+    retarget:
         {
             flamer->kirby3 = sub_0803D368(&flamer->base);
             flamer->unk9E = 0;
