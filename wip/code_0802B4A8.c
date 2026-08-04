@@ -1131,6 +1131,27 @@ void sub_0802E0E8(struct Unk_0802B4A8 *x) {
     x->unk0 = sub_0802E11C;
 }
 
+void sub_0802E16C(void) {
+    struct Task *t = TaskCreate(sub_0802E390, 0x48, 0x1000, 4, nullsub_11);
+    struct Unk_0802E390 *x;
+    u16 bgIdx;
+    u16 white;
+
+    white = 0x7FFF;
+    sub_0803D21C(&white, 0, 1);
+    gDispCnt = 0x1840;
+    x = TaskGetStructPtr(t);
+    x->unk40 = sub_0802E3C8;
+    x->unk44 = 0;
+    bgIdx = gUnk_082EB6D0[gLanguage];
+    gBgScrollRegs[3][0] = 0;
+    gBgScrollRegs[3][1] = 0;
+    gBgCntRegs[3] = 0x1E0A;
+    BgInit(&x->unk0, 0x06008000, 0, 0x0600F000, 0, 0, bgIdx, 0, 0, 0, 0, 0x1E, 0x14, 0, 0, 0, 0x1B, 0, 0, 0x7FFF, 0x7FFF);
+    LZ77UnCompVram(gUnk_082D7850[bgIdx]->tileset, (void *)x->unk0.tilesVram);
+    sub_08153060(&x->unk0);
+}
+
 void sub_0802E390(void) {
     struct Unk_0802E390 *x = TaskGetStructPtr(gCurTask);
 
