@@ -15,84 +15,14 @@ struct Unk_0802F8D8 {
     /* 0x3A */ u16 unk3A;
 }; /* size = 0x3C */
 
-/* Local view of struct Unk_0802E57C_C with the fields in filler48 named. */
-struct Unk_0802F8D8_C {
-    /* 0x00 */ struct Sprite unk0;
-    /* 0x28 */ void (*unk28)(struct Unk_0802E57C *, struct Unk_0802F8D8_C *);
-    /* 0x2C */ u32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ s32 unk34;
-    /* 0x38 */ s16 unk38;
-    /* 0x3A */ s16 unk3A;
-    /* 0x3C */ u16 *unk3C;
-    /* 0x40 */ u16 unk40;
-    /* 0x42 */ u16 unk42;
-    /* 0x44 */ u16 unk44;
-    /* 0x46 */ u16 unk46;
-    /* 0x48 */ u16 unk48;
-    /* 0x4A */ u16 unk4A;
-    /* 0x4C */ u8 filler4C[4];
-}; /* size = 0x50 */
-
-typedef void (*UnkCFunc2)(struct Unk_0802E57C *, struct Unk_0802F8D8_C *);
-
 extern u16 gUnk_082EB800[];
 extern u16 gUnk_082EB7F8[];
 extern const UnkCFunc2 gUnk_082EB7D0[];
 
-void sub_0802E97C(struct Unk_0802E57C *);
-void sub_0802ECBC(struct Unk_0802E57C *);
-void sub_0802EF90(struct Unk_0802E57C *, struct Unk_0802E57C_C *);
-void sub_0802F40C(struct Unk_0802E57C *, struct Unk_0802F8D8_C *);
-void sub_0802F51C(struct Unk_0802E57C *, struct Unk_0802F8D8_C *);
-void sub_0802F5B8(struct Unk_0802E57C *, struct Unk_0802F8D8_C *);
-void sub_0802F638(struct Unk_0802E57C *, struct Unk_0802F8D8_C *);
-void sub_0802F6A0(struct Unk_0802E57C *, struct Unk_0802F8D8_C *);
-void sub_0802F714(struct Unk_0802E57C *, struct Unk_0802F8D8_C *);
-void sub_0802F77C(struct Unk_0802E57C *, struct Unk_0802F8D8_C *);
-
 struct Unk_0802F8D8 *sub_0802F8D8(struct Unk_0802E57C *a, u16 animId, u16 variant, u32 tiles, s32 x, s32 y, u16 xspeed,
                                   u16 yspeed, u16 duration);
-void sub_0802F9AC(void);
 struct Unk_0802F8D8 *sub_0802FA40(struct Unk_0802E57C *a, u16 animId, u16 variant, u32 tiles, s32 x, s32 y, u16 xspeed,
                                   u16 yspeed, u16 duration);
-void sub_0802FB0C(void);
-void sub_0802FBE0(struct Unk_0802E57C *a);
-void sub_0802FBF4(struct Unk_0802E57C *a);
-void sub_0802FC08(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FC14(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FC64(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FCB4(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FCDC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FD00(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FD3C(struct Unk_0802E57C *a);
-void sub_0802FDA4(struct Unk_0802E57C *a);
-void sub_0802FDF4(struct Unk_0802E57C *a);
-void sub_0802FE30(struct Unk_0802E57C *a);
-void sub_0802FE4C(struct Unk_0802E57C *a);
-void sub_0802FE5C(void);
-void sub_0802FE70(void);
-void sub_0802FE84(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FEAC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FEC8(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FF14(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FF38(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FF5C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FF9C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FFA8(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0802FFDC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_08030018(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_08030024(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0803005C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_08030068(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_080300A0(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_080300CC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0803010C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_08030138(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0803017C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_080301B0(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_080301DC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
-void sub_0803020C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b);
 
 struct Unk_0802F8D8 *sub_0802F8D8(struct Unk_0802E57C *a, u16 animId, u16 variant, u32 tiles, s32 x, s32 y, u16 xspeed,
                                   u16 yspeed, u16 duration) {
@@ -182,11 +112,11 @@ void sub_0802FBF4(struct Unk_0802E57C *a) {
     a->unk188 |= 0x200;
 }
 
-void sub_0802FC08(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FC08(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     b->unk2C |= 2;
 }
 
-void sub_0802FC14(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FC14(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u8 v = 0;
     u32 flags;
 
@@ -205,7 +135,7 @@ void sub_0802FC14(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     b->unk28 = sub_0802FE84;
 }
 
-void sub_0802FC64(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FC64(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags;
 
     b->unk0.animId = 0x49;
@@ -226,7 +156,7 @@ void sub_0802FC64(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     b->unk28 = sub_0802FEAC;
 }
 
-void sub_0802FCB4(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FCB4(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u8 v = 0;
     u32 flags;
 
@@ -240,7 +170,7 @@ void sub_0802FCB4(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     b->unk28 = sub_0802FFA8;
 }
 
-void sub_0802FCDC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FCDC(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u8 v = 6;
     u32 flags;
 
@@ -257,7 +187,7 @@ void sub_0802FCDC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     b->unk28 = sub_0802F51C;
 }
 
-void sub_0802FD00(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FD00(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     UnkCFunc2 f;
 
     b->unk48 = Rand16() & 0x1F;
@@ -271,7 +201,7 @@ void sub_0802FD3C(struct Unk_0802E57C *a) {
     void (*f)(struct Unk_0802E57C *) = sub_0802FDA4;
 
     for (; i < 4; i++) {
-        struct Unk_0802F8D8_C *b = (struct Unk_0802F8D8_C *)&a->unkC[i];
+        struct Unk_0802E57C_C *b = (struct Unk_0802E57C_C *)&a->unkC[i];
 
         b->unk3C = gUnk_082EB800;
         b->unk42 = gUnk_082EB800[b->unk40 * 2];
@@ -304,7 +234,7 @@ void sub_0802FDF4(struct Unk_0802E57C *a) {
     void (*f)(struct Unk_0802E57C *) = sub_0802E97C;
 
     for (; i < 4; i++) {
-        struct Unk_0802F8D8_C *b = (struct Unk_0802F8D8_C *)&a->unkC[i];
+        struct Unk_0802E57C_C *b = (struct Unk_0802E57C_C *)&a->unkC[i];
 
         b->unk3C = gUnk_082EB7F8;
         b->unk40 = 0;
@@ -334,7 +264,7 @@ void sub_0802FE70(void) {
     TaskDestroy(gCurTask);
 }
 
-void sub_0802FE84(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FE84(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u16 *p = &b->unk44;
     u16 v = b->unk48;
 
@@ -345,13 +275,13 @@ void sub_0802FE84(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     }
 }
 
-void sub_0802FEAC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FEAC(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     if (b->unk2C & 8) {
         b->unk28 = sub_0802FEC8;
     }
 }
 
-void sub_0802FEC8(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FEC8(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u8 v = 0;
     u32 flags;
 
@@ -366,7 +296,7 @@ void sub_0802FEC8(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     b->unk28 = sub_0802FF14;
 }
 
-void sub_0802FF14(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FF14(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u16 *p = &b->unk44;
     u16 v = b->unk48;
 
@@ -377,7 +307,7 @@ void sub_0802FF14(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     }
 }
 
-void sub_0802FF38(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FF38(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags;
 
     b->unk0.animId = 0x49;
@@ -390,7 +320,7 @@ void sub_0802FF38(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     b->unk28 = sub_0802FF5C;
 }
 
-void sub_0802FF5C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FF5C(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u16 *p = &b->unk44;
     u16 v = b->unk48;
 
@@ -414,11 +344,11 @@ void sub_0802FF5C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     }
 }
 
-void sub_0802FF9C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FF9C(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     b->unk2C |= 2;
 }
 
-void sub_0802FFA8(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FFA8(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags = b->unk2C;
 
     if (flags & 8) {
@@ -432,7 +362,7 @@ void sub_0802FFA8(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     }
 }
 
-void sub_0802FFDC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0802FFDC(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags = b->unk2C;
 
     if (flags & 8) {
@@ -447,11 +377,11 @@ void sub_0802FFDC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     }
 }
 
-void sub_08030018(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_08030018(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     b->unk2C |= 2;
 }
 
-void sub_08030024(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_08030024(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags = b->unk2C;
 
     if (flags & 8) {
@@ -468,11 +398,11 @@ void sub_08030024(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     }
 }
 
-void sub_0803005C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0803005C(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     b->unk2C |= 2;
 }
 
-void sub_08030068(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_08030068(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags;
     UnkCFunc2 f;
 
@@ -489,7 +419,7 @@ void sub_08030068(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     f(a, b);
 }
 
-void sub_080300A0(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_080300A0(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags;
     UnkCFunc2 f;
 
@@ -505,7 +435,7 @@ void sub_080300A0(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     f(a, b);
 }
 
-void sub_080300CC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_080300CC(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     if (b->unk2C & 0x40) {
         u16 old = b->unk3A;
         s32 sum = old + 0x26;
@@ -530,7 +460,7 @@ void sub_080300CC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     }
 }
 
-void sub_0803010C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0803010C(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags;
     UnkCFunc2 f;
 
@@ -546,7 +476,7 @@ void sub_0803010C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     f(a, b);
 }
 
-void sub_08030138(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_08030138(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     if (b->unk38 > 0) {
         b->unk38 -= 0xE;
         if (b->unk38 < 0) {
@@ -563,7 +493,7 @@ void sub_08030138(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     }
 }
 
-void sub_0803017C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0803017C(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags;
     UnkCFunc2 f;
 
@@ -580,7 +510,7 @@ void sub_0803017C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     f(a, b);
 }
 
-void sub_080301B0(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_080301B0(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u32 flags;
     UnkCFunc2 f;
 
@@ -596,7 +526,7 @@ void sub_080301B0(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     f(a, b);
 }
 
-void sub_080301DC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_080301DC(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     u8 v = 0;
     u32 flags;
     UnkCFunc2 f;
@@ -617,7 +547,7 @@ void sub_080301DC(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
     f(a, b);
 }
 
-void sub_0803020C(struct Unk_0802E57C *a, struct Unk_0802F8D8_C *b) {
+void sub_0803020C(struct Unk_0802E57C *a, struct Unk_0802E57C_C *b) {
     if (b->unk38 > 0) {
         b->unk38 -= 0xE;
         if (b->unk38 < 0) {
