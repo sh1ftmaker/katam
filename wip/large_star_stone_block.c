@@ -364,6 +364,15 @@ u8 sub_08120DE0(struct Unknown82 *x)
     }
 }
 
+// sub_08120E1C: functionally equivalent (verified against the disassembly by
+// hand); the remaining diffs after several regalloc/scheduling attempts are
+// pointer-vs-member addressing / operand-order shapes only.
+#ifndef NONMATCHING
+NAKED void sub_08120E1C(struct Unknown82 *x)
+{
+    asm(".include \"asm/nonmatching/sub_08120E1C.inc\"");
+}
+#else
 void sub_08120E1C(struct Unknown82 *x)
 {
     if (sub_08120DE0(x))
@@ -382,18 +391,23 @@ void sub_08120E1C(struct Unknown82 *x)
     }
     else
     {
-        u16 v = x->unkB6 & ~0x100;
+        u16 *b6 = &x->unkB6;
+        s16 *b4 = &x->unkB4;
+        u16 v = *b6 & ~0x100;
 
-        x->unkB6 = v;
-        if ((s16)x->unkB4 < 0)
+        *b6 = v;
+        if (*b4 < 0)
         {
-            u16 w = v & ~0x31;
+            u16 w = v;
 
-            x->unkB6 = w;
+            w &= ~1;
+            w &= ~0x20;
+            w &= ~0x10;
+            *b6 = w;
             if (w & 4)
-                x->unkB6 = w & ~4;
+                *b6 = w & ~4;
             else
-                x->unkB6 = w | 4;
+                *b6 = w | 4;
         }
         else
         {
@@ -403,12 +417,13 @@ void sub_08120E1C(struct Unknown82 *x)
                 w = v & ~0x20;
             else
                 w = v | 0x20;
-            x->unkB6 = w;
-            x->unkB6 = x->unkB6 | 0x10;
-            x->unkB4 -= 1;
+            *b6 = w;
+            *b6 = *b6 | 0x10;
+            *b4 -= 1;
         }
     }
 }
+#endif
 
 // sub_08120EE0: not yet reverse engineered; the #else body below is an
 // unverified placeholder — do not trust it as correct.
