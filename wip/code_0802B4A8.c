@@ -257,7 +257,7 @@ void sub_0802B62C(struct Unk_0802B4A8 *x) {
 
     j = 0;
     for (i = 0; i < 5; i++, j += 3) {
-        if (x->unk214 & (1 << j)) {
+        if ((1 << j) & x->unk214) {
             s = &x->unk4[i];
             x->unk254[i] = (x->unk254[i] + 4) & 0x3FF;
             if ((s16)x->unk25E[i] < (s16)x->unk268[i]) {
@@ -272,24 +272,26 @@ void sub_0802B62C(struct Unk_0802B4A8 *x) {
             s->x = (s32)x->unk218[i][0] >> 8;
             s->y = (s32)(x->unk218[i][1] + (gSineTable[x->unk254[i]] >> 10) * ((s16)x->unk25E[i] >> 4)) >> 8;
             if ((s32)x->unk214 >= 0) {
-                if (!(x->unk214 & (2 << j))) {
+                if (!((2 << j) & x->unk214)) {
                     if (sub_08155128(s) == 0)
                         x->unk214 |= 2 << j;
                 }
-                if (x->unk214 & (2 << j)) {
+                if ((2 << j) & x->unk214) {
                     x->unk214 &= ~(2 << j);
                     s->unk1B = 0xFF;
                 }
             }
             sub_0815604C(s);
-            if (x->unk214 & (4 << j)) {
+            if ((4 << j) & x->unk214) {
                 x->unkCC.x = s->x;
                 x->unkCC.y = s->y;
                 sub_0815604C(&x->unkCC);
                 if (!(x->unk214 & 0x800000)) {
                     if (((x->unk2BA + i * 2) & 7) == 0) {
-                        sub_0802CFF0(x, 0x295, 2, x->unk16C.tilesVram,
-                            x->unk2B4 + x->unk218[i][0] + 0x1000,
+                        u32 tv = x->unk16C.tilesVram;
+                        s32 base = x->unk2B4;
+                        sub_0802CFF0(x, 0x295, 2, tv,
+                            x->unk218[i][0] + base + 0x1000,
                             x->unk218[i][1] + 0x800, 0, 0, 1);
                     }
                     if (((x->unk2BA + i * 2) & 0xF) == 0) {
