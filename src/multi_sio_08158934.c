@@ -81,8 +81,13 @@ void sub_08158A28(void) {
 }
 
 // sub_08158AE4: functionally equivalent; remaining diff is register allocation
-// inside the case-0 block only (which pseudo lands in r6/r0-r1/r2-r3 and two
-// gcc-elided register copies); every other block matches modulo pool offsets.
+// inside the case-0 block only (80 diff lines, was 141). The recv/z pins plus
+// the late s = ptr copy reproduce ref's b-extraction reload shape and the
+// adds r4 base copy; still open: ref's a-extraction is in-place in r0 with a
+// separate copy to r1 at the first compare (the a1 local merges back under
+// copy-prop no matter how it is blocked), and a global r0/r2/r3 rotation of
+// the scratch pseudos seeded by that copy. Pins are bare here because this is
+// the #else branch of the wrapper; guard them if the wrapper is ever removed.
 #ifndef NONMATCHING
 NAKED void sub_08158AE4(void) {
     asm(".include \"asm/nonmatching/sub_08158AE4.inc\"");
@@ -95,40 +100,50 @@ void sub_08158AE4(void) {
 
     switch (gUnk_03006CC0) {
     case 0: {
-        u32 recv = REG_SIODATA32;
-        u16 a = (recv << (gUnk_03000020.unk0 * 16)) >> 16;
-        u16 b = (recv << ((1 - gUnk_03000020.unk0) * 16)) >> 16;
+        register u32 recv asm("r6") = REG_SIODATA32;
+        struct Unk_03000020 *ptr = &gUnk_03000020;
+        struct Unk_03000020 *s;
+        u32 k = ptr->unk0;
+        u32 x = recv << (k * 16);
+        register u32 z asm("r1");
+        u16 a = x >> 16;
+        u16 b;
+        z = recv << ((1 - k) * 16);
+        b = z >> 16;
+        {u16 unkAv = ptr->unkA; s = ptr;
 
-        if (gUnk_03000020.unkA == 0) {
-            if (a == gUnk_03000020.unk6) {
-                if (gUnk_03000020.unk2 <= 3) {
-                    if (a == (u16)~gUnk_03000020.unk4 && b == (u16)~gUnk_03000020.unk6) {
-                        gUnk_03000020.unk2++;
+        if (unkAv == 0) {
+            u32 a1 = a;
+            if (a1 == s->unk6) {
+                if (s->unk2 <= 3) {
+                    if (a1 == (u16)~s->unk4 && b == (u16)~s->unk6) {
+                        s->unk2++;
                     }
                 } else {
-                    gUnk_03000020.unkA = b;
+                    s->unkA = b;
                     if (b == 0x8002) {
                         gUnk_03006CC0 = 1;
                         gUnk_0300002C = sub_08158DBC(1);
                         REG_SIODATA32 = gUnk_0300002C;
-                        gUnk_03000020.unk2 = 0;
+                        s->unk2 = 0;
                         goto send;
                     }
-                    gUnk_03000020.unkA = 0;
-                    gUnk_03000020.unk2 = 0;
+                    s->unkA = 0;
+                    s->unk2 = 0;
                 }
             } else {
-                gUnk_03000020.unk2 = 0;
+                s->unk2 = 0;
             }
         }
-        if (gUnk_03000020.unk2 <= 3) {
-            gUnk_03000020.unk4 = *(u16 *)(gAgbSramLibVer + gUnk_03000020.unk2 * 2);
-        } else {
-            gUnk_03000020.unk4 = 0x8000;
         }
-        gUnk_03000020.unk6 = ~b;
-        REG_SIODATA32 = (gUnk_03000020.unk4 << ((1 - gUnk_03000020.unk0) * 16))
-                      + (gUnk_03000020.unk6 << (gUnk_03000020.unk0 * 16));
+        if (s->unk2 <= 3) {
+            s->unk4 = *(u16 *)(gAgbSramLibVer + s->unk2 * 2);
+        } else {
+            s->unk4 = 0x8000;
+        }
+        s->unk6 = ~b;
+        REG_SIODATA32 = (s->unk4 << ((1 - s->unk0) * 16))
+                      + (s->unk6 << (s->unk0 * 16));
         goto send;
     }
     case 1:
