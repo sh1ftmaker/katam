@@ -372,6 +372,13 @@ void sub_08020DDC(struct CutsceneTrigger *x) {
     struct Object4 *obj;
     union CutsceneVal *p;
     union CutsceneVal *q;
+#ifndef NONMATCHING
+    register union CutsceneVal *r asm("r4");
+    register struct Object4 *o asm("r2");
+#else
+    union CutsceneVal *r;
+    struct Object4 *o;
+#endif
     u16 mask;
     u16 i;
 
@@ -407,9 +414,11 @@ void sub_08020DDC(struct CutsceneTrigger *x) {
         if (x2->unkB8.obj4 != NULL)
             x2->unkB8.obj4->flags |= 0x1000;
         x2->unkB8.obj4 = NULL;
-        if (x2->unkBC.obj4 != NULL)
-            x2->unkBC.obj4->flags |= 0x1000;
-        x2->unkBC.obj4 = NULL;
+        r = &x2->unkBC;
+        o = r->obj4;
+        if (o != NULL)
+            o->flags |= 0x1000;
+        r->obj4 = NULL;
         x->obj2.unk78 = sub_08022E80;
     }
 }
