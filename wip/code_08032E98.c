@@ -83,10 +83,8 @@ void sub_08036378(void)
 
 bool32 sub_0803D1C8(void)
 {
-    u32 m = 4;
-
-    if (!(m & gUnk_02022930.unk0[0].unk8) && !(m & gUnk_02022930.unk0[1].unk8)
-        && !(m & gUnk_02022930.unk0[2].unk8) && !(m & gUnk_02022930.unk0[3].unk8))
+    if (!(gUnk_02022930.unk0[0].unk8 & 4) && !(gUnk_02022930.unk0[1].unk8 & 4)
+        && !(gUnk_02022930.unk0[2].unk8 & 4) && !(gUnk_02022930.unk0[3].unk8 & 4))
         return TRUE;
     return FALSE;
 }
@@ -338,7 +336,7 @@ struct Unk_02022930_0 *sub_0803D308(u8 arg0)
     return &gUnk_02022930.unk0[arg0];
 }
 
-void sub_0803D318(void)
+void sub_0803D318(struct Task *t)
 {
     gUnk_02022920 = NULL;
 }
@@ -941,8 +939,97 @@ u8 sub_08039430(struct ObjectBase *obj, s32 x, s32 y, s16 offX, s16 offY, u16 w,
     s32 x1 = (x >> 8) + offX;
     s32 y1 = (y >> 8) + offY;
 
-    if (((obj->x >> 8) + 1 >= x1 || ((obj->x >> 8) >= x1 && x1 + w >= (obj->x >> 8)))
-     && ((obj->y >> 8) + 1 >= y1 || ((obj->y >> 8) >= y1 && y1 + h >= (obj->y >> 8))))
+    if ((((obj->x >> 8) <= x1 && (obj->x >> 8) + 1 >= x1)
+             || ((obj->x >> 8) >= x1 && x1 + w >= (obj->x >> 8)))
+     && (((obj->y >> 8) <= y1 && (obj->y >> 8) + 1 >= y1)
+             || ((obj->y >> 8) >= y1 && y1 + h >= (obj->y >> 8))))
         return TRUE;
     return FALSE;
+}
+
+void sub_08034BB4(void)
+{
+    vu16 *dst = (vu16 *)0x0600E350;
+    u8 i, j;
+
+    for (j = 0; j < 2; j++) {
+        for (i = 12; i < 14; i++) {
+            *dst = (j * 15 + (((long long)i) + 0x1E3)) | 0xFFFFF000;
+            dst++;
+        }
+        dst += 30;
+    }
+    dst = (vu16 *)0x0600E290;
+    for (j = 0; j < 2; j++) {
+        for (i = 12; i < 14; i++) {
+            *dst = 0xF184;
+            dst++;
+        }
+        dst += 30;
+    }
+}
+
+void sub_08034C28(void)
+{
+    vu16 *dst = (vu16 *)0x0600E290;
+    u8 i, j;
+
+    for (j = 0; j < 2; j++) {
+        for (i = 12; i < 14; i++) {
+            *dst = (j * 15 + (((long long)i) + 0x1E3)) | 0xFFFFF000;
+            dst++;
+        }
+        dst += 30;
+    }
+    dst = (vu16 *)0x0600E350;
+    for (j = 0; j < 2; j++) {
+        for (i = 12; i < 14; i++) {
+            *dst = 0xF184;
+            dst++;
+        }
+        dst += 30;
+    }
+}
+
+void sub_08034034(void)
+{
+    u8 i;
+    struct Kirby *k;
+
+    for (i = 0; i < gUnk_0203AD44; i++) {
+        if (i != gUnk_0203AD3C) {
+            k = &gKirbys[i];
+            if (gKirbys[gUnk_0203AD3C].base.base.base.roomId != k->base.base.base.roomId) {
+                k->base.base.base.sprite.unk8 |= 0x80000;
+                k->base.other.unk7C[1].unk8 |= 0x80000;
+                k->base.other.unk7C[0].unk8 |= 0x80000;
+            }
+        }
+    }
+}
+
+void sub_0803A1F4(void);
+
+void sub_08039FF8(struct Unk_02022930_0 *arg0)
+{
+    u8 i;
+    struct Unk_02022930 *g = &gUnk_02022930;
+    struct Unk_02022930_0 *p;
+
+    if (gUnk_02022920 == NULL) {
+        gUnk_02022920 = TaskCreate(sub_0803A1F4, 0, 0xFFFE, 4, sub_0803D318);
+        for (i = 0; i < 8; i++) {
+            g->unk80[i] = NULL;
+        }
+    }
+    p = g->unk80[0];
+    if (p != NULL) {
+        if (p->unk3 > arg0->unk3) {
+            sub_0803D324(p, 1);
+        } else {
+            sub_0803D324(arg0, 1);
+            return;
+        }
+    }
+    g->unk80[0] = arg0;
 }
