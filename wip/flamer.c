@@ -73,6 +73,48 @@ void sub_080B8954(struct Object2 *flamer)
 }
 
 
+void sub_080B94F4(struct Object2 *flamer)
+{
+    s16 off;
+
+    flamer->base.flags |= 4;
+    if (flamer->base.x > flamer->kirby3->base.base.base.x)
+        off = 0x4000;
+    else
+        off = 0xC000;
+    if (flamer->base.counter-- <= 0)
+    {
+        s32 dx = (flamer->kirby3->base.base.base.x + off - flamer->base.x) >> 8;
+        s32 dy = (flamer->base.y - flamer->kirby3->base.base.base.y) >> 8;
+        u16 dist = Sqrt((dx * dx + dy * dy) * 256);
+        s32 vx = dx * 256 / dist;
+        s32 vy = dy * 256 / dist;
+        u16 v;
+
+        flamer->base.xspeed = vx << 4;
+        flamer->base.yspeed = vy << 4;
+        switch (flamer->subtype)
+        {
+        case 1:
+            v = 9;
+            break;
+        case 2:
+            v = 6;
+            break;
+        default:
+            v = 12;
+            break;
+        }
+        flamer->base.counter = v;
+    }
+    if (abs(flamer->kirby3->base.base.base.x + off - flamer->base.x) <= 0x9FF)
+    {
+        if (abs(flamer->kirby3->base.base.base.y - flamer->base.y) <= 0x9FF)
+            sub_080BA400(flamer);
+    }
+}
+
+
 void sub_080B976C(struct Object2 *flamer)
 {
     s16 c;
