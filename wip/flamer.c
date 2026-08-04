@@ -858,8 +858,7 @@ struct Object4 *sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
     if (Macro_0810B1F4(&flamer->base))
         newObj->flags |= 0x2000;
     newObj->flags |= 0x4000;
-    gfxId = 0x31E;
-    sub_080709F8(newObj, &newObj->sprite, 6, gfxId, 12, 12);
+    sub_080709F8(newObj, &newObj->sprite, 6, gfxId = 0x31E, 12, 12);
     newObj->sprite.palId = (u8)z;
     if (flamer->base.unkC & 0x10)
     {
