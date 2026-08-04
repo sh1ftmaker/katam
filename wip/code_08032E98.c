@@ -22,6 +22,8 @@ extern void sub_080340A8(void);
 extern void sub_080006EC(void);
 extern void PauseMenuInitRetained(void);
 extern void sub_08033B9C(void);
+void nullsub_30(struct Task *);
+void sub_0803518C(u8 *);
 
 struct Unk_08039E04 {
     void (*unk0)(struct Unk_08039E04 *);
@@ -49,7 +51,7 @@ void sub_0803D2D0(void);
 void sub_0803D2EC(void);
 void sub_0803D324(struct Unk_02022930_0 *, u8);
 
-void nullsub_30(void)
+void nullsub_30(struct Task *t)
 {
 }
 
@@ -2030,14 +2032,131 @@ void sub_08034A20(void)
 }
 
 struct Unk_080340A8 {
-    /* 0x00 */ u8 filler0[0xB];
+    /* 0x00 */ u32 unk0;
+    /* 0x04 */ u16 unk4;
+    /* 0x06 */ u8 unk6;
+    /* 0x07 */ u8 unk7;
+    /* 0x08 */ u8 filler8;
+    /* 0x09 */ u8 unk9;
+    /* 0x0A */ u8 unkA;
     /* 0x0B */ u8 unkB;
     /* 0x0C */ u8 unkC;
-    /* 0x0D */ u8 fillerD;
+    /* 0x0D */ u8 unkD;
     /* 0x0E */ u8 unkE;
-    /* 0x0F */ u8 fillerF;
+    /* 0x0F */ u8 unkF;
     /* 0x10 */ u32 unk10;
-};
+    /* 0x14 */ u8 filler14[8];
+    /* 0x1C */ void *unk1C;
+    /* 0x20 */ struct Sprite unk20[3][4];
+}; /* size = 0x200 */
+
+void sub_080338B4(void)
+{
+    struct Task *t;
+    void *tmp;
+    struct Unk_080340A8 *p;
+    struct Kirby *kirby;
+    struct Sprite *s;
+    u8 i;
+
+    gBgCntRegs[1] = 0x1C04;
+    CPU_FILL(0x184, (void *)0x0600E000, 0x800, 16);
+    CPU_FILL(0, (void *)0x06007080, 0x600, 16);
+    gBgScrollRegs[1][0] = 0;
+    gBgScrollRegs[1][1] = 0;
+    t = TaskCreate(sub_08033B9C, 0x200, 0xF500, 0, nullsub_30);
+    gUnk_03000010 = t;
+    tmp = TaskGetStructPtr(t);
+    p = tmp;
+    CPU_FILL(0, p, 0x200, 16);
+    kirby = &gKirbys[gUnk_0203AD3C];
+
+    if (gUnk_0203AD10 & 0x10) {
+        sub_08036114();
+        t->main = sub_08034034;
+        return;
+    }
+
+    sub_08035FDC();
+    sub_08035E28(kirby->ability);
+    sub_08036048();
+    sub_08036088(kirby);
+    sub_0803518C((u8 *)kirby);
+    sub_08034C9C(2);
+    sub_08036194();
+    sub_08034D68(kirby);
+    sub_080361C8();
+    sub_08034FA8(NULL);
+    CPU_FILL(0, (void *)0x060077A0, 0x100, 16);
+
+    p->unk0 = kirby->score;
+    p->unk6 = kirby->hp;
+    p->unk7 = kirby->lives;
+    p->unkC = kirby->battery;
+    p->unkB = gRoomProps[kirby->base.base.base.roomId].priorityFlags & 8;
+    p->unk4 = 0x80;
+    p->unk9 = 0;
+    p->unkA = 0;
+    p->unkF = 0;
+    p->unk1C = NULL;
+    p->unkE = 0;
+    p->unk10 = 0;
+    p->unkD = 0;
+
+    for (i = 0; i < gUnk_0203AD44; i++) {
+        if (gUnk_0203AD3C == i) {
+            s = &p->unk20[0][i];
+            s->tilesVram = 0;
+            s->unk14 = 0x80;
+            s->animId = 0x2DB;
+            s->variant = 1;
+            s->unk16 = 0;
+            s->unk1B |= 0xFF;
+            s->unk1C = 0x10;
+            s->palId = 0;
+            s->x = 8;
+            s->y = 0xF;
+            s->unk8 = 0x40000;
+        } else {
+            s = &p->unk20[0][i];
+            s->tilesVram = gKirbys[i].base.base.base.sprite.tilesVram;
+            s->unk14 = 0x80;
+            s->animId = 0;
+            s->variant = 0;
+            s->unk16 = 0;
+            s->unk1B |= 0xFF;
+            s->unk1C = 0x10;
+            s->palId = gKirbys[i].base.base.base.sprite.palId;
+            s->x = 0;
+            s->y = 0;
+            s->unk8 = 0x42000;
+        }
+        s = &p->unk20[1][i];
+        s->tilesVram = gKirbys[i].base.base.base.sprite.tilesVram + 0x80;
+        s->unk14 = 0x80;
+        s->animId = 0;
+        s->variant = 0;
+        s->unk16 = 0;
+        s->unk1B |= 0xFF;
+        s->unk1C = 0x10;
+        s->palId = gKirbys[i].base.other.unk7C[1].palId;
+        s->x = 0;
+        s->y = 0;
+        s->unk8 = 0x42000;
+        s = &p->unk20[2][i];
+        s->tilesVram = gKirbys[i].base.other.unk7C[0].tilesVram;
+        s->unk14 = 0x80;
+        s->animId = 0;
+        s->variant = 0;
+        s->unk16 = 0;
+        s->unk1B |= 0xFF;
+        s->unk1C = 0x10;
+        s->palId = 0xF;
+        s->x = 0;
+        s->y = 0;
+        s->unk8 = 0x42000;
+    }
+}
 
 void sub_080340A8(void)
 {
