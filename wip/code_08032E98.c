@@ -858,3 +858,91 @@ void sub_080363B4(void)
         dst += 0x10;
     }
 }
+
+extern void sub_08037314(void);
+extern void sub_08038B34(void);
+extern void sub_0808838C(void);
+
+void sub_08036470(void)
+{
+    sub_08037314();
+    sub_08038B34();
+    sub_0808838C();
+    gUnk_02022EB0[0][0] = 0;
+    gUnk_02022EB0[0][1] = 0;
+    gUnk_02022EB0[1][0] = 0;
+    gUnk_02022EB0[1][1] = 0;
+    gUnk_02022EB0[2][0] = 0;
+    gUnk_02022EB0[2][1] = 0;
+    gUnk_02022EB0[3][0] = 0;
+    gUnk_02022EB0[3][1] = 0;
+    gUnk_02022F40[0] = 0;
+    gUnk_02022F40[1] = 0;
+    gUnk_02022F40[2] = 0;
+    gUnk_02022F40[3] = 0;
+    gUnk_02022F50[0] = NULL;
+    gUnk_02022F50[64] = NULL;
+    gUnk_02022F50[128] = NULL;
+    gUnk_02022F50[192] = NULL;
+    gUnk_02022EC0[0][0] = NULL;
+    gUnk_02022EC0[1][0] = NULL;
+    gUnk_02022EC0[2][0] = NULL;
+    gUnk_02022EC0[3][0] = NULL;
+    gUnk_0203AD40++;
+}
+
+void sub_08039E58(struct Unk_08039E04 *arg0)
+{
+    u16 c;
+
+    if (++arg0->unkA > 0x1E) {
+        c = 0x7FFF;
+        sub_0803D21C(&c, 0, 1);
+        if (gUnk_0203AD10 & 2)
+            sub_08031CE4(8);
+        arg0->unk0 = sub_08039ED4;
+        m4aSongNumStop(0x16);
+        m4aSongNumStop(0x17);
+        m4aMPlayVolumeControl(&gMPlayInfo_1, 0xFFFF, 0);
+        m4aMPlayVolumeControl(&gMPlayInfo_2, 0xFFFF, 0);
+    }
+}
+
+void sub_08039600(u16 arg0)
+{
+    struct Task *t;
+    struct Unk_08039E04 *s;
+
+    t = TaskCreate(sub_08039D7C, 0xC, 1, 4, sub_08039DB0);
+    gUnk_0203AD4C = t;
+    s = TaskGetStructPtr(t);
+    s->unk0 = sub_08039E04;
+    s->unk8 = arg0;
+    s->unk4 = 0;
+    gMainFlags |= 0x400;
+}
+
+void sub_08036114(void)
+{
+    u8 c = gKirbys[gUnk_0203AD3C].color;
+    vu16 *dst = (vu16 *)0x0600E198;
+    u8 i;
+
+    sub_0803D21C(&gUnk_0834BB20[c * 0x10], 0xF0, 0x10);
+    CpuSet(gUnk_08D60F8C[gLanguage], (void *)0x060070A0, 0x400);
+    for (i = 0; i < 6; i++) {
+        *dst = (((long long)i) + 0x1B5) | 0xFFFFF000;
+        dst++;
+    }
+}
+
+u8 sub_08039430(struct ObjectBase *obj, s32 x, s32 y, s16 offX, s16 offY, u16 w, u16 h)
+{
+    s32 x1 = (x >> 8) + offX;
+    s32 y1 = (y >> 8) + offY;
+
+    if (((obj->x >> 8) + 1 >= x1 || ((obj->x >> 8) >= x1 && x1 + w >= (obj->x >> 8)))
+     && ((obj->y >> 8) + 1 >= y1 || ((obj->y >> 8) >= y1 && y1 + h >= (obj->y >> 8))))
+        return TRUE;
+    return FALSE;
+}
