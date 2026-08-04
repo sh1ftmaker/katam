@@ -243,6 +243,50 @@ void sub_0802084C(struct CutsceneTrigger *x) {
     }
 }
 
+void sub_08020FA8(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    struct Object2 *obj = x->unkB4.obj;
+    struct LevelInfo *lvl = &gCurLevelInfo[gUnk_0203AD3C];
+
+    if (++x->unkD0 > 0x3C) {
+        if (obj->base.xspeed != 0) {
+            obj->base.xspeed += 0xE;
+            if (obj->base.xspeed > 0) {
+                x->unkC8.obj4 = sub_0808B62C(&x->obj2.base, 4, 0x2C3, 0, 0);
+                x->unkC8.obj4->sprite.palId = 0;
+                if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == x->unkC8.obj4->roomId) {
+                    if (x->unkC8.obj4->sprite.palId == 0) {
+                        x->unkC8.obj4->sprite.palId = sub_0803DF24(0x2C3);
+                        if (x->unkC8.obj4->sprite.palId == 0xFF)
+                            x->unkC8.obj4->sprite.palId = sub_0803DFAC(0x2C3, 0);
+                    }
+                } else {
+                    x->unkC8.obj4->sprite.palId = 0;
+                }
+                x2->unkC8.obj4->x = obj->base.x;
+                x2->unkC8.obj4->y = obj->base.y - 0x1400;
+                obj->base.xspeed = 0;
+                obj->unk83 = 0;
+                obj->base.sprite.unk1C = 0x10;
+            }
+        }
+    }
+    if (x2->unkD0 & 1) {
+        lvl->viewportModX_44 = (Rand16() & 7) - 4;
+        lvl->viewportModY_46 = (Rand16() & 7) - 4;
+    } else {
+        lvl->viewportModX_44 = 0;
+        lvl->viewportModY_46 = 0;
+    }
+    if (obj->base.xspeed == 0 && x2->unkD0 > 0x78) {
+        lvl->viewportModX_44 = 0;
+        lvl->viewportModY_46 = 0;
+        obj->base.xspeed = 0;
+        obj->base.sprite.unk1C = 0x10;
+        x->obj2.unk78 = sub_0802114C;
+    }
+}
+
 void sub_0802114C(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
     struct Object2 *obj = x->unkB4.obj;
