@@ -1320,3 +1320,105 @@ void sub_0803C748(struct Unk_02022930_0 *p)
         }
     }
 }
+
+extern const u16 *const gUnk_08D60F2C[];
+extern const u16 *const gUnk_08D60F44[];
+
+void sub_08034828(u8 arg0)
+{
+    vu16 *dst = (vu16 *)0x0600E000;
+    u8 i, j;
+
+    switch (arg0) {
+    case 0:
+    default:
+        for (j = 0; j < 2; j++) {
+            for (i = 0; i < 14; i++) {
+                *dst = 0xF184;
+                dst++;
+            }
+            dst += 18;
+        }
+        break;
+    case 1:
+        CpuSet(gUnk_08D60F2C[gLanguage], (void *)0x06007C60, 0x1D0);
+        for (j = 0; j < 2; j++) {
+            for (i = 0; i < 14; i++) {
+                *dst = (j * 15 + (((long long)i) + 0x1E3)) | 0xFFFFF000;
+                dst++;
+            }
+            dst += 18;
+        }
+        break;
+    case 2:
+        CpuSet(gUnk_08D60F44[gLanguage], (void *)0x06007C60, 0x1D0);
+        for (j = 0; j < 2; j++) {
+            for (i = 0; i < 14; i++) {
+                *dst = (j * 15 + (((long long)i) + 0x1E3)) | 0xFFFFF000;
+                dst++;
+            }
+            dst += 18;
+        }
+        break;
+    }
+}
+
+extern const u16 *const gUnk_08D60EFC[];
+extern const u16 *const gUnk_08D60F14[];
+
+void sub_08034924(u8 arg0)
+{
+    vu16 *dst = (vu16 *)0x0600E000;
+    u8 i, j;
+
+    switch (arg0) {
+    case 0:
+    default:
+        for (j = 0; j < 2; j++) {
+            for (i = 0; i < 14; i++) {
+                *dst = 0xF184;
+                dst++;
+            }
+            dst += 18;
+        }
+        break;
+    case 1:
+        CpuSet(gUnk_08D60EFC[gLanguage], (void *)0x06007C60, 0x1D0);
+        for (j = 0; j < 2; j++) {
+            for (i = 0; i < 14; i++) {
+                *dst = (j * 15 + (((long long)i) + 0x1E3)) | 0xFFFFF000;
+                dst++;
+            }
+            dst += 18;
+        }
+        break;
+    case 2:
+        CpuSet(gUnk_08D60F14[gLanguage], (void *)0x06007C60, 0x1D0);
+        for (j = 0; j < 2; j++) {
+            for (i = 0; i < 14; i++) {
+                *dst = (j * 15 + (((long long)i) + 0x1E3)) | 0xFFFFF000;
+                dst++;
+            }
+            dst += 18;
+        }
+        break;
+    }
+}
+
+void sub_08039504(struct Unk_08039E04 *s)
+{
+    u16 i;
+
+    gMainFlags &= ~0x400;
+    s->unkA = 0;
+    if (gUnk_0203AD10 & 2) {
+        for (i = 0; i < gUnk_0203AD30; i++) {
+            struct Kirby *k = &gKirbys[i];
+            u16 v = gUnk_020382D0.unk8[0][i];
+            k->movementState |= v & 2;
+        }
+    } else {
+        gKirbys[0].movementState |= gHeldKeys & 2;
+    }
+    s->unk0 = sub_08039F74;
+}
