@@ -713,10 +713,13 @@ void sub_08021984(struct CutsceneTrigger *x) {
                         if (v < gUnk_082DEA7C[k][0]) {
                             t = (u16)gUnk_082DEA7C[k][0];
                         } else {
-                            if (v > gUnk_082DEA8C[k][0]) {
-                                v = gUnk_082DEA8C[k][0];
+                            register s32 mx asm("r2") = gUnk_082DEA8C[k][0];
+                            register s32 c asm("r0") = v;
+
+                            if (c > mx) {
+                                c = mx;
                             }
-                            t = v;
+                            t = c;
                         }
                         obj->unk3C = t;
                         if (obj->unk3C < d) {
@@ -772,15 +775,18 @@ void sub_08021984(struct CutsceneTrigger *x) {
                         if (v < gUnk_082DEA7C[k][1]) {
                             t = (u16)gUnk_082DEA7C[k][1];
                         } else {
-                            if (v > gUnk_082DEA8C[k][1]) {
-                                v = gUnk_082DEA8C[k][1];
+                            register s32 mx asm("r2") = gUnk_082DEA8C[k][1];
+                            register s32 c asm("r0") = v;
+
+                            if (c > mx) {
+                                c = mx;
                             }
-                            t = v;
+                            t = c;
                         }
                         obj->unk3E = t;
                         if (obj->unk3E < d) {
-                            obj->unk3E = -obj->unk3E;
                             flag = 0;
+                            obj->unk3E = -obj->unk3E;
                         } else {
                             obj->unk3E = 0;
                         }
