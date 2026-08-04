@@ -93,7 +93,9 @@ void sub_080B89DC(struct Object2 *flamer)
     u32 collision;
     u32 attr;
     u8 t;
+    u8 st;
     u8 *facing;
+    u8 *sub;
     s32 mag;
     s16 *speed;
 
@@ -108,10 +110,14 @@ void sub_080B89DC(struct Object2 *flamer)
 
     facing = &flamer->unk85;
     v = sub_080B75D0(flamer);
+#ifndef NONMATCHING
+    asm("" ::: "r0");
+#endif
     if (v == 0)
         goto end;
 
-    if (v & 1)
+    v &= 1;
+    if (v)
     {
         t = *facing & 0xC0;
         if (t == 0x40)
@@ -150,6 +156,9 @@ void sub_080B89DC(struct Object2 *flamer)
 
     collision = sub_080B7E74(flamer);
     attr = sub_080B819C(flamer) & 0xF0000000;
+#ifndef NONMATCHING
+    asm("" ::: "r3");
+#endif
     if (collision == 0)
         goto end;
     if ((collision & 0xF0000001) || (attr & 0xF0000000))
@@ -187,7 +196,9 @@ dispatch:
     t = *facing & 0xC0;
     if (t == 0x40)
     {
-        switch (flamer->subtype)
+        st = flamer->subtype;
+        sub = &flamer->subtype;
+        switch (st)
         {
         case 1: mag = 0x140; break;
         case 2: mag = 0x300; break;
@@ -200,7 +211,7 @@ dispatch:
             goto end;
         if (attr == 0x30000000)
         {
-            switch (flamer->subtype)
+            switch (*sub)
             {
             case 1: mag = 0xE2; break;
             case 2: mag = 0x21F; break;
@@ -209,7 +220,7 @@ dispatch:
         }
         else if (attr == 0x10000000 || attr == 0x20000000 || attr == 0x50000000 || attr == 0x60000000)
         {
-            switch (flamer->subtype)
+            switch (*sub)
             {
             case 1: mag = 0x127; break;
             case 2: mag = 0x2C4; break;
@@ -218,7 +229,7 @@ dispatch:
         }
         else if (attr == 0x40000000)
         {
-            switch (flamer->subtype)
+            switch (*sub)
             {
             case 1: mag = 0xE2; break;
             case 2: mag = 0x21F; break;
@@ -232,7 +243,9 @@ dispatch:
     }
     else if (t == 0)
     {
-        switch (flamer->subtype)
+        st = flamer->subtype;
+        sub = &flamer->subtype;
+        switch (st)
         {
         case 1: mag = 0x140; break;
         case 2: mag = 0x300; break;
@@ -246,7 +259,7 @@ dispatch:
             goto end;
         if (attr == 0x90000000 || attr == 0xA0000000)
         {
-            switch (flamer->subtype)
+            switch (*sub)
             {
             case 1: mag = 0xE2; break;
             case 2: mag = 0x21F; break;
@@ -255,7 +268,7 @@ dispatch:
         }
         else if (attr == 0x70000000 || attr == 0x80000000 || attr == 0xC0000000)
         {
-            switch (flamer->subtype)
+            switch (*sub)
             {
             case 1: mag = 0x127; break;
             case 2: mag = 0x2C4; break;
@@ -271,7 +284,9 @@ dispatch:
     else if (t == 0x80)
     {
         flamer->base.xspeed = 0;
-        switch (flamer->subtype)
+        st = flamer->subtype;
+        sub = &flamer->subtype;
+        switch (st)
         {
         case 1: mag = 0x140; break;
         case 2: mag = 0x300; break;
@@ -283,7 +298,7 @@ dispatch:
             goto end;
         if (attr == 0x30000000 || attr == 0x40000000 || attr == 0x90000000 || attr == 0xA0000000)
         {
-            switch (flamer->subtype)
+            switch (*sub)
             {
             case 1: mag = 0xE2; break;
             case 2: mag = 0x21F; break;
@@ -292,7 +307,7 @@ dispatch:
         }
         else if (attr == 0x10000000 || attr == 0x20000000 || attr == 0x50000000 || attr == 0x60000000)
         {
-            switch (flamer->subtype)
+            switch (*sub)
             {
             case 1: mag = 0x127; break;
             case 2: mag = 0x2C4; break;
@@ -301,7 +316,7 @@ dispatch:
         }
         else if (attr == 0x70000000 || attr == 0x80000000 || attr == 0xB0000000 || attr == 0xC0000000)
         {
-            switch (flamer->subtype)
+            switch (*sub)
             {
             case 1: mag = 0x117; break;
             case 2: mag = 0x4A; break;
@@ -316,7 +331,9 @@ dispatch:
     else if (t == 0xC0)
     {
         flamer->base.xspeed = 0;
-        switch (flamer->subtype)
+        st = flamer->subtype;
+        sub = &flamer->subtype;
+        switch (st)
         {
         case 1: mag = 0x140; break;
         case 2: mag = 0x300; break;
@@ -329,7 +346,7 @@ dispatch:
             goto end;
         if (attr == 0x10000000 || attr == 0x60000000 || attr == 0x70000000 || attr == 0xB0000000 || attr == 0xC0000000)
         {
-            switch (flamer->subtype)
+            switch (*sub)
             {
             case 1: mag = 0x117; break;
             case 2: mag = 0x4A; break;
@@ -338,7 +355,7 @@ dispatch:
         }
         else if (attr == 0x30000000 || attr == 0x40000000 || attr == 0x90000000)
         {
-            switch (flamer->subtype)
+            switch (*sub)
             {
             case 1: mag = 0xE2; break;
             case 2: mag = 0x21F; break;
