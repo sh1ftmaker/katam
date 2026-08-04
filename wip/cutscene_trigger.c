@@ -1617,9 +1617,8 @@ void sub_08023394(struct CutsceneTrigger *x) {
 void sub_080233A8(struct CutsceneTrigger *x) {
     if (++x->unkB4.s[0] > 0x4F) {
         struct Object4 *obj = x->unkC4.obj4;
-        u16 v = obj->unk8;
 
-        obj->unk8 = v & 0xFFBF;
+        obj->unk8 = (u16)obj->unk8 & 0xFFBF;
         x->obj2.base.flags |= 0x1000;
     }
 }
