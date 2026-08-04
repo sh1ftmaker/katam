@@ -228,21 +228,20 @@ void LoadLevelGfx(u8 playerId, const u16 **a, const u16 **b)
 
 void FillLevelInfo(u8 playerId, u16 room, const u16 **a, const u16 **b)
 {
-    struct Unk_08002E48_2 *var0 = TaskGetStructPtr(gUnk_02023354);
+    struct Unk_08002E48_2 *var0 = TaskGetStructPtr(gUnk_02023354), *var1 = var0;
     struct LevelInfo *levelInfo = gCurLevelInfo + playerId;
+    struct Background *bg2 = &levelInfo->unkC0[2];
     struct Background *bg0 = &levelInfo->unkC0[0];
     u32 prevRoom = levelInfo->currentRoom;
-    u8 i;
+    u8 i = 0;
 
     if (prevRoom != 0xFFFF)
-        sub_08003028(playerId, playerId == var0->unk0);
+        sub_08003028(playerId, playerId == var1->unk0);
 
     levelInfo->unk5FA = levelInfo->currentRoom;
     levelInfo->currentRoom = room;
 
     if (room != 0xFFFF) {
-
-        struct Background *bg2 = &levelInfo->unkC0[2];
 
         CpuSet(gForegroundTilemaps[gRoomProps[room].mapDataIdx], &levelInfo->unk180[0], 0x10);
         CpuSet(gRoomTiledBGs[gRoomProps[room].backgroundIdx], &levelInfo->unk180[1], 0x10);
@@ -295,7 +294,9 @@ void FillLevelInfo(u8 playerId, u16 room, const u16 **a, const u16 **b)
         levelInfo->unk2C = 0;
         levelInfo->unk30 = 0;
         levelInfo->altViewport_34.x = gRoomProps[room].unk0A;
-        levelInfo->altViewport_34.y = ((levelInfo->unk180[1].height << 3) - (gRoomProps[room].unk0C + 0xA0)) << 8;
+        { s32 h = levelInfo->unk180[1].height << 3;
+          s32 t = gRoomProps[room].unk0C + 0xA0;
+          levelInfo->altViewport_34.y = (h - t) << 8; }
         levelInfo->unk3C = 0;
         levelInfo->unk40 = 0;
         levelInfo->viewportModX_44 = 0;
@@ -472,13 +473,13 @@ void FillLevelInfo(u8 playerId, u16 room, const u16 **a, const u16 **b)
             levelInfo->unk662 = 0x180;
             levelInfo->unk664 = 0x180;
 
-            if (playerId == var0->unk0)
+            if (playerId == var1->unk0)
                 LoadLevelGfx(playerId, a, b);
 
             sub_08001D18(playerId);
             levelInfo->viewportPositionUnmodified.x = levelInfo->viewportPosition.x;
             levelInfo->viewportPositionUnmodified.y = levelInfo->viewportPosition.y;
-            sub_08002EC4(playerId, playerId == var0->unk0);
+            sub_08002EC4(playerId, playerId == var1->unk0);
         }
     }
 
