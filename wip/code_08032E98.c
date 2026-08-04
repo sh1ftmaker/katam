@@ -1422,3 +1422,89 @@ void sub_08039504(struct Unk_08039E04 *s)
     }
     s->unk0 = sub_08039F74;
 }
+
+void sub_08034C9C(u8 arg0)
+{
+    u16 i;
+    u8 *p;
+    vu16 *dst;
+
+    if (!(gUnk_0203AD10 & 0x10)) {
+        p = TaskGetStructPtr(gUnk_03000010);
+        p[0x14] = arg0;
+        dst = (vu16 *)0x0600E380;
+        for (i = 0; i < 6 - arg0; i++) {
+            *dst = 0x184;
+            dst++;
+            *dst = 0x184;
+            dst++;
+            *dst = 0x184;
+            dst++;
+            *dst = 0x184;
+            dst++;
+            *dst = 0x184;
+            dst += 0x1C;
+        }
+        for (i = 0; i < arg0; i++) {
+            s32 v;
+            v = (i * 5 + 0x1C5) | (0xE << 12);
+            *dst = v;
+            dst++;
+            v = (i * 5 + 0x1C6) | (0xE << 12);
+            *dst = v;
+            dst++;
+            v = (i * 5 + 0x1C7) | (0xE << 12);
+            *dst = v;
+            dst++;
+            v = (i * 5 + 0x1C8) | (0xE << 12);
+            *dst = v;
+            dst++;
+            v = (i * 5 + 0x1C9) | (0xE << 12);
+            *dst = v;
+            dst += 0x1C;
+        }
+    }
+}
+
+void sub_08034D68(struct Kirby *kirby)
+{
+    u8 *p = TaskGetStructPtr(gUnk_03000010);
+    vu16 *dst = (vu16 *)0x0600E004;
+    s32 a, b, x, y, t;
+
+    switch (kirby->battery) {
+    case 0:
+        a = 0x30;
+        b = 0x31;
+        break;
+    case 1:
+        if (p[0xD] & 0x20) {
+            a = 0x35;
+            b = 0x37;
+        } else {
+            a = 0x35;
+            b = 0x36;
+        }
+        break;
+    case 2:
+        a = 0x34;
+        b = 0x33;
+        break;
+    default:
+        a = 0x32;
+        b = 0x33;
+        break;
+    }
+    x = 0x185 + a;
+    t = x | 0xFFFFF000;
+    *dst = t;
+    dst++;
+    y = 0x185 + b;
+    t = y | 0xFFFFF000;
+    *dst = t;
+    dst += 0x1F;
+    t = x | 0xFFFFF800;
+    *dst = t;
+    t = y | 0xFFFFF800;
+    dst[1] = t;
+}
