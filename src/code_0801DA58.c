@@ -201,7 +201,7 @@ static void sub_0801DF30(struct Unk_0801DA58 *var)
     sub_0801DEC8(var);
 }
 
-static void sub_0801DFE8(void)
+void sub_0801DFE8(void)
 {
     sub_0801DA58(0);
 }
