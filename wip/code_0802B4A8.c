@@ -29,7 +29,8 @@ struct Unk_0802B4A8 {
     /* 0x218 */ u32 unk218[5][2];
     /* 0x240 */ u16 unk240[5][2];
     /* 0x254 */ u16 unk254[5];
-    /* 0x25E */ u8 filler25E[0x268 - 0x25E];
+    /* 0x25E */ u16 unk25E[4];
+    /* 0x266 */ u8 filler266[2];
     /* 0x268 */ u16 unk268[4];
     /* 0x270 */ u8 filler270[0x274 - 0x270];
     /* 0x274 */ s32 unk274;
@@ -85,6 +86,10 @@ extern u32 gUnk_082EB564[][2];
 extern u16 gUnk_082EB634[];
 extern u16 gUnk_082EB640[][6][2];
 extern u16 gUnk_082EB5B4[];
+extern u32 gUnk_082EB5C0[][2];
+extern u32 gUnk_082EB5C4[][2];
+extern u16 gUnk_082EB4B4[][2];
+extern u16 gUnk_082EB4B6[][2];
 extern u16 gUnk_0300000C;
 
 void sub_0803D2D0(void);
@@ -106,6 +111,7 @@ void sub_0802D458(struct Unk_0802B4A8 *);
 void sub_0802D46C(struct Unk_0802B4A8 *);
 void sub_0802C550(struct Unk_0802B4A8 *);
 void sub_0802C8E8(struct Unk_0802B4A8 *);
+void sub_0802CA78(struct Unk_0802B4A8 *);
 void sub_0802D360(struct Task *);
 void sub_0802DE14(struct Unk_0802B4A8 *);
 void sub_0802DE38(struct Unk_0802B4A8 *);
@@ -474,6 +480,63 @@ void sub_0802C770(struct Unk_0802B4A8 *x) {
     x->unk2BC = 0;
     x->unk214 &= 0xFFF7FFFF;
     x->unk0 = sub_0802D800;
+}
+
+void sub_0802C8E8(struct Unk_0802B4A8 *x) {
+    u16 i;
+    struct Sprite *s;
+    struct Sprite *s2;
+    u32 ff = -1;
+
+    for (i = 0; i < 4; i++) {
+        s = &x->unk4[i];
+        x->unk218[i][0] = gUnk_082EB5C0[i][0];
+        x->unk218[i][1] = gUnk_082EB5C4[i][0];
+        x->unk240[i][0] = 0x300;
+        x->unk240[i][1] = 0xFF80;
+        x->unk25E[i] = 0;
+        x->unk268[i] = 0;
+
+        s->unk14 = 0x100;
+        s->animId = gUnk_082EB4B4[gKirbys[i].color][0];
+        s->variant = gUnk_082EB4B6[gKirbys[i].color][0];
+        s->unk16 = 0;
+        s->unk1B = 0xFF;
+        s->unk1C = 0x10;
+        s->palId = i;
+        s->x = 0;
+        s->y = 0;
+        s->unk8 = 0x81000;
+        sub_08155128(s);
+
+        s->unk14 = 0x100;
+        s->animId = 0x2D;
+        s->variant = 0;
+        s->unk16 = 0;
+        s->unk1B = ff;
+        s->unk1C = 0x10;
+        s->palId = i;
+        s->x = (s32)x->unk218[i][0] >> 8;
+        s->y = (s32)x->unk218[i][1] >> 8;
+        s->unk8 = 0x41000;
+        sub_08155128(s);
+    }
+
+    s2 = &x->unkCC;
+    s2->unk14 = 0x140;
+    s2->animId = 0x2DE;
+    s2->variant = 0;
+    s2->unk16 = 0;
+    s2->unk1B |= ff;
+    s2->unk1C = 0x10;
+    s2->palId = 0xF;
+    s2->x = 0xFF00;
+    s2->y = 0xFF00;
+    s2->unk8 = 0x1000;
+    sub_08155128(s2);
+
+    x->unk214 = (x->unk214 & 0xF0800000) | 0xB6D;
+    x->unk0 = sub_0802CA78;
 }
 
 void sub_0802CA78(struct Unk_0802B4A8 *x) {
