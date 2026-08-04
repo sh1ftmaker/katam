@@ -25,24 +25,24 @@ extern u8 gUnk_0203A9A0;
 extern u16 gUnk_0203A9B0[];
 
 void sub_08020220(void) {
-    u8 n = gUnk_03003A00;
-    u16 j = n * 4;
-    u16 k = n * 3;
+    u8 firstSlot = gUnk_03003A00;
+    u16 oamIdx = firstSlot * 4;
+    u16 backupIdx = firstSlot * 3;
     u16 i;
 
-    gUnk_0203A9A0 = n;
+    gUnk_0203A9A0 = firstSlot;
     gUnk_03003A00 = 0;
     for (i = gUnk_0203A9A0; i < 0x80; i++) {
-        u16 *oam = (u16 *)gOamBuffer + j;
-        CpuCopy16(oam, &gUnk_0203A9B0[k], 6);
+        u16 *oam = (u16 *)gOamBuffer + oamIdx;
+        CpuCopy16(oam, &gUnk_0203A9B0[backupIdx], 6);
         CpuFill16(0x200, oam, 6);
-        j += 4;
-        k += 3;
+        oamIdx += 4;
+        backupIdx += 3;
     }
 }
 
-static void sub_08020298(struct Unk_08020428 *x) {
-    void (*callback)(void) = x->callback;
+static void sub_08020298(struct Unk_08020428 *fade) {
+    void (*callback)(void) = fade->callback;
 
     TasksDestroyInPriorityRange(0, 0xFFFF);
     gUnk_03003A04 = gUnk_03003790;
@@ -63,17 +63,17 @@ static void sub_08020298(struct Unk_08020428 *x) {
 }
 
 void sub_08020370(void) {
-    u8 n = gUnk_0203A9A0;
-    u16 j = n * 4;
-    u16 k = n * 3;
+    u8 firstSlot = gUnk_0203A9A0;
+    u16 oamIdx = firstSlot * 4;
+    u16 backupIdx = firstSlot * 3;
     u16 i;
 
-    gUnk_03003A00 = n;
+    gUnk_03003A00 = firstSlot;
     gUnk_0203A9A0 = 0;
     for (i = gUnk_03003A00; i < 0x80; i++) {
-        CpuCopy16(&gUnk_0203A9B0[k], (u16 *)gOamBuffer + j, 6);
-        j += 4;
-        k += 3;
+        CpuCopy16(&gUnk_0203A9B0[backupIdx], (u16 *)gOamBuffer + oamIdx, 6);
+        oamIdx += 4;
+        backupIdx += 3;
     }
 }
 
@@ -86,11 +86,11 @@ void sub_080203C8(void) {
 
 void sub_08020428(void (*callback)(void)) {
     struct Task *task = TaskCreate(sub_080205BC, sizeof(struct Unk_08020428), 1, TASK_x0004, NULL);
-    struct Unk_08020428 *x = TaskGetStructPtr(task);
+    struct Unk_08020428 *fade = TaskGetStructPtr(task);
 
-    x->func = sub_080205F0;
-    x->callback = callback;
-    x->counter = 0;
+    fade->func = sub_080205F0;
+    fade->callback = callback;
+    fade->counter = 0;
     m4aMPlayAllStop();
     gMainFlags |= 0x400;
 }
@@ -144,38 +144,38 @@ u16 sub_0802055C(u16 idx) {
 void nullsub_112(void) {}
 
 static void sub_080205BC(void) {
-    struct Unk_08020428 *x = TaskGetStructPtr(gCurTask);
-    x->func(x);
+    struct Unk_08020428 *fade = TaskGetStructPtr(gCurTask);
+    fade->func(fade);
 }
 
-static void sub_080205F0(struct Unk_08020428 *x) {
+static void sub_080205F0(struct Unk_08020428 *fade) {
     if (gUnk_0203AD10 & 2) {
         gUnk_020382D0.unk4 &= ~2;
     }
-    x->func = sub_08020624;
+    fade->func = sub_08020624;
 }
 
-static void sub_08020624(struct Unk_08020428 *x) {
+static void sub_08020624(struct Unk_08020428 *fade) {
     gBldRegs.bldCnt = 0xBF;
     gBldRegs.bldY = 0;
-    x->counter = 0;
-    x->func = sub_08020640;
+    fade->counter = 0;
+    fade->func = sub_08020640;
 }
 
-static void sub_08020640(struct Unk_08020428 *x) {
-    x->counter++;
-    if (x->counter > 0xF) {
+static void sub_08020640(struct Unk_08020428 *fade) {
+    fade->counter++;
+    if (fade->counter > 0xF) {
         gBldRegs.bldY = 0x10;
-        x->func = sub_08020674;
+        fade->func = sub_08020674;
     } else {
-        gBldRegs.bldY = x->counter;
+        gBldRegs.bldY = fade->counter;
     }
 }
 
-static void sub_08020674(struct Unk_08020428 *x) {
+static void sub_08020674(struct Unk_08020428 *fade) {
     if (gUnk_0203AD10 & 2) {
         sub_08031CC8();
         sub_081589E8();
     }
-    x->func = sub_08020298;
+    fade->func = sub_08020298;
 }

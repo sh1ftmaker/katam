@@ -6,12 +6,12 @@
 
 struct Unk_0802F8D8 {
     /* 0x00 */ struct Sprite sprite;
-    /* 0x28 */ struct Unk_0802E57C *unk28;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ u16 unk38;
+    /* 0x28 */ struct Unk_0802E57C *parent;
+    /* 0x2C */ s32 x;
+    /* 0x30 */ s32 y;
+    /* 0x34 */ s16 xspeed;
+    /* 0x36 */ s16 yspeed;
+    /* 0x38 */ u16 timer;
     /* 0x3A */ u16 unk3A;
 }; /* size = 0x3C */
 
@@ -29,15 +29,15 @@ struct Unk_0802F8D8 *sub_0802F8D8(struct Unk_0802E57C *a, u16 animId, u16 varian
     struct Task *t = TaskCreate(sub_0802F9AC, sizeof(struct Unk_0802F8D8), 0x101, 0, NULL);
     struct Unk_0802F8D8 *s = TaskGetStructPtr(t);
 
-    s->unk28 = a;
+    s->parent = a;
 #ifndef NONMATCHING
     asm("" ::: "r8");
 #endif
-    s->unk2C = x;
-    s->unk30 = y;
-    s->unk34 = xspeed;
-    s->unk36 = yspeed;
-    s->unk38 = duration;
+    s->x = x;
+    s->y = y;
+    s->xspeed = xspeed;
+    s->yspeed = yspeed;
+    s->timer = duration;
     SpriteInit(&s->sprite, tiles, 0x340, animId, variant, 0, ({ s32 m = -1; m; }), 0x10, 0xB, x >> 8, y >> 8,
                0x80000);
     s->sprite.unk8 |= 0x40000;
@@ -47,19 +47,19 @@ struct Unk_0802F8D8 *sub_0802F8D8(struct Unk_0802E57C *a, u16 animId, u16 varian
 void sub_0802F9AC(void) {
     struct Unk_0802F8D8 *tmp = TaskGetStructPtr(gCurTask), *s = tmp;
 
-    s->unk2C += s->unk34;
-    s->unk30 += s->unk36;
-    if (s->unk38 != 0) {
-        s->unk38--;
-        if (s->unk38 == 0) {
+    s->x += s->xspeed;
+    s->y += s->yspeed;
+    if (s->timer != 0) {
+        s->timer--;
+        if (s->timer == 0) {
             gCurTask->main = sub_0802FE5C;
         }
     }
-    if (s->unk28->unk188 & 0x20000000) {
+    if (s->parent->unk188 & 0x20000000) {
         gCurTask->main = sub_0802FE5C;
     }
-    s->sprite.x = s->unk2C >> 8;
-    s->sprite.y = s->unk30 >> 8;
+    s->sprite.x = s->x >> 8;
+    s->sprite.y = s->y >> 8;
     sub_08155128(&s->sprite);
     s->sprite.unk1B = 0xFF;
     sub_0815604C(&s->sprite);
@@ -70,12 +70,12 @@ struct Unk_0802F8D8 *sub_0802FA40(struct Unk_0802E57C *a, u16 animId, u16 varian
     struct Task *t = TaskCreate(sub_0802FB0C, sizeof(struct Unk_0802F8D8), 0x101, 0, NULL);
     struct Unk_0802F8D8 *s = TaskGetStructPtr(t);
 
-    s->unk28 = a;
-    s->unk2C = x;
-    s->unk30 = y;
-    s->unk34 = xspeed;
-    s->unk36 = yspeed;
-    s->unk38 = duration;
+    s->parent = a;
+    s->x = x;
+    s->y = y;
+    s->xspeed = xspeed;
+    s->yspeed = yspeed;
+    s->timer = duration;
     SpriteInit(&s->sprite, tiles, 0, animId, variant, 0, 0xFF, 0x10, 0xB, x >> 8, y >> 8, 0x80000);
     s->sprite.unk8 |= 0x40000;
     return s;
@@ -84,22 +84,22 @@ struct Unk_0802F8D8 *sub_0802FA40(struct Unk_0802E57C *a, u16 animId, u16 varian
 void sub_0802FB0C(void) {
     struct Unk_0802F8D8 *tmp = TaskGetStructPtr(gCurTask), *s = tmp, *s2 = s;
 
-    s->sprite.x = s->unk2C >> 8;
-    s->sprite.y = s->unk30 >> 8;
+    s->sprite.x = s->x >> 8;
+    s->sprite.y = s->y >> 8;
     if (sub_08155128(&s->sprite) == 0) {
-        if (s->unk38 != 0 && --s->unk38 == 0) {
+        if (s->timer != 0 && --s->timer == 0) {
             gCurTask->main = sub_0802FE70;
         } else {
             s->sprite.unk1B = 0xFF;
         }
     }
     sub_0815604C(&s2->sprite);
-    s->unk2C += s->unk34;
-    s->unk30 += s->unk36;
+    s->x += s->xspeed;
+    s->y += s->yspeed;
     if ((u16)(s2->sprite.x + 0x40) > 0x170 || s2->sprite.y < -0x40 || s2->sprite.y > 0xE0) {
         gCurTask->main = sub_0802FE70;
     }
-    if (s->unk28->unk188 & 0x20000000) {
+    if (s->parent->unk188 & 0x20000000) {
         gCurTask->main = sub_0802FE70;
     }
 }

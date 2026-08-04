@@ -221,7 +221,7 @@ static void sub_080C34D4(void)
     }
 }
 
-void sub_080C3694(struct Object2 *hothead, u8 a2)
+void sub_080C3694(struct Object2 *hothead, u8 dirIndex)
 {
     struct Task *t = TaskCreate(sub_080C3880, sizeof(struct ObjectBase), 0x3500, TASK_USE_IWRAM, sub_0803DCCC);
     struct ObjectBase *tmp = TaskGetStructPtr(t), *objBase = tmp;
@@ -243,9 +243,9 @@ void sub_080C3694(struct Object2 *hothead, u8 a2)
     objBase->flags |= 0x140;
     objBase->unk68 = 0x20000103;
     objBase->unk5C |= 0x80000;
-    if (a2 > 5)
-        a2 = 5;
-    objBase->xspeed = gUnk_0835553A[idx = a2 * 2];
+    if (dirIndex > 5)
+        dirIndex = 5;
+    objBase->xspeed = gUnk_0835553A[idx = dirIndex * 2];
     objBase->yspeed = gUnk_0835553A[idx + 1];
     if (hothead->base.flags & 1)
     {

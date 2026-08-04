@@ -11,10 +11,10 @@
 struct KirbyCannon {
     /* 0x00 */ struct Object2 obj2;
     /* 0xB4 */ u8 unkB4;
-    /* 0xB5 */ u8 unkB5;
-    /* 0xB6 */ u8 unkB6;
-    /* 0xB7 */ u8 unkB7;
-    /* 0xB8 */ u8 unkB8;
+    /* 0xB5 */ u8 stage;
+    /* 0xB6 */ u8 cannonFlags;
+    /* 0xB7 */ u8 timer;
+    /* 0xB8 */ u8 kirbyMask;
     /* 0xBA */ u16 unkBA;
     /* 0xBC */ s8 unkBC;
     /* 0xBD */ s8 unkBD;
@@ -56,13 +56,13 @@ void sub_08121AF8(struct Object2 *obj2) {
 
     obj2->base.counter = 0;
     cannon->unkB4 = 0;
-    cannon->unkB5 = 0;
-    cannon->unkB6 = 8;
+    cannon->stage = 0;
+    cannon->cannonFlags = 8;
     if (obj2->object->unk22 & 2) {
-        cannon->unkB6 = 0x20;
+        cannon->cannonFlags = 0x20;
     }
-    cannon->unkB7 = 3;
-    cannon->unkB8 = 0;
+    cannon->timer = 3;
+    cannon->kirbyMask = 0;
     cannon->unkBA = obj2->object->unk12;
     cannon->unkBC = obj2->object->unk18 >> 8;
     cannon->unkBD = obj2->object->unk18 != 0;
@@ -84,68 +84,68 @@ static void sub_08121B70(struct KirbyCannon *x) {
 
     p = sub_08002888(0, (u8)x->obj2.object->unk14, gCurLevelInfo[x->obj2.base.unk56].unk65E);
     if (*p != 0) {
-        flags = (x->unkB6 & ~8) | 0x20;
+        flags = (x->cannonFlags & ~8) | 0x20;
     } else {
-        flags = (x->unkB6 | 8) & ~0x20;
+        flags = (x->cannonFlags | 8) & ~0x20;
     }
-    x->unkB6 = flags;
+    x->cannonFlags = flags;
 
-    if (x2->unkB6 & 8) {
+    if (x2->cannonFlags & 8) {
         if (x->obj2.base.flags & 0x40000) {
-            x2->unkB6 |= 1;
+            x2->cannonFlags |= 1;
             if (((struct ObjectBase *)x->obj2.base.unk6C)->unk56 < gUnk_0203AD30) {
                 if (gUnk_0203AD30 != 0
                  && gKirbys[0].base.base.base.roomId == roomId
-                 && !(x2->unkB8 & 1)
+                 && !(x2->kirbyMask & 1)
                  && sub_0803925C(&x->obj2.base, &gKirbys[0].base.base.base)
                  && gKirbys[0].base.base.base.unk6C == x
                  && sub_080510EC(&gKirbys[0])) {
-                    x2->unkB8 |= 1;
+                    x2->kirbyMask |= 1;
                 }
                 if (gUnk_0203AD30 > 1
                  && gKirbys[1].base.base.base.roomId == roomId
-                 && !(x2->unkB8 & 2)
+                 && !(x2->kirbyMask & 2)
                  && sub_0803925C(&x->obj2.base, &gKirbys[1].base.base.base)
                  && gKirbys[1].base.base.base.unk6C == x
                  && sub_080510EC(&gKirbys[1])) {
-                    x2->unkB8 |= 2;
+                    x2->kirbyMask |= 2;
                 }
                 if (gUnk_0203AD30 > 2
                  && gKirbys[2].base.base.base.roomId == roomId
-                 && !(x2->unkB8 & 4)
+                 && !(x2->kirbyMask & 4)
                  && sub_0803925C(&x->obj2.base, &gKirbys[2].base.base.base)
                  && gKirbys[2].base.base.base.unk6C == x
                  && sub_080510EC(&gKirbys[2])) {
-                    x2->unkB8 |= 4;
+                    x2->kirbyMask |= 4;
                 }
                 if (gUnk_0203AD30 > 3
                  && gKirbys[3].base.base.base.roomId == roomId
-                 && !(x2->unkB8 & 8)
+                 && !(x2->kirbyMask & 8)
                  && sub_0803925C(&x->obj2.base, &gKirbys[3].base.base.base)
                  && gKirbys[3].base.base.base.unk6C == x
                  && sub_080510EC(&gKirbys[3])) {
-                    x2->unkB8 |= 8;
+                    x2->kirbyMask |= 8;
                 }
             }
-        } else if (x2->unkB6 & 1) {
-            if ((x2->unkB8 & 1) && (gKirbys[0].unk11A & 1)) {
+        } else if (x2->cannonFlags & 1) {
+            if ((x2->kirbyMask & 1) && (gKirbys[0].unk11A & 1)) {
                 sub_08051544(&gKirbys[0]);
-                x2->unkB8 &= ~1;
+                x2->kirbyMask &= ~1;
             }
-            if ((x2->unkB8 & 2) && (gKirbys[1].unk11A & 1)) {
+            if ((x2->kirbyMask & 2) && (gKirbys[1].unk11A & 1)) {
                 sub_08051544(&gKirbys[1]);
-                x2->unkB8 &= ~2;
+                x2->kirbyMask &= ~2;
             }
-            if ((x2->unkB8 & 4) && (gKirbys[2].unk11A & 1)) {
+            if ((x2->kirbyMask & 4) && (gKirbys[2].unk11A & 1)) {
                 sub_08051544(&gKirbys[2]);
-                x2->unkB8 &= ~4;
+                x2->kirbyMask &= ~4;
             }
-            if ((x2->unkB8 & 8) && (gKirbys[3].unk11A & 1)) {
+            if ((x2->kirbyMask & 8) && (gKirbys[3].unk11A & 1)) {
                 sub_08051544(&gKirbys[3]);
-                x2->unkB8 &= ~8;
+                x2->kirbyMask &= ~8;
             }
-            if (!(x2->unkB8 & 0xF)) {
-                x2->unkB6 &= ~1;
+            if (!(x2->kirbyMask & 0xF)) {
+                x2->cannonFlags &= ~1;
             }
         }
     }
@@ -153,21 +153,21 @@ static void sub_08121B70(struct KirbyCannon *x) {
     p = sub_08002888(0, x->obj2.object->unk4, gCurLevelInfo[x->obj2.base.unk56].unk65E);
     if (*p != 0) {
         (*p)--;
-        x2->unkB6 |= 2;
+        x2->cannonFlags |= 2;
     }
-    if (x2->unkB6 & 2) {
-        x2->unkB6 &= ~8;
-        if (x2->unkB6 & 1) {
-            if (x2->unkB8 & 1) {
+    if (x2->cannonFlags & 2) {
+        x2->cannonFlags &= ~8;
+        if (x2->cannonFlags & 1) {
+            if (x2->kirbyMask & 1) {
                 sub_0805BE64(&gKirbys[0]);
             }
-            if (x2->unkB8 & 2) {
+            if (x2->kirbyMask & 2) {
                 sub_0805BE64(&gKirbys[1]);
             }
-            if (x2->unkB8 & 4) {
+            if (x2->kirbyMask & 4) {
                 sub_0805BE64(&gKirbys[2]);
             }
-            if (x2->unkB8 & 8) {
+            if (x2->kirbyMask & 8) {
                 sub_0805BE64(&gKirbys[3]);
             }
             if (x->obj2.object->unk22 & 1) {
@@ -199,22 +199,22 @@ static void sub_08121FCC(struct KirbyCannon *x) {
         eff = sub_0808AE30(&x->obj2.base, 0, 0x2A8, 0);
         eff->y -= 0x2000;
         sub_0806FE64(3, &x->obj2.base);
-        x->unkB5 = 0;
-        if (x->unkB8 & 1) {
+        x->stage = 0;
+        if (x->kirbyMask & 1) {
             sub_080515D4(&gKirbys[0], x->unkBA, x->unkBC, x->unkBD, x->obj2.object->unk22 & 1);
-            x->unkB8 &= ~1;
+            x->kirbyMask &= ~1;
         }
-        if (x->unkB8 & 2) {
+        if (x->kirbyMask & 2) {
             sub_080515D4(&gKirbys[1], x->unkBA, x->unkBC, x->unkBD, x->obj2.object->unk22 & 1);
-            x->unkB8 &= ~2;
+            x->kirbyMask &= ~2;
         }
-        if (x->unkB8 & 4) {
+        if (x->kirbyMask & 4) {
             sub_080515D4(&gKirbys[2], x->unkBA, x->unkBC, x->unkBD, x->obj2.object->unk22 & 1);
-            x->unkB8 &= ~4;
+            x->kirbyMask &= ~4;
         }
-        if (x->unkB8 & 8) {
+        if (x->kirbyMask & 8) {
             sub_080515D4(&gKirbys[3], x2->unkBA, x2->unkBC, x2->unkBD, x2->obj2.object->unk22 & 1);
-            x->unkB8 &= ~8;
+            x->kirbyMask &= ~8;
         }
     }
 }
@@ -222,19 +222,19 @@ static void sub_08121FCC(struct KirbyCannon *x) {
 bool32 sub_0812214C(struct KirbyCannon *x) {
     s32 s;
 
-    if (x->unkB5 <= 0xB) {
+    if (x->stage <= 0xB) {
         x->unkB4--;
         if (x->unkB4 == 0xFF) {
-            s = gUnk_08357E78[x->unkB5] << 8;
+            s = gUnk_08357E78[x->stage] << 8;
             if (s > 0) {
                 x->obj2.base.yspeed += s;
-                if (x->obj2.base.yspeed > gUnk_08357E78[x->unkB5] << 8) {
-                    x->obj2.base.yspeed = gUnk_08357E78[x->unkB5] << 8;
+                if (x->obj2.base.yspeed > gUnk_08357E78[x->stage] << 8) {
+                    x->obj2.base.yspeed = gUnk_08357E78[x->stage] << 8;
                 }
             } else {
                 x->obj2.base.yspeed += s;
-                if (x->obj2.base.yspeed < -(gUnk_08357E78[x->unkB5] << 8)) {
-                    x->obj2.base.yspeed = -(gUnk_08357E78[x->unkB5] << 8);
+                if (x->obj2.base.yspeed < -(gUnk_08357E78[x->stage] << 8)) {
+                    x->obj2.base.yspeed = -(gUnk_08357E78[x->stage] << 8);
                 }
             }
             if (!(x->obj2.base.flags & 0x800)) {
@@ -255,28 +255,28 @@ bool32 sub_0812214C(struct KirbyCannon *x) {
                 }
             }
             x->unkB4 = 0;
-            x->unkB5++;
+            x->stage++;
         }
         return TRUE;
     }
     x->unkB4 = 0;
-    x->unkB5 = 0;
+    x->stage = 0;
     return FALSE;
 }
 
 static void sub_08122248(struct KirbyCannon *x) {
-    u32 r2 = 4 & x->unkB6;
+    u32 r2 = 4 & x->cannonFlags;
 
     if (r2 != 0) {
         if (!sub_0812214C(x)) {
-            x->unkB6 = 8;
-            x->unkB7 = 3;
+            x->cannonFlags = 8;
+            x->timer = 3;
             x->obj2.unk78 = sub_08121B70;
         }
     } else {
-        x->unkB7--;
-        if (x->unkB7 == 0xFF) {
-            x->unkB6 |= 4;
+        x->timer--;
+        if (x->timer == 0xFF) {
+            x->cannonFlags |= 4;
             x->obj2.unk83 = r2;
         }
     }

@@ -43,6 +43,9 @@ void sub_080BA9F0(struct Object2 *);
 void sub_080BAA78(struct Object2 *);
 void sub_080BAAF8(struct Object2 *);
 
+extern const struct Unk_08353510 gUnk_083546A4[];
+extern const struct Unk_08353510 gUnk_08354710[];
+extern const struct Unk_08353510 gUnk_08354734[];
 extern const struct Unk_08353510 gUnk_0835477C[];
 
 void sub_080B8954(struct Object2 *flamer)
@@ -72,6 +75,48 @@ void sub_080B8954(struct Object2 *flamer)
         flamer->base.xspeed = -flamer->base.xspeed;
     flamer->base.flags |= 0x140;
     flamer->base.unkC &= ~1;
+}
+
+
+void sub_080B937C(struct Object2 *flamer)
+{
+    if (flamer->unk83 == 5)
+        flamer->base.flags |= 4;
+    if (flamer->unk9E == 0)
+    {
+        flamer->unk9F++;
+        if (gUnk_083546A4[flamer->unk9F].unk8 == 0)
+            flamer->unk9F--;
+        flamer->unk9E = gUnk_083546A4[flamer->unk9F].unk8;
+        if (gUnk_083546A4[flamer->unk9F].unk9 != 0xFF)
+            flamer->unk83 = gUnk_083546A4[flamer->unk9F].unk9;
+        if (flamer->unk9F != 0)
+        {
+            if (gUnk_083546A4[flamer->unk9F].unk0 != gUnk_083546A4[flamer->unk9F - 1].unk0)
+            {
+                flamer->base.xspeed = gUnk_083546A4[flamer->unk9F].unk0;
+                if (flamer->base.flags & 1)
+                    flamer->base.xspeed = -flamer->base.xspeed;
+            }
+            if (gUnk_083546A4[flamer->unk9F].unk2 != gUnk_083546A4[flamer->unk9F - 1].unk2)
+                flamer->base.yspeed = gUnk_083546A4[flamer->unk9F].unk2;
+        }
+        else
+        {
+            flamer->base.yspeed = gUnk_083546A4[flamer->unk9F].unk2;
+            flamer->base.xspeed = gUnk_083546A4[flamer->unk9F].unk0;
+            if (flamer->base.flags & 1)
+                flamer->base.xspeed = -flamer->base.xspeed;
+        }
+    }
+    if (flamer->base.flags & 1)
+        flamer->base.xspeed -= gUnk_083546A4[flamer->unk9F].unk4;
+    else
+        flamer->base.xspeed += gUnk_083546A4[flamer->unk9F].unk4;
+    flamer->base.yspeed += gUnk_083546A4[flamer->unk9F].unk6;
+    flamer->unk9E--;
+    if (gUnk_083546A4[(u8)(flamer->unk9F + 1)].unk8 == 0 && flamer->unk9E == 0)
+        sub_080BA3EC(flamer);
 }
 
 
@@ -117,6 +162,46 @@ void sub_080B94F4(struct Object2 *flamer)
 }
 
 
+void sub_080B95F0(struct Object2 *flamer)
+{
+    if (flamer->unk9E == 0)
+    {
+        flamer->unk9F++;
+        if (gUnk_08354710[flamer->unk9F].unk8 == 0)
+            flamer->unk9F--;
+        flamer->unk9E = gUnk_08354710[flamer->unk9F].unk8;
+        if (gUnk_08354710[flamer->unk9F].unk9 != 0xFF)
+            flamer->unk83 = gUnk_08354710[flamer->unk9F].unk9;
+        if (flamer->unk9F != 0)
+        {
+            if (gUnk_08354710[flamer->unk9F].unk0 != gUnk_08354710[flamer->unk9F - 1].unk0)
+            {
+                flamer->base.xspeed = gUnk_08354710[flamer->unk9F].unk0;
+                if (flamer->base.flags & 1)
+                    flamer->base.xspeed = -flamer->base.xspeed;
+            }
+            if (gUnk_08354710[flamer->unk9F].unk2 != gUnk_08354710[flamer->unk9F - 1].unk2)
+                flamer->base.yspeed = gUnk_08354710[flamer->unk9F].unk2;
+        }
+        else
+        {
+            flamer->base.yspeed = gUnk_08354710[flamer->unk9F].unk2;
+            flamer->base.xspeed = gUnk_08354710[flamer->unk9F].unk0;
+            if (flamer->base.flags & 1)
+                flamer->base.xspeed = -flamer->base.xspeed;
+        }
+    }
+    if (flamer->base.flags & 1)
+        flamer->base.xspeed -= gUnk_08354710[flamer->unk9F].unk4;
+    else
+        flamer->base.xspeed += gUnk_08354710[flamer->unk9F].unk4;
+    flamer->base.yspeed += gUnk_08354710[flamer->unk9F].unk6;
+    flamer->unk9E--;
+    if (gUnk_08354710[(u8)(flamer->unk9F + 1)].unk8 == 0 && flamer->unk9E == 0)
+        sub_080BA450(flamer);
+}
+
+
 void sub_080B976C(struct Object2 *flamer)
 {
     s16 c;
@@ -158,6 +243,46 @@ void sub_080B976C(struct Object2 *flamer)
         }
     }
 }
+
+void sub_080B9810(struct Object2 *flamer)
+{
+    if (flamer->unk9E == 0)
+    {
+        flamer->unk9F++;
+        if (gUnk_08354734[flamer->unk9F].unk8 == 0)
+            flamer->unk9F--;
+        flamer->unk9E = gUnk_08354734[flamer->unk9F].unk8;
+        if (gUnk_08354734[flamer->unk9F].unk9 != 0xFF)
+            flamer->unk83 = gUnk_08354734[flamer->unk9F].unk9;
+        if (flamer->unk9F != 0)
+        {
+            if (gUnk_08354734[flamer->unk9F].unk0 != gUnk_08354734[flamer->unk9F - 1].unk0)
+            {
+                flamer->base.xspeed = gUnk_08354734[flamer->unk9F].unk0;
+                if (flamer->base.flags & 1)
+                    flamer->base.xspeed = -flamer->base.xspeed;
+            }
+            if (gUnk_08354734[flamer->unk9F].unk2 != gUnk_08354734[flamer->unk9F - 1].unk2)
+                flamer->base.yspeed = gUnk_08354734[flamer->unk9F].unk2;
+        }
+        else
+        {
+            flamer->base.yspeed = gUnk_08354734[flamer->unk9F].unk2;
+            flamer->base.xspeed = gUnk_08354734[flamer->unk9F].unk0;
+            if (flamer->base.flags & 1)
+                flamer->base.xspeed = -flamer->base.xspeed;
+        }
+    }
+    if (flamer->base.flags & 1)
+        flamer->base.xspeed -= gUnk_08354734[flamer->unk9F].unk4;
+    else
+        flamer->base.xspeed += gUnk_08354734[flamer->unk9F].unk4;
+    flamer->base.yspeed += gUnk_08354734[flamer->unk9F].unk6;
+    flamer->unk9E--;
+    if (gUnk_08354734[(u8)(flamer->unk9F + 1)].unk8 == 0 && flamer->unk9E == 0)
+        sub_080BA4F0(flamer);
+}
+
 
 void sub_080B998C(struct Object2 *flamer)
 {

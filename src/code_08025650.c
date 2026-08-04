@@ -10,9 +10,9 @@
 #include "constants/songs.h"
 
 struct Unk_08025A80 {
-    /* 0x00 */ struct Background unk0;
-    /* 0x40 */ struct Background unk40;
-    /* 0x80 */ void (*unk80)(struct Unk_08025A80 *);
+    /* 0x00 */ struct Background bg1;
+    /* 0x40 */ struct Background bg0;
+    /* 0x80 */ void (*callback)(struct Unk_08025A80 *);
     /* 0x84 */ u16 counter;
 }; /* size = 0x88 */
 
@@ -97,7 +97,7 @@ static void sub_080257A8(struct Unk_08025A80 *x) {
     gBldRegs.bldCnt = 0xBF;
     gBldRegs.bldY = 0x10;
     gDispCnt = DISPCNT_OBJ_1D_MAP;
-    bg = &x->unk40;
+    bg = &x->bg0;
     gBgCntRegs[0] = 0x1F03;
     gBgScrollRegs[0][0] = 0;
     gBgScrollRegs[0][1] = 0;
@@ -110,11 +110,11 @@ static void sub_080257A8(struct Unk_08025A80 *x) {
     gBgCntRegs[1] = 0x1E0A;
     gBgScrollRegs[1][0] = 0;
     gBgScrollRegs[1][1] = 0;
-    BgInit(&x->unk0, 0x06008000, 0, 0x0600F000, 0, 0, langMap, 0, 0, 0, 0, 0x1E, 0x14, 0, 0, 0, 0x19, 0, 0, 0x7FFF, 0x7FFF);
-    sub_08153060(&x->unk0);
+    BgInit(&x->bg1, 0x06008000, 0, 0x0600F000, 0, 0, langMap, 0, 0, 0, 0, 0x1E, 0x14, 0, 0, 0, 0x19, 0, 0, 0x7FFF, 0x7FFF);
+    sub_08153060(&x->bg1);
     LZ77UnCompVram(gUnk_082D7850[langMap]->tileset, (void *)0x06008000);
     gDispCnt |= DISPCNT_BG1_ON;
-    x->unk80 = sub_08025B58;
+    x->callback = sub_08025B58;
 }
 
 static void sub_08025914(struct Unk_08025A80 *x) {
@@ -124,7 +124,7 @@ static void sub_08025914(struct Unk_08025A80 *x) {
     gBldRegs.bldCnt = 0xBF;
     gBldRegs.bldY = 0x10;
     gDispCnt = DISPCNT_OBJ_1D_MAP;
-    bg = &x->unk40;
+    bg = &x->bg0;
     gBgCntRegs[0] = 0x1F03;
     gBgScrollRegs[0][0] = 0;
     gBgScrollRegs[0][1] = 0;
@@ -137,18 +137,18 @@ static void sub_08025914(struct Unk_08025A80 *x) {
     gBgCntRegs[1] = 0x1E0A;
     gBgScrollRegs[1][0] = 0;
     gBgScrollRegs[1][1] = 0;
-    BgInit(&x->unk0, 0x06008000, 0, 0x0600F000, 0, 0, langMap, 0, 0, 0, 0, 0x1E, 0x14, 0, 0, 0, 9, 0, 0, 0x7FFF, 0x7FFF);
-    sub_08153060(&x->unk0);
+    BgInit(&x->bg1, 0x06008000, 0, 0x0600F000, 0, 0, langMap, 0, 0, 0, 0, 0x1E, 0x14, 0, 0, 0, 9, 0, 0, 0x7FFF, 0x7FFF);
+    sub_08153060(&x->bg1);
     LZ77UnCompVram(gUnk_082D7850[langMap]->tileset, (void *)0x06008000);
     gDispCnt |= DISPCNT_BG1_ON;
-    x->unk80 = sub_08025BA4;
+    x->callback = sub_08025BA4;
 }
 
 void sub_08025A80(void) {
     struct Task *task = TaskCreate(sub_08025B20, sizeof(struct Unk_08025A80), 1, 0, NULL);
     struct Unk_08025A80 *x = TaskGetStructPtr(task);
 
-    x->unk80 = sub_080257A8;
+    x->callback = sub_080257A8;
     x->counter = 0;
 }
 
@@ -156,28 +156,28 @@ void sub_08025AD0(void) {
     struct Task *task = TaskCreate(sub_08025B6C, sizeof(struct Unk_08025A80), 1, 0, NULL);
     struct Unk_08025A80 *x = TaskGetStructPtr(task);
 
-    x->unk80 = sub_08025914;
+    x->callback = sub_08025914;
     x->counter = 0;
 }
 
 static void sub_08025B20(void) {
     struct Unk_08025A80 *x = TaskGetStructPtr(gCurTask);
-    x->unk80(x);
+    x->callback(x);
 }
 
 static void sub_08025B58(struct Unk_08025A80 *x) {
     x->counter = 0;
-    x->unk80 = sub_08025BB8;
+    x->callback = sub_08025BB8;
 }
 
 static void sub_08025B6C(void) {
     struct Unk_08025A80 *x = TaskGetStructPtr(gCurTask);
-    x->unk80(x);
+    x->callback(x);
 }
 
 static void sub_08025BA4(struct Unk_08025A80 *x) {
     x->counter = 0;
-    x->unk80 = sub_08025BFC;
+    x->callback = sub_08025BFC;
 }
 
 static void sub_08025BB8(struct Unk_08025A80 *x) {
@@ -185,7 +185,7 @@ static void sub_08025BB8(struct Unk_08025A80 *x) {
     if (x->counter > 0xF) {
         gBldRegs.bldCnt = 0;
         gBldRegs.bldY = 0;
-        x->unk80 = sub_08025C40;
+        x->callback = sub_08025C40;
     } else {
         gBldRegs.bldY = 0x10 - x->counter;
     }
@@ -196,7 +196,7 @@ static void sub_08025BFC(struct Unk_08025A80 *x) {
     if (x->counter > 0xF) {
         gBldRegs.bldCnt = 0;
         gBldRegs.bldY = 0;
-        x->unk80 = sub_08025C64;
+        x->callback = sub_08025C64;
     } else {
         gBldRegs.bldY = 0x10 - x->counter;
     }
@@ -205,26 +205,26 @@ static void sub_08025BFC(struct Unk_08025A80 *x) {
 static void sub_08025C40(struct Unk_08025A80 *x) {
     x->counter = 0;
     m4aSongNumStart(SE_SUBGAME_AUDIENCE_CHEER);
-    x->unk80 = sub_08025C88;
+    x->callback = sub_08025C88;
 }
 
 static void sub_08025C64(struct Unk_08025A80 *x) {
     x->counter = 0;
     m4aSongNumStart(MUS_GAME_OVER);
-    x->unk80 = sub_08025CCC;
+    x->callback = sub_08025CCC;
 }
 
 static void sub_08025C88(struct Unk_08025A80 *x) {
     if (x->counter++ > 600 || (gPressedKeys & (A_BUTTON | B_BUTTON | START_BUTTON))) {
         m4aSongNumStart(SE_MAIN_MENU_SELECT);
-        x->unk80 = sub_08025D10;
+        x->callback = sub_08025D10;
     }
 }
 
 static void sub_08025CCC(struct Unk_08025A80 *x) {
     if (x->counter++ > 600 || (gPressedKeys & (A_BUTTON | B_BUTTON | START_BUTTON))) {
         m4aSongNumStart(SE_MAIN_MENU_SELECT);
-        x->unk80 = sub_08025D30;
+        x->callback = sub_08025D30;
     }
 }
 
@@ -232,21 +232,21 @@ static void sub_08025D10(struct Unk_08025A80 *x) {
     gBldRegs.bldCnt = 0xBF;
     gBldRegs.bldY = 0;
     x->counter = 0;
-    x->unk80 = sub_08025D50;
+    x->callback = sub_08025D50;
 }
 
 static void sub_08025D30(struct Unk_08025A80 *x) {
     gBldRegs.bldCnt = 0xBF;
     gBldRegs.bldY = 0;
     x->counter = 0;
-    x->unk80 = sub_08025D8C;
+    x->callback = sub_08025D8C;
 }
 
 static void sub_08025D50(struct Unk_08025A80 *x) {
     x->counter++;
     if (x->counter > 0xF) {
         gBldRegs.bldY = 0x10;
-        x->unk80 = sub_08025DC8;
+        x->callback = sub_08025DC8;
     } else {
         gBldRegs.bldY = x->counter;
     }
@@ -256,7 +256,7 @@ static void sub_08025D8C(struct Unk_08025A80 *x) {
     x->counter++;
     if (x->counter > 0xF) {
         gBldRegs.bldY = 0x10;
-        x->unk80 = sub_08025DE4;
+        x->callback = sub_08025DE4;
     } else {
         gBldRegs.bldY = x->counter;
     }

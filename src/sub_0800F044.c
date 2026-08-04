@@ -12,7 +12,7 @@ struct Object2 **sub_080394C8(struct ObjectBase *);
 // The C below is believed functionally equivalent (control flow, memory
 // accesses and arithmetic all line up instruction-for-instruction), but the
 // original's register allocation could not be reproduced: the ~10 long-lived
-// locals (sp10/sp14/sp18, the xm1/xp1/ym1/yp1 guard caches and the per-loop
+// locals (kirbyCellX/kirbyPixelX/kirbyPixelY, the xm1/xp1/ym1/yp1 guard caches and the per-loop
 // bound temps) spill in a different order, which shifts every stack offset and
 // register choice in this 1900-instruction function.
 #ifndef NONMATCHING
@@ -27,20 +27,20 @@ void sub_0800F044(struct Unk_02038590 *a1) {
         li->unk_S32Vec2_6C.x >> 12, li->unk_S32Vec2_6C.y >> 12,
         li->unk_S32Vec2_74.x >> 12, li->unk_S32Vec2_74.y >> 12,
     };
-    u16 sp10;
-    s32 sl;
+    u16 kirbyCellX;
+    s32 kirbyCellY;
     u8 *r5;
     u8 *q;
     bool32 r6;
-    struct Object2 **r7;
+    struct Object2 **objs;
     s32 xm1, xp1, ym1, yp1;
-    s16 sp14, sp18;
+    s16 kirbyPixelX, kirbyPixelY;
 
-    sp10 = kirby->base.base.base.x >> 12;
-    sl = (u16)(kirby->base.base.base.y >> 12);
+    kirbyCellX = kirby->base.base.base.x >> 12;
+    kirbyCellY = (u16)(kirby->base.base.base.y >> 12);
     r6 = FALSE;
     a1->unk26[2] = 0;
-    switch (gUnk_082D88B8[sub_080024F0(a1->unk14, sp10, sl)] & 0xF0000000) {
+    switch (gUnk_082D88B8[sub_080024F0(a1->unk14, kirbyCellX, kirbyCellY)] & 0xF0000000) {
     case 0x20000000:
     case 0x30000000:
     case 0x40000000:
@@ -49,13 +49,13 @@ void sub_0800F044(struct Unk_02038590 *a1) {
         break;
     }
     r5 = a1->unk26;
-    xm1 = sp10 - 1;
+    xm1 = kirbyCellX - 1;
     if ((u16)array[0] >= xm1 || xm1 >= (u16)array[2])
         r5[1] = 0xFF;
     else if (a1->unk26[2])
         r5[1] = a1->unk26[2];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)(sp10 + -1), sl)];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)(kirbyCellX + -1), kirbyCellY)];
 
         if (r1 & 0x2000)
             r5[1] = 1;
@@ -72,12 +72,12 @@ void sub_0800F044(struct Unk_02038590 *a1) {
             r5[1] = 0;
         }
     }
-    if ((u16)array[0] >= sp10 - 2 || sp10 - 2 >= (u16)array[2])
+    if ((u16)array[0] >= kirbyCellX - 2 || kirbyCellX - 2 >= (u16)array[2])
         r5[0] = 0xFF;
     else if (a1->unk26[1])
         r5[0] = a1->unk26[1];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)(sp10 + -2), sl)];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)(kirbyCellX + -2), kirbyCellY)];
 
         if (r1 & 0x2000)
             r5[0] = 1;
@@ -92,13 +92,13 @@ void sub_0800F044(struct Unk_02038590 *a1) {
             r5[0] = 0;
         }
     }
-    xp1 = sp10 + 1;
+    xp1 = kirbyCellX + 1;
     if ((u16)array[0] >= xp1 || xp1 >= (u16)array[2])
         r5[3] = 0xFF;
     else if (a1->unk26[2])
         r5[3] = a1->unk26[2];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)xp1, sl)];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)xp1, kirbyCellY)];
 
         if (r1 & 0x2000)
             r5[3] = 1;
@@ -116,12 +116,12 @@ void sub_0800F044(struct Unk_02038590 *a1) {
         }
     }
     q = r5;
-    if ((u16)array[0] >= sp10 + 2 || sp10 + 2 >= (u16)array[2])
+    if ((u16)array[0] >= kirbyCellX + 2 || kirbyCellX + 2 >= (u16)array[2])
         q[4] = 0xFF;
     else if (a1->unk26[3])
         q[4] = a1->unk26[3];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)(sp10 + 2), sl)];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)(kirbyCellX + 2), kirbyCellY)];
 
         if (r1 & 0x2000)
             q[4] = 1;
@@ -137,13 +137,13 @@ void sub_0800F044(struct Unk_02038590 *a1) {
         }
     }
     r5 = a1->unk1C;
-    ym1 = sl - 1;
+    ym1 = kirbyCellY - 1;
     if ((u16)array[1] >= ym1 || ym1 >= (u16)array[3])
         r5[7] = 0xFF;
     else if (a1->unk26[2])
         r5[7] = a1->unk26[2];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, sp10, (u16)(sl + -1))];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, kirbyCellX, (u16)(kirbyCellY + -1))];
 
         if (r1 & 0x2000)
             r5[7] = 1;
@@ -158,12 +158,12 @@ void sub_0800F044(struct Unk_02038590 *a1) {
             r5[7] = 0;
         }
     }
-    if ((u16)array[1] >= sl - 2 || sl - 2 >= (u16)array[3])
+    if ((u16)array[1] >= kirbyCellY - 2 || kirbyCellY - 2 >= (u16)array[3])
         r5[2] = 0xFF;
     else if (a1->unk1C[7])
         r5[2] = a1->unk1C[7];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, sp10, (u16)(sl + -2))];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, kirbyCellX, (u16)(kirbyCellY + -2))];
 
         if (r1 & 0x2000)
             r5[2] = 1;
@@ -178,13 +178,13 @@ void sub_0800F044(struct Unk_02038590 *a1) {
             r5[2] = 0;
         }
     }
-    yp1 = sl + 1;
+    yp1 = kirbyCellY + 1;
     if ((u16)array[1] >= yp1 || yp1 >= (u16)array[3])
         r5[0x11] = 0xFF;
     else if (a1->unk26[2])
         r5[0x11] = a1->unk26[2];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, sp10, (u16)yp1)];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, kirbyCellX, (u16)yp1)];
 
         if (r1 & 0x2000)
             r5[0x11] = 1;
@@ -199,12 +199,12 @@ void sub_0800F044(struct Unk_02038590 *a1) {
             r5[0x11] = 0;
         }
     }
-    if ((u16)array[1] >= sl + 2 || sl + 2 >= (u16)array[3])
+    if ((u16)array[1] >= kirbyCellY + 2 || kirbyCellY + 2 >= (u16)array[3])
         r5[0x16] = 0xFF;
     else if (a1->unk2B[2])
         r5[0x16] = a1->unk2B[2];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, sp10, (u16)(sl + 2))];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, kirbyCellX, (u16)(kirbyCellY + 2))];
 
         if (r1 & 0x2000)
             r5[0x16] = 1;
@@ -226,7 +226,7 @@ void sub_0800F044(struct Unk_02038590 *a1) {
     else if (a1->unk26[2])
         r5[0x6] = a1->unk26[2];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)(sp10 + -1), (u16)(sl + -1))];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)(kirbyCellX + -1), (u16)(kirbyCellY + -1))];
 
         if (r1 & 0x2000)
             r5[0x6] = 1;
@@ -248,7 +248,7 @@ void sub_0800F044(struct Unk_02038590 *a1) {
     else if (a1->unk26[2])
         r5[8] = a1->unk26[2];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)xp1, (u16)(sl + -1))];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)xp1, (u16)(kirbyCellY + -1))];
 
         if (r1 & 0x2000)
             r5[8] = 1;
@@ -292,7 +292,7 @@ void sub_0800F044(struct Unk_02038590 *a1) {
     else if (a1->unk26[2])
         r5[0x10] = a1->unk26[2];
     else {
-        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)(sp10 + -1), (u16)yp1)];
+        u32 r1 = gUnk_082D88B8[sub_080024F0(li, (u16)(kirbyCellX + -1), (u16)yp1)];
 
         if (r1 & 0x2000)
             r5[0x10] = 1;
@@ -307,26 +307,26 @@ void sub_0800F044(struct Unk_02038590 *a1) {
             r5[0x10] = 0;
         }
     }
-    r7 = sub_080394C8(&kirby->base.base.base);
-    sp14 = kirby->base.base.base.x >> 8;
-    sp18 = kirby->base.base.base.y >> 8;
+    objs = sub_080394C8(&kirby->base.base.base);
+    kirbyPixelX = kirby->base.base.base.x >> 8;
+    kirbyPixelY = kirby->base.base.base.y >> 8;
     if (kirby->base.base.base.yspeed > 0) {
         if (kirby->base.base.base.flags & 1) {
-            if (*r7 != NULL) {
-                s16 ty1 = sp18 - 0x10;
-                s16 ty2 = sp18 - 0x20;
-                s16 tx1 = sp14 - 0x10;
-                s16 tx2 = sp14 - 0x20;
+            if (*objs != NULL) {
+                s16 ty1 = kirbyPixelY - 0x10;
+                s16 ty2 = kirbyPixelY - 0x20;
+                s16 tx1 = kirbyPixelX - 0x10;
+                s16 tx2 = kirbyPixelX - 0x20;
 
                 do {
-                    s16 rx = (*r7)->base.x >> 8;
-                    s16 ry = (*r7)->base.y >> 8;
+                    s16 rx = (*objs)->base.x >> 8;
+                    s16 ry = (*objs)->base.y >> 8;
 
-                    array[0] = (*r7)->base.unk3C + rx;
-                    array[1] = (*r7)->base.unk3D + ry;
-                    array[2] = (*r7)->base.unk3E + rx;
-                    array[3] = (*r7)->base.unk3F + ry;
-                    if (array[0] <= sp14 && array[2] >= sp14) {
+                    array[0] = (*objs)->base.unk3C + rx;
+                    array[1] = (*objs)->base.unk3D + ry;
+                    array[2] = (*objs)->base.unk3E + rx;
+                    array[3] = (*objs)->base.unk3F + ry;
+                    if (array[0] <= kirbyPixelX && array[2] >= kirbyPixelX) {
                         if (!r5[7]) {
                             if (array[1] <= ty1 && array[3] >= ty1)
                                 r5[7] = 2;
@@ -335,7 +335,7 @@ void sub_0800F044(struct Unk_02038590 *a1) {
                                 r5[2] = 2;
                         }
                     }
-                    if (array[1] <= sp18 && array[3] >= sp18) {
+                    if (array[1] <= kirbyPixelY && array[3] >= kirbyPixelY) {
                         if (!r5[0xB]) {
                             if (array[0] <= tx1 && array[2] >= tx1)
                                 r5[0xB] = 2;
@@ -345,31 +345,31 @@ void sub_0800F044(struct Unk_02038590 *a1) {
                         }
                     }
                     if (!r5[0x6]) {
-                        s16 zz = sp18 - 0x10;
+                        s16 zz = kirbyPixelY - 0x10;
 
                         if (array[0] <= tx1 && array[2] >= tx1
                             && array[1] <= zz && array[3] >= zz)
                             r5[0x6] = 2;
                     }
-                    r7++;
-                } while (*r7 != NULL);
+                    objs++;
+                } while (*objs != NULL);
             }
         } else {
-            if (*r7 != NULL) {
-                s16 ty1 = sp18 - 0x10;
-                s16 ty2 = sp18 - 0x20;
-                s16 tx1 = sp14 + 0x10;
-                s16 tx2 = sp14 + 0x20;
+            if (*objs != NULL) {
+                s16 ty1 = kirbyPixelY - 0x10;
+                s16 ty2 = kirbyPixelY - 0x20;
+                s16 tx1 = kirbyPixelX + 0x10;
+                s16 tx2 = kirbyPixelX + 0x20;
 
                 do {
-                    s16 rx = (*r7)->base.x >> 8;
-                    s16 ry = (*r7)->base.y >> 8;
+                    s16 rx = (*objs)->base.x >> 8;
+                    s16 ry = (*objs)->base.y >> 8;
 
-                    array[0] = (*r7)->base.unk3C + rx;
-                    array[1] = (*r7)->base.unk3D + ry;
-                    array[2] = (*r7)->base.unk3E + rx;
-                    array[3] = (*r7)->base.unk3F + ry;
-                    if (array[0] <= sp14 && array[2] >= sp14) {
+                    array[0] = (*objs)->base.unk3C + rx;
+                    array[1] = (*objs)->base.unk3D + ry;
+                    array[2] = (*objs)->base.unk3E + rx;
+                    array[3] = (*objs)->base.unk3F + ry;
+                    if (array[0] <= kirbyPixelX && array[2] >= kirbyPixelX) {
                         if (!r5[7]) {
                             if (array[1] <= ty1 && array[3] >= ty1)
                                 r5[7] = 2;
@@ -378,7 +378,7 @@ void sub_0800F044(struct Unk_02038590 *a1) {
                                 r5[2] = 2;
                         }
                     }
-                    if (array[1] <= sp18 && array[3] >= sp18) {
+                    if (array[1] <= kirbyPixelY && array[3] >= kirbyPixelY) {
                         if (!r5[0xD]) {
                             if (array[0] <= tx1 && array[2] >= tx1)
                                 r5[0xD] = 2;
@@ -388,33 +388,33 @@ void sub_0800F044(struct Unk_02038590 *a1) {
                         }
                     }
                     if (!r5[8]) {
-                        s16 zz = sp18 - 0x10;
+                        s16 zz = kirbyPixelY - 0x10;
 
                         if (array[0] <= tx1 && array[2] >= tx1
                             && array[1] <= zz && array[3] >= zz)
                             r5[8] = 2;
                     }
-                    r7++;
-                } while (*r7 != NULL);
+                    objs++;
+                } while (*objs != NULL);
             }
         }
     } else {
         if (kirby->base.base.base.flags & 1) {
-            if (*r7 != NULL) {
-                s16 ty1 = sp18 - 0x10;
-                s16 ty2 = sp18 - 0x20;
-                s16 tx1 = sp14 - 0x10;
-                s16 tx2 = sp14 - 0x20;
+            if (*objs != NULL) {
+                s16 ty1 = kirbyPixelY - 0x10;
+                s16 ty2 = kirbyPixelY - 0x20;
+                s16 tx1 = kirbyPixelX - 0x10;
+                s16 tx2 = kirbyPixelX - 0x20;
 
                 do {
-                    s16 rx = (*r7)->base.x >> 8;
-                    s16 ry = (*r7)->base.y >> 8;
+                    s16 rx = (*objs)->base.x >> 8;
+                    s16 ry = (*objs)->base.y >> 8;
 
-                    array[0] = (*r7)->base.unk3C + rx;
-                    array[1] = (*r7)->base.unk3D + ry;
-                    array[2] = (*r7)->base.unk3E + rx;
-                    array[3] = (*r7)->base.unk3F + ry;
-                    if (array[0] <= sp14 && array[2] >= sp14) {
+                    array[0] = (*objs)->base.unk3C + rx;
+                    array[1] = (*objs)->base.unk3D + ry;
+                    array[2] = (*objs)->base.unk3E + rx;
+                    array[3] = (*objs)->base.unk3F + ry;
+                    if (array[0] <= kirbyPixelX && array[2] >= kirbyPixelX) {
                         if (!r5[7]) {
                             if (array[1] <= ty1 && array[3] >= ty1)
                                 r5[7] = 2;
@@ -423,7 +423,7 @@ void sub_0800F044(struct Unk_02038590 *a1) {
                                 r5[2] = 2;
                         }
                     }
-                    if (array[1] <= sp18 && array[3] >= sp18) {
+                    if (array[1] <= kirbyPixelY && array[3] >= kirbyPixelY) {
                         if (!r5[0xB]) {
                             if (array[0] <= tx1 && array[2] >= tx1)
                                 r5[0xB] = 2;
@@ -433,31 +433,31 @@ void sub_0800F044(struct Unk_02038590 *a1) {
                         }
                     }
                     if (!r5[0x10]) {
-                        s16 zz = sp18 + 0x10;
+                        s16 zz = kirbyPixelY + 0x10;
 
                         if (array[0] <= tx1 && array[2] >= tx1
                             && array[1] <= zz && array[3] >= zz)
                             r5[0x10] = 2;
                     }
-                    r7++;
-                } while (*r7 != NULL);
+                    objs++;
+                } while (*objs != NULL);
             }
         } else {
-            if (*r7 != NULL) {
-                s16 ty1 = sp18 - 0x10;
-                s16 ty2 = sp18 - 0x20;
-                s16 tx1 = sp14 + 0x10;
-                s16 tx2 = sp14 + 0x20;
+            if (*objs != NULL) {
+                s16 ty1 = kirbyPixelY - 0x10;
+                s16 ty2 = kirbyPixelY - 0x20;
+                s16 tx1 = kirbyPixelX + 0x10;
+                s16 tx2 = kirbyPixelX + 0x20;
 
                 do {
-                    s16 rx = (*r7)->base.x >> 8;
-                    s16 ry = (*r7)->base.y >> 8;
+                    s16 rx = (*objs)->base.x >> 8;
+                    s16 ry = (*objs)->base.y >> 8;
 
-                    array[0] = (*r7)->base.unk3C + rx;
-                    array[1] = (*r7)->base.unk3D + ry;
-                    array[2] = (*r7)->base.unk3E + rx;
-                    array[3] = (*r7)->base.unk3F + ry;
-                    if (array[0] <= sp14 && array[2] >= sp14) {
+                    array[0] = (*objs)->base.unk3C + rx;
+                    array[1] = (*objs)->base.unk3D + ry;
+                    array[2] = (*objs)->base.unk3E + rx;
+                    array[3] = (*objs)->base.unk3F + ry;
+                    if (array[0] <= kirbyPixelX && array[2] >= kirbyPixelX) {
                         if (!r5[7]) {
                             if (array[1] <= ty1 && array[3] >= ty1)
                                 r5[7] = 2;
@@ -466,7 +466,7 @@ void sub_0800F044(struct Unk_02038590 *a1) {
                                 r5[2] = 2;
                         }
                     }
-                    if (array[1] <= sp18 && array[3] >= sp18) {
+                    if (array[1] <= kirbyPixelY && array[3] >= kirbyPixelY) {
                         if (!r5[0xD]) {
                             if (array[0] <= tx1 && array[2] >= tx1)
                                 r5[0xD] = 2;
@@ -476,14 +476,14 @@ void sub_0800F044(struct Unk_02038590 *a1) {
                         }
                     }
                     if (!r5[0x12]) {
-                        s16 zz = sp18 + 0x10;
+                        s16 zz = kirbyPixelY + 0x10;
 
                         if (array[0] <= tx1 && array[2] >= tx1
                             && array[1] <= zz && array[3] >= zz)
                             r5[0x12] = 2;
                     }
-                    r7++;
-                } while (*r7 != NULL);
+                    objs++;
+                } while (*objs != NULL);
             }
         }
     }

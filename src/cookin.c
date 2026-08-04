@@ -31,168 +31,168 @@ extern const struct Kirby_110 gUnk_08354554[];
 
 void *CreateCookin(struct Object *arg0, u8 arg1) {
     struct Task *task = TaskCreate(ObjectMain, sizeof(struct Object2), 0x1000, TASK_USE_EWRAM, ObjectDestroy);
-    struct Object2 *tmp = TaskGetStructPtr(task), *obj = tmp;
+    struct Object2 *tmp = TaskGetStructPtr(task), *cookin = tmp;
 
-    InitObject(obj, arg0, arg1);
-    if (obj->base.x > obj->kirby3->base.base.base.x)
-        obj->base.flags |= 1;
+    InitObject(cookin, arg0, arg1);
+    if (cookin->base.x > cookin->kirby3->base.base.base.x)
+        cookin->base.flags |= 1;
     else
-        obj->base.flags &= ~1;
-    sub_0803E2B0(&obj->base, -5, -7, 5, 4);
-    sub_0803E308(&obj->base, -6, -8, 6, 6);
-    ObjectInitSprite(obj);
-    gUnk_08351648[obj->type].unk10(obj);
-    obj->unk9E = 0;
-    obj->unk7C = NULL;
-    return obj;
+        cookin->base.flags &= ~1;
+    sub_0803E2B0(&cookin->base, -5, -7, 5, 4);
+    sub_0803E308(&cookin->base, -6, -8, 6, 6);
+    ObjectInitSprite(cookin);
+    gUnk_08351648[cookin->type].unk10(cookin);
+    cookin->unk9E = 0;
+    cookin->unk7C = NULL;
+    return cookin;
 }
 
-static void sub_080B5BE8(struct Object2 *obj) {
-    obj->base.flags |= 4;
-    obj->base.xspeed = 0;
-    if (obj->object->subtype1 == 0) {
-        if (--obj->unk9E == 0) {
-            obj->unk9E = 0x3C;
-            obj->kirby3 = sub_0803D368(&obj->base);
-            if (obj->base.x > obj->kirby3->base.base.base.x)
-                obj->base.flags |= 1;
+static void sub_080B5BE8(struct Object2 *cookin) {
+    cookin->base.flags |= 4;
+    cookin->base.xspeed = 0;
+    if (cookin->object->subtype1 == 0) {
+        if (--cookin->unk9E == 0) {
+            cookin->unk9E = 0x3C;
+            cookin->kirby3 = sub_0803D368(&cookin->base);
+            if (cookin->base.x > cookin->kirby3->base.base.base.x)
+                cookin->base.flags |= 1;
             else
-                obj->base.flags &= ~1;
-            if (obj->base.unk62 & 4) {
-                if (abs(obj->kirby3->base.base.base.x - obj->base.x) <= 0xA7FF
-                    && abs(obj->kirby3->base.base.base.y - obj->base.y) <= 0x2FFF)
-                    sub_080B68C0(obj);
+                cookin->base.flags &= ~1;
+            if (cookin->base.unk62 & 4) {
+                if (abs(cookin->kirby3->base.base.base.x - cookin->base.x) <= 0xA7FF
+                    && abs(cookin->kirby3->base.base.base.y - cookin->base.y) <= 0x2FFF)
+                    sub_080B68C0(cookin);
             }
         }
     }
 }
 
-static void sub_080B5CA4(struct Object2 *obj) {
-    obj->base.flags |= 4;
-    if (++obj->base.counter > 0x78) {
-        obj->base.flags ^= 1;
-        obj->base.xspeed = -obj->base.xspeed;
-        obj->base.counter = 0;
+static void sub_080B5CA4(struct Object2 *cookin) {
+    cookin->base.flags |= 4;
+    if (++cookin->base.counter > 0x78) {
+        cookin->base.flags ^= 1;
+        cookin->base.xspeed = -cookin->base.xspeed;
+        cookin->base.counter = 0;
     }
-    if (obj->base.unk62 & 1) {
-        obj->base.flags ^= 1;
-        obj->base.xspeed = -obj->base.xspeed;
+    if (cookin->base.unk62 & 1) {
+        cookin->base.flags ^= 1;
+        cookin->base.xspeed = -cookin->base.xspeed;
     }
-    if (obj->base.unk62 & 4 && sub_0809D998(obj)) {
-        obj->base.flags ^= 1;
-        obj->base.xspeed = -obj->base.xspeed;
+    if (cookin->base.unk62 & 4 && sub_0809D998(cookin)) {
+        cookin->base.flags ^= 1;
+        cookin->base.xspeed = -cookin->base.xspeed;
     }
-    if (--obj->unk9E == 0) {
-        if (obj->base.unk62 & 4 && (Rand16() & 3) == 0)
-            sub_080B68C0(obj);
+    if (--cookin->unk9E == 0) {
+        if (cookin->base.unk62 & 4 && (Rand16() & 3) == 0)
+            sub_080B68C0(cookin);
         else
-            obj->unk9E = 0x3C;
+            cookin->unk9E = 0x3C;
     }
 }
 
-void sub_080B5D70(struct Object2 *obj) {
-    ObjectSetFunc(obj, 5, sub_080B5E1C);
-    obj->base.flags &= ~2;
-    obj->type = 0x26;
-    PlaySfx(&obj->base, SE_COOKED_KIRBY);
+void sub_080B5D70(struct Object2 *cookin) {
+    ObjectSetFunc(cookin, 5, sub_080B5E1C);
+    cookin->base.flags &= ~2;
+    cookin->type = 0x26;
+    PlaySfx(&cookin->base, SE_COOKED_KIRBY);
 }
 
-static void sub_080B5E1C(struct Object2 *obj) {
-    if (obj->base.flags & 2) {
-        if (obj->unk80 > 0)
-            ObjectSetFunc(obj, 0, sub_080B5BE8);
+static void sub_080B5E1C(struct Object2 *cookin) {
+    if (cookin->base.flags & 2) {
+        if (cookin->unk80 > 0)
+            ObjectSetFunc(cookin, 0, sub_080B5BE8);
         else {
 #ifndef NONMATCHING
             register void (*func)(struct Object2 *) asm("r2") = sub_080B5BE8;
-            register struct Object2 *o asm("r0") = obj;
+            register struct Object2 *o asm("r0") = cookin;
             register s32 m asm("r1") = -1;
             ObjectSetFunc(o, m, func);
 #else
             ObjectSetFunc(obj, -1, sub_080B5BE8);
 #endif
         }
-        obj->base.flags &= ~0x800;
-        if (obj->object->subtype1 == 1)
-            sub_080B6894(obj);
-        obj->unk9E = 0x3C;
-        obj->type = 0x26;
+        cookin->base.flags &= ~0x800;
+        if (cookin->object->subtype1 == 1)
+            sub_080B6894(cookin);
+        cookin->unk9E = 0x3C;
+        cookin->type = 0x26;
     }
-    if (obj->base.unk1 == 0x28 || obj->base.unk1 == 0x4C)
-        PlaySfx(&obj->base, SE_COOKED_KIRBY);
+    if (cookin->base.unk1 == 0x28 || cookin->base.unk1 == 0x4C)
+        PlaySfx(&cookin->base, SE_COOKED_KIRBY);
 }
 
 void *CreateCookinPan(struct Object *arg0, u8 arg1) {
     struct Task *task = TaskCreate(ObjectMain, sizeof(struct Object2), 0x1000, TASK_USE_EWRAM, ObjectDestroy);
-    struct Object2 *tmp = TaskGetStructPtr(task), *obj = tmp;
+    struct Object2 *tmp = TaskGetStructPtr(task), *pan = tmp;
 
-    InitObject(obj, arg0, arg1);
-    obj->base.flags |= 0x02000140;
-    if (obj->object->subtype1 == 0) {
-        obj->base.flags |= 0x20000;
-        obj->base.unk68 = 0;
+    InitObject(pan, arg0, arg1);
+    pan->base.flags |= 0x02000140;
+    if (pan->object->subtype1 == 0) {
+        pan->base.flags |= 0x20000;
+        pan->base.unk68 = 0;
     }
-    obj->base.flags |= 0x10000;
+    pan->base.flags |= 0x10000;
     {
         s32 m = -1;
-        obj->base.unkC |= 2;
-        obj->base.unk5C = m;
+        pan->base.unkC |= 2;
+        pan->base.unk5C = m;
     }
-    sub_0803E2B0(&obj->base, -5, -3, 5, 8);
-    sub_0803E308(&obj->base, -6, -4, 6, 0xA);
-    if (obj->subtype != 0)
-        obj->base.flags |= 1;
-    ObjectInitSprite(obj);
-    obj->base.sprite.unk14 = 0x640;
-    obj->unk9E = 0;
-    obj->unk7C = sub_0809F840;
-    gUnk_08351648[obj->type].unk10(obj);
-    if (obj->object->subtype1 == 0)
-        sub_080B65D8(obj);
-    PlaySfx(&obj->base, SE_COOKIN_THROW_PAN);
-    return obj;
+    sub_0803E2B0(&pan->base, -5, -3, 5, 8);
+    sub_0803E308(&pan->base, -6, -4, 6, 0xA);
+    if (pan->subtype != 0)
+        pan->base.flags |= 1;
+    ObjectInitSprite(pan);
+    pan->base.sprite.unk14 = 0x640;
+    pan->unk9E = 0;
+    pan->unk7C = sub_0809F840;
+    gUnk_08351648[pan->type].unk10(pan);
+    if (pan->object->subtype1 == 0)
+        sub_080B65D8(pan);
+    PlaySfx(&pan->base, SE_COOKIN_THROW_PAN);
+    return pan;
 }
 
-static void sub_080B60AC(struct Object2 *obj) {
-    struct Object2 *parent = obj->base.parent;
+static void sub_080B60AC(struct Object2 *pan) {
+    struct Object2 *parent = pan->base.parent;
 
-    obj->base.flags |= 4;
-    if (obj->unk9E == 0) {
-        ++obj->unk9F;
-        if (gUnk_08354368[obj->unk9F].unk8 == 0)
-            --obj->unk9F;
-        obj->unk9E = gUnk_08354368[obj->unk9F].unk8;
-        if (gUnk_08354368[obj->unk9F].unk9 != 0xFF)
-            obj->unk83 = gUnk_08354368[obj->unk9F].unk9;
-        if (obj->unk9F != 0) {
-            if (gUnk_08354368[obj->unk9F].unk0 != gUnk_08354368[obj->unk9F - 1].unk0) {
-                obj->base.xspeed = gUnk_08354368[obj->unk9F].unk0;
-                if (obj->base.flags & 1)
-                    obj->base.xspeed = -obj->base.xspeed;
+    pan->base.flags |= 4;
+    if (pan->unk9E == 0) {
+        ++pan->unk9F;
+        if (gUnk_08354368[pan->unk9F].unk8 == 0)
+            --pan->unk9F;
+        pan->unk9E = gUnk_08354368[pan->unk9F].unk8;
+        if (gUnk_08354368[pan->unk9F].unk9 != 0xFF)
+            pan->unk83 = gUnk_08354368[pan->unk9F].unk9;
+        if (pan->unk9F != 0) {
+            if (gUnk_08354368[pan->unk9F].unk0 != gUnk_08354368[pan->unk9F - 1].unk0) {
+                pan->base.xspeed = gUnk_08354368[pan->unk9F].unk0;
+                if (pan->base.flags & 1)
+                    pan->base.xspeed = -pan->base.xspeed;
             }
-            if (gUnk_08354368[obj->unk9F].unk2 != gUnk_08354368[obj->unk9F - 1].unk2)
-                obj->base.yspeed = gUnk_08354368[obj->unk9F].unk2;
+            if (gUnk_08354368[pan->unk9F].unk2 != gUnk_08354368[pan->unk9F - 1].unk2)
+                pan->base.yspeed = gUnk_08354368[pan->unk9F].unk2;
         }
         else {
-            obj->base.yspeed = gUnk_08354368[obj->unk9F].unk2;
-            obj->base.xspeed = gUnk_08354368[obj->unk9F].unk0;
-            if (obj->base.flags & 1)
-                obj->base.xspeed = -obj->base.xspeed;
+            pan->base.yspeed = gUnk_08354368[pan->unk9F].unk2;
+            pan->base.xspeed = gUnk_08354368[pan->unk9F].unk0;
+            if (pan->base.flags & 1)
+                pan->base.xspeed = -pan->base.xspeed;
         }
     }
-    if (obj->base.flags & 1)
-        obj->base.xspeed -= gUnk_08354368[obj->unk9F].unk4;
+    if (pan->base.flags & 1)
+        pan->base.xspeed -= gUnk_08354368[pan->unk9F].unk4;
     else
-        obj->base.xspeed += gUnk_08354368[obj->unk9F].unk4;
-    obj->base.yspeed += gUnk_08354368[obj->unk9F].unk6;
-    --obj->unk9E;
-    if (!gUnk_08354368[(u8)(obj->unk9F + 1)].unk8 && !obj->unk9E) {
-        struct Kirby *kirby = obj->kirby3;
+        pan->base.xspeed += gUnk_08354368[pan->unk9F].unk4;
+    pan->base.yspeed += gUnk_08354368[pan->unk9F].unk6;
+    --pan->unk9E;
+    if (!gUnk_08354368[(u8)(pan->unk9F + 1)].unk8 && !pan->unk9E) {
+        struct Kirby *kirby = pan->kirby3;
 
-        if (obj->base.counter != 0 && kirby->unk110 != NULL) {
+        if (pan->base.counter != 0 && kirby->unk110 != NULL) {
             kirby->base.base.base.unk6C = parent;
             if (parent->type == 0x26 || parent->type == 0x31) {
                 if (parent->unk83 >= gUnk_08351648[0x26].unk0) {
-                    obj->base.flags |= 0x1000;
+                    pan->base.flags |= 0x1000;
                     parent->type = 0x26;
                     return;
                 }
@@ -230,12 +230,12 @@ static void sub_080B60AC(struct Object2 *obj) {
                 sub_080A245C(parent);
             }
         }
-        obj->base.flags |= 0x1000;
+        pan->base.flags |= 0x1000;
     }
 }
 
-bool32 sub_080B6368(struct Object2 *obj, struct Kirby *kirby) {
-    if (obj->unk83 != 0)
+bool32 sub_080B6368(struct Object2 *pan, struct Kirby *kirby) {
+    if (pan->unk83 != 0)
         return FALSE;
     if (kirby->base.base.base.unk0 != 0)
         return FALSE;
@@ -249,49 +249,49 @@ bool32 sub_080B6368(struct Object2 *obj, struct Kirby *kirby) {
         return FALSE;
     if (kirby->base.base.base.flags & 0x03800B00)
         return FALSE;
-    obj->unk83 = 1;
-    obj->base.counter = 1;
+    pan->unk83 = 1;
+    pan->base.counter = 1;
     kirby->unk110 = gUnk_08354404;
-    obj->kirby3 = kirby;
-    obj->base.unk6C = kirby;
-    PlaySfx(&obj->base, SE_COOKED_KIRBY);
+    pan->kirby3 = kirby;
+    pan->base.unk6C = kirby;
+    PlaySfx(&pan->base, SE_COOKED_KIRBY);
     return TRUE;
 }
 
-void sub_080B645C(struct Object2 *obj) {
+void sub_080B645C(struct Object2 *cookin) {
     struct Object2 *created;
     s32 x, y;
     u32 subtype1 = 0;
 
-    if (obj->base.flags & 1)
-        x = (obj->base.x >> 8) - 0x1E;
+    if (cookin->base.flags & 1)
+        x = (cookin->base.x >> 8) - 0x1E;
     else
-        x = (obj->base.x >> 8) + 0x1E;
-    y = obj->base.y >> 8;
-    if (obj->subtype != 0)
+        x = (cookin->base.x >> 8) + 0x1E;
+    y = cookin->base.y >> 8;
+    if (cookin->subtype != 0)
         subtype1 = 1;
-    if (obj->base.unkC & 0x10)
-        created = CreateObjTemplateAndObj(obj->base.unk56, 1, 0x24, x, y, 0, 0x1F, 0, 0, 0x9E, subtype1, 0,
-            obj->base.flags & 1, 0x8000, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    if (cookin->base.unkC & 0x10)
+        created = CreateObjTemplateAndObj(cookin->base.unk56, 1, 0x24, x, y, 0, 0x1F, 0, 0, 0x9E, subtype1, 0,
+            cookin->base.flags & 1, 0x8000, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     else
-        created = CreateObjTemplateAndObj(obj->base.unk56, 1, 0x24, x, y, 0, 0x1F, 0, 0, 0x9E, subtype1, 0,
-            obj->base.flags & 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    created->base.parent = obj;
+        created = CreateObjTemplateAndObj(cookin->base.unk56, 1, 0x24, x, y, 0, 0x1F, 0, 0, 0x9E, subtype1, 0,
+            cookin->base.flags & 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    created->base.parent = cookin;
 }
 
-void sub_080B65D8(struct Object2 *obj) {
+void sub_080B65D8(struct Object2 *pan) {
     struct Task *task = TaskCreate(sub_080B66A8, sizeof(struct ObjectBase), 0x3500, TASK_USE_EWRAM, NULL);
     struct ObjectBase *tmp = TaskGetStructPtr(task), *objBase = tmp;
     u32 unk68;
 
     sub_0803E380(objBase);
     objBase->unk0 = 2;
-    objBase->x = obj->base.x;
-    objBase->y = obj->base.y;
-    objBase->parent = obj;
+    objBase->x = pan->base.x;
+    objBase->y = pan->base.y;
+    objBase->parent = pan;
     objBase->counter = 0;
-    objBase->roomId = obj->base.roomId;
-    objBase->unk56 = obj->base.unk56;
+    objBase->roomId = pan->base.roomId;
+    objBase->unk56 = pan->base.unk56;
     if (Macro_0810B1F4(objBase))
         objBase->flags |= 0x2000;
     objBase->counter = 0;
@@ -307,25 +307,25 @@ void sub_080B65D8(struct Object2 *obj) {
 
 static void sub_080B66A8(void) {
     struct ObjectBase *tmp = TaskGetStructPtr(gCurTask), *objBase = tmp;
-    struct Object2 *obj = objBase->parent;
+    struct Object2 *pan = objBase->parent;
 
     if (objBase->flags & 0x1000)
         TaskDestroy(gCurTask);
-    else if (obj->base.flags & 0x1000)
+    else if (pan->base.flags & 0x1000)
         objBase->flags |= 0x1000;
     else {
-        objBase->x = obj->base.x;
-        objBase->y = obj->base.y;
-        objBase->unk56 = obj->base.unk56;
+        objBase->x = pan->base.x;
+        objBase->y = pan->base.y;
+        objBase->unk56 = pan->base.unk56;
         if (Macro_0810B1F4(objBase) && !(objBase->flags & 0x2000)) {
             sub_0803D9A8(objBase);
         }
         else {
-            if (obj->base.flags & 1)
+            if (pan->base.flags & 1)
                 objBase->flags |= 1;
             else
                 objBase->flags &= ~1;
-            if (obj->unk83 == 0) {
+            if (pan->unk83 == 0) {
                 if (objBase->flags & 0x40000) {
                     objBase->flags &= ~0x40000;
                 }
@@ -341,53 +341,53 @@ static void sub_080B66A8(void) {
     }
 }
 
-void sub_080B681C(struct Object2 *obj) {
-    if (obj->unk80 > 0)
-        ObjectSetFunc(obj, 0, sub_080B5BE8);
+void sub_080B681C(struct Object2 *cookin) {
+    if (cookin->unk80 > 0)
+        ObjectSetFunc(cookin, 0, sub_080B5BE8);
     else
-        ObjectSetFunc(obj, -1, sub_080B5BE8);
-    obj->base.flags &= ~0x800;
-    if (obj->object->subtype1 == 1)
-        sub_080B6894(obj);
-    obj->unk9E = 0x3C;
-    obj->type = 0x26;
+        ObjectSetFunc(cookin, -1, sub_080B5BE8);
+    cookin->base.flags &= ~0x800;
+    if (cookin->object->subtype1 == 1)
+        sub_080B6894(cookin);
+    cookin->unk9E = 0x3C;
+    cookin->type = 0x26;
 }
 
-void sub_080B6880(struct Object2 *obj) {
-    ObjectSetFunc(obj, 0, sub_080B60AC);
+void sub_080B6880(struct Object2 *pan) {
+    ObjectSetFunc(pan, 0, sub_080B60AC);
 }
 
-void sub_080B6894(struct Object2 *obj) {
-    ObjectSetFunc(obj, 1, sub_080B5CA4);
-    obj->base.xspeed = 0x80;
-    if (obj->base.flags & 1)
-        obj->base.xspeed = -obj->base.xspeed;
+void sub_080B6894(struct Object2 *cookin) {
+    ObjectSetFunc(cookin, 1, sub_080B5CA4);
+    cookin->base.xspeed = 0x80;
+    if (cookin->base.flags & 1)
+        cookin->base.xspeed = -cookin->base.xspeed;
 }
 
-void sub_080B68C0(struct Object2 *obj) {
-    ObjectSetFunc(obj, 2, sub_080B6910);
-    obj->base.flags &= ~2;
-    obj->base.xspeed = 0;
-    obj->kirby3 = sub_0803D368(&obj->base);
-    if (obj->base.x > obj->kirby3->base.base.base.x)
-        obj->base.flags |= 1;
+void sub_080B68C0(struct Object2 *cookin) {
+    ObjectSetFunc(cookin, 2, sub_080B6910);
+    cookin->base.flags &= ~2;
+    cookin->base.xspeed = 0;
+    cookin->kirby3 = sub_0803D368(&cookin->base);
+    if (cookin->base.x > cookin->kirby3->base.base.base.x)
+        cookin->base.flags |= 1;
     else
-        obj->base.flags &= ~1;
+        cookin->base.flags &= ~1;
 }
 
-static void sub_080B6910(struct Object2 *obj) {
-    if (obj->base.flags & 2)
-        sub_080B6928(obj);
+static void sub_080B6910(struct Object2 *cookin) {
+    if (cookin->base.flags & 2)
+        sub_080B6928(cookin);
 }
 
-void sub_080B6928(struct Object2 *obj) {
-    ObjectSetFunc(obj, 2, sub_080B6960);
-    obj->base.flags &= ~4;
-    sub_080B645C(obj);
-    obj->base.flags |= 0x800;
-    obj->type = 0x31;
+void sub_080B6928(struct Object2 *cookin) {
+    ObjectSetFunc(cookin, 2, sub_080B6960);
+    cookin->base.flags &= ~4;
+    sub_080B645C(cookin);
+    cookin->base.flags |= 0x800;
+    cookin->type = 0x31;
 }
 
-static void sub_080B6960(struct Object2 *obj) {
-    obj->unk83 = 3;
+static void sub_080B6960(struct Object2 *cookin) {
+    cookin->unk83 = 3;
 }
