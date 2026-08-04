@@ -51,8 +51,7 @@ extern const u16 gUnk_082DE9FC[];
 extern const u16 gUnk_082DEA24[];
 extern const s16 gUnk_082DEA4C[];
 extern const s16 gUnk_082DEA4E[];
-extern const s16 gUnk_082DEA5C[];
-extern const s16 gUnk_082DEA5E[];
+extern const s16 gUnk_082DEA5C[][2];
 extern const s16 gUnk_082DEA6C[][2];
 extern const s16 gUnk_082DEA7C[][2];
 extern const s16 gUnk_082DEA8C[][2];
@@ -396,7 +395,7 @@ void sub_08020DDC(struct CutsceneTrigger *x) {
         if (i != 0) {
             q = &x2->unkB8;
             obj = q[i].obj4;
-            obj->x = ((-(x2->unkCE * 0x12) >> 1) + ((Rand16() & mask) + 0x4E)) << 8;
+            obj->x = ((-(x2->unkCE * 0x12) >> 1) + (s16)((Rand16() & mask) + 0x4E)) << 8;
         } else {
             q = &x2->unkB8;
             obj = q[i].obj4;
@@ -640,15 +639,14 @@ void sub_08021844(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
     u16 i;
     u16 j = 0;
-    const s16 *p = gUnk_082DEA5C;
 
     for (i = 0; i < 4; i++) {
         x2->unk2A4[i] = 0;
         if (x2->unk294[i] == (struct Object4 *)-1) {
             struct Object4 *obj = x2->unk294[i] = sub_0808B62C(&x->obj2.base, 0x10, 0x2DE, 0, 0);
 
-            obj->x = p[j * 2] << 8;
-            obj->y = gUnk_082DEA5E[j * 2] << 8;
+            obj->x = gUnk_082DEA5C[j][0] << 8;
+            obj->y = gUnk_082DEA5C[j][1] << 8;
             obj->unk3C = 0;
             obj->unk3E = 0;
             obj->sprite.unk8 = (obj->sprite.unk8 & 0xFFFFCFFF) | 0x1000;
