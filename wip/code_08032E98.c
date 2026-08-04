@@ -3,6 +3,7 @@
 #include "functions.h"
 #include "kirby.h"
 #include "task.h"
+#include "palette.h"
 
 extern u16 gUnk_02022120[0x100];
 extern u16 gUnk_02022320[0x100];
@@ -1619,4 +1620,153 @@ u8 sub_08039358(struct ObjectBase *obj, s32 x, s32 y, u16 offX, u16 offY, u16 w,
      && ((ay <= by && ay + obj->unk3B * 2 >= by) || (ay >= by && by + h >= ay)))
         return TRUE;
     return FALSE;
+}
+
+
+void sub_0803CD98(u8 palId, u16 animId1, u8 variant1, u16 animId2, u8 variant2, u16 blend)
+{
+    u16 pal[16];
+    u16 pal2[16];
+    struct Sprite s;
+    u8 i;
+    s8 c;
+    u16 color;
+
+    s.tilesVram = 0x06000000;
+    s.unk1B = 0xFF;
+    s.x = 0;
+    s.y = 0;
+    s.unk14 = 0;
+    s.unk16 = 0;
+    s.unk1C = 0x10;
+    s.palId = palId;
+    s.unk8 = 0x80000;
+
+    if (animId2 == 0 && variant2 == 0)
+        CpuSet(&gObjPalette[palId * 16], pal2, 0x10);
+
+    if (animId1 != 0 || variant1 != 0) {
+        s.animId = animId1;
+        s.variant = variant1;
+        sub_08155128(&s);
+    }
+
+    CpuSet(&gObjPalette[palId * 16], pal, 0x10);
+
+    if (animId2 != 0 || variant2 != 0) {
+        s.animId = animId2;
+        s.variant = variant2;
+        sub_08155128(&s);
+        CpuSet(&gObjPalette[palId * 16], pal2, 0x10);
+    }
+
+    for (i = 1; (i & 0xF0) == 0; i++) {
+        c = (pal[i] & 0x1F) + ((blend * ((pal2[i] & 0x1F) - (pal[i] & 0x1F))) >> 8);
+        if (c & 0xE0) {
+            if (c & 0x80)
+                c = 0;
+            else
+                c = 0x1F;
+        }
+        color = c;
+
+        c = ((pal[i] >> 5) & 0x1F)
+            + ((blend * (((pal2[i] >> 5) & 0x1F) - ((pal[i] >> 5) & 0x1F))) >> 8);
+        if (c & 0xE0) {
+            if (c & 0x80)
+                c = 0;
+            else
+                c = 0x1F;
+        }
+        color |= c << 5;
+
+        c = ((pal[i] >> 10) & 0x1F)
+            + ((blend * (((pal2[i] >> 10) & 0x1F) - ((pal[i] >> 10) & 0x1F))) >> 8);
+        if (c & 0xE0) {
+            if (c & 0x80)
+                c = 0;
+            else
+                c = 0x1F;
+        }
+        color |= c << 10;
+
+        pal[i] = color;
+    }
+
+    if (gMainFlags & 0x20000) {
+        LoadObjPaletteWithTransformation(pal, palId * 16, 0x10);
+    } else {
+        DmaCopy16(3, pal, &gObjPalette[palId * 16], 0x20);
+        gMainFlags |= 2;
+    }
+
+    CpuSet(&gObjPalette[(u8)(palId * 16)], &gUnk_02022320[(u8)(palId * 16)], 0x10);
+}
+
+void sub_0803CFC4(u8 palId, u16 animId, u8 variant, s8 dr, s8 dg, s8 db, u16 blend)
+{
+    u16 pal[16];
+    struct Sprite s;
+    u8 i;
+    s8 c;
+    u16 color;
+
+    s.tilesVram = 0x06000000;
+    s.unk1B = 0xFF;
+    s.x = 0;
+    s.y = 0;
+    s.unk14 = 0;
+    s.unk16 = 0;
+    s.unk1C = 0x10;
+    s.palId = palId;
+    s.unk8 = 0x80000;
+
+    if (animId != 0 || variant != 0) {
+        s.animId = animId;
+        s.variant = variant;
+        sub_08155128(&s);
+    }
+
+    CpuSet(&gObjPalette[palId * 16], pal, 0x10);
+
+    for (i = 1; (i & 0xF0) == 0; i++) {
+        c = (pal[i] & 0x1F) + ((blend * dr) >> 8);
+        if (c & 0xE0) {
+            if (c & 0x80)
+                c = 0;
+            else
+                c = 0x1F;
+        }
+        color = c;
+
+        c = ((pal[i] >> 5) & 0x1F) + ((blend * dg) >> 8);
+        if (c & 0xE0) {
+            if (c & 0x80)
+                c = 0;
+            else
+                c = 0x1F;
+        }
+        color |= c << 5;
+
+        c = ((pal[i] >> 10) & 0x1F) + ((blend * db) >> 8);
+        if (c & 0xE0) {
+            if (c & 0x80)
+                c = 0;
+            else
+                c = 0x1F;
+        }
+        color |= c << 10;
+
+        pal[i] = color;
+    }
+
+    if (gMainFlags & 0x20000) {
+        LoadObjPaletteWithTransformation(pal, palId * 16, 0x10);
+    } else {
+        DmaCopy16(3, pal, &gObjPalette[palId * 16], 0x20);
+        gMainFlags |= 2;
+    }
+    gMainFlags |= 2;
+
+    CpuSet(&gObjPalette[(u8)(palId * 16)], &gUnk_02022320[(u8)(palId * 16)], 0x10);
 }
