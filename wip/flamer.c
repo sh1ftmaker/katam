@@ -325,6 +325,96 @@ void sub_080B998C(struct Object2 *flamer)
     flamer->unk9E--;
 }
 
+void sub_080B9AF0(struct Object2 *flamer)
+{
+    s16 dirSign;
+    u32 collideFlags;
+    s32 x, y;
+
+    collideFlags = 1;
+    flamer->base.flags |= 4;
+
+    dirSign = -0x1000;
+    if (flamer->base.x > flamer->kirby3->base.base.base.x)
+        dirSign = 0x1000;
+
+    if (flamer->base.counter-- <= 0)
+    {
+        s32 dx = (flamer->kirby3->base.base.base.x + dirSign - flamer->base.x) >> 8;
+        s32 dy = (flamer->base.y - flamer->kirby3->base.base.base.y) >> 8;
+        u16 dist = Sqrt((dx * dx + dy * dy) * 256);
+        s32 vx = dx * 256 / dist;
+        s32 vy = dy * 256 / dist;
+
+        flamer->base.xspeed = vx << 4;
+        flamer->base.yspeed = vy << 4;
+
+        switch (flamer->subtype)
+        {
+        case 1:
+            flamer->base.counter = 9;
+            break;
+        case 2:
+            flamer->base.counter = 6;
+            break;
+        default:
+            flamer->base.counter = 12;
+            break;
+        }
+    }
+
+    x = flamer->base.x + (flamer->base.unk3E << 8);
+    if (x <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.x
+        && x >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.x)
+    {
+        y = flamer->base.y + (flamer->base.unk3D << 8);
+        if (y <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
+            && y >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
+            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56, x >> 12, y >> 12)];
+    }
+
+    x = flamer->base.x + (flamer->base.unk3C << 8);
+    if (x <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.x
+        && x >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.x)
+    {
+        y = flamer->base.y + (flamer->base.unk3D << 8);
+        if (y <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
+            && y >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
+            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56, x >> 12, y >> 12)];
+    }
+
+    x = flamer->base.x + (flamer->base.unk3E << 8);
+    if (x <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.x
+        && x >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.x)
+    {
+        y = flamer->base.y + (flamer->base.unk3F << 8);
+        if (y <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
+            && y >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
+            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56, x >> 12, y >> 12)];
+    }
+
+    x = flamer->base.x + (flamer->base.unk3C << 8);
+    if (x <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.x
+        && x >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.x)
+    {
+        y = flamer->base.y + (flamer->base.unk3F << 8);
+        if (y <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
+            && y >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
+            collideFlags |= gUnk_082D88B8[sub_080023E4(flamer->base.unk56, x >> 12, y >> 12)];
+    }
+
+    if (collideFlags == 1)
+    {
+        if (flamer->unk9E)
+        {
+            flamer->base.xspeed = 0;
+            flamer->base.yspeed = 0;
+            flamer->unk9E--;
+        }
+        sub_080BA54C(flamer);
+    }
+}
+
 void sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
 {
     struct Task *t = TaskCreate(sub_080BA004, sizeof(struct Object4), 0x3500, TASK_USE_IWRAM, sub_0803DCCC);
