@@ -1097,12 +1097,14 @@ void sub_080BA5C8(struct Object2 *flamer)
     if (t == 0x80 || t == 0xC0)
     {
         s32 off = flamer->base.unk3E * 0x100;
-        s32 x = flamer->base.x + off;
+        s32 x0 = flamer->base.x;
+        register s32 x asm("r4") = x0 + off;
         s32 y = flamer->base.y;
         s32 m;
-        s32 xm = x & ~0xF00;
+        s32 xm;
+        x &= ~0xF00;
         m = 0xF00;
-        xm += m;
+        xm = x + m;
         y &= m;
         flamer->base.x = xm - y - off;
     }
