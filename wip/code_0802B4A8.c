@@ -26,7 +26,10 @@ struct Unk_0802B4A8 {
     /* 0x278 */ s32 unk278;
     /* 0x27C */ s32 unk27C;
     /* 0x280 */ s32 unk280;
-    /* 0x284 */ u8 filler284[0x2A0 - 0x284];
+    /* 0x284 */ u8 filler284[0x294 - 0x284];
+    /* 0x294 */ s32 unk294;
+    /* 0x298 */ s32 unk298;
+    /* 0x29C */ s32 unk29C;
     /* 0x2A0 */ s32 unk2A0;
     /* 0x2A4 */ s32 unk2A4;
     /* 0x2A8 */ s32 unk2A8;
@@ -78,6 +81,8 @@ void sub_0802BF68(struct Unk_0802B4A8 *);
 void sub_0802C1D8(struct Unk_0802B4A8 *);
 void sub_0802C308(struct Unk_0802B4A8 *);
 void sub_0802C3C8(struct Unk_0802B4A8 *);
+void sub_0802C4BC(struct Unk_0802B4A8 *);
+void sub_0802D458(struct Unk_0802B4A8 *);
 void sub_0802C550(struct Unk_0802B4A8 *);
 void sub_0802C8E8(struct Unk_0802B4A8 *);
 void sub_0802D360(struct Task *);
@@ -162,7 +167,8 @@ void sub_0802E11C(struct Unk_0802B4A8 *);
 void sub_0802D444(struct Unk_0802B4A8 *);
 void sub_0802DD3C(void);
 void sub_0802DD94(struct Unk_0802D898 *);
-struct Sprite *sub_0802CFF0(struct Unk_0802B4A8 *, u16, u16, u32, s32, s32, s32, s32, s32);
+struct Unk_0802CE64 *sub_0802CFF0(struct Unk_0802B4A8 *, u16, u16, u32, s32, s32, u16, u16, u16);
+void sub_0802D0B8(void);
 void sub_0802CF2C(void);
 void sub_0802D528(struct Unk_0802B4A8 *);
 
@@ -240,6 +246,61 @@ void sub_0802C360(struct Unk_0802B4A8 *x) {
     x->unk218[4][0] += (s16)x->unk240[4][0];
 }
 
+void sub_0802C3C8(struct Unk_0802B4A8 *x) {
+    struct Sprite *s = &x->unk11C;
+
+    x->unk294 = 0x11800;
+    x->unk298 = 0x5000;
+    x->unk29C = 0;
+    x->unk2A0 = 0;
+    s->unk14 = 0x100;
+    s->animId = 0x395;
+    s->variant = 0;
+    s->unk16 = 0;
+    s->unk1B = 0xFF;
+    s->unk1C = 0x10;
+    s->palId = 5;
+    s->x = x->unk294 >> 8;
+    s->y = x->unk298 >> 8;
+    s->unk8 = 0x1400;
+    sub_08155128(s);
+    s = &x->unk144;
+    x->unk2A4 = x->unk294;
+    x->unk2A8 = x->unk298;
+    x->unk2AC = 0;
+    x->unk2B0 = 0;
+    s->unk14 = 0x100;
+    s->animId = 0x395;
+    s->variant = 1;
+    s->unk16 = 0;
+    s->unk1B = 0xFF;
+    s->unk1C = 0x10;
+    s->palId = 6;
+    s->x = x->unk2A4 >> 8;
+    s->y = x->unk2A8 >> 8;
+    s->unk8 = 0x1400;
+    sub_08155128(s);
+    x->unk214 |= 0xA0000;
+    x->unk0 = sub_0802C4BC;
+}
+
+void sub_0802C4BC(struct Unk_0802B4A8 *x) {
+    x->unk29C = -0x140;
+    if (x->unk294 <= 0xDBFF) {
+        x->unk2A0 -= 8;
+    }
+    if (x->unk298 < -0x2000) {
+        x->unk29C = 0;
+        x->unk2A0 = 0;
+        x->unk214 &= 0xFFF7FFFF;
+        x->unk0 = sub_0802D458;
+    }
+    x->unk294 += x->unk29C;
+    x->unk298 += x->unk2A0;
+    x->unk2A4 = x->unk294;
+    x->unk2A8 = x->unk298;
+}
+
 void sub_0802CDA0(struct Unk_0802D898 *x) {
     u32 t = x->unk4A + 1;
 
@@ -312,6 +373,22 @@ void sub_0802CF2C(void) {
         }
     }
     gCurTask->main = (TaskMain)sub_0802D528;
+}
+
+struct Unk_0802CE64 *sub_0802CFF0(struct Unk_0802B4A8 *x, u16 animId, u16 variant, u32 tilesVram, s32 a5, s32 a6, u16 a7, u16 a8, u16 a9) {
+    struct Task *t;
+    struct Unk_0802CE64 *s;
+
+    t = TaskCreate(sub_0802D0B8, 0x3C, 0x101, 0, NULL);
+    s = TaskGetStructPtr(t);
+    s->unk28 = x;
+    s->unk2C = a5;
+    s->unk30 = a6;
+    s->unk34 = a7;
+    s->unk36 = a8;
+    s->unk38 = a9;
+    SpriteInit(&s->sprite, tilesVram, 0x140, animId, variant, 0, 0xFF, 0x10, 0xD, a5 >> 8, a6 >> 8, 0x81000);
+    return s;
 }
 
 void sub_0802D360(struct Task *t) {
@@ -807,12 +884,12 @@ void sub_0802DF0C(struct Unk_0802B4A8 *x) {
 }
 
 void sub_0802DF30(struct Unk_0802B4A8 *x) {
-    struct Sprite *s;
+    struct Unk_0802CE64 *s;
 
     x->unk214 &= 0xFBFFFFFF;
     x->unk2B4 = 0;
     s = sub_0802CFF0(x, 0x28F, 3, x->unk16C.tilesVram, x->unk2A4, x->unk2A8, 0, 0, 1);
-    s->unk1C >>= 1;
+    s->sprite.unk1C >>= 1;
     m4aSongNumStart(0x212);
     x->unk0 = sub_0802DFA0;
 }
