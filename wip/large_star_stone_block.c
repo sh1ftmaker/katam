@@ -391,6 +391,7 @@ void sub_08120A40(struct Unknown82 *x)
     u8 unk56;
     u16 xu, yu;
     u32 i, j;
+    u16 *e8;
     s16 unused[6];
 
     x->obj2.base.counter = 0;
@@ -407,6 +408,7 @@ void sub_08120A40(struct Unknown82 *x)
     yu = x->obj2.base.y >> 0xc;
 
     j = 0;
+    e8 = entry->unk0.unk08;
     for (i = 0; i < (u16)x->unkB4; i++) {
             u16 dx = gUnk_08357D30[x2->unkB6 * 0x12 + j];
             u16 dy;
@@ -423,7 +425,7 @@ void sub_08120A40(struct Unknown82 *x)
 
             ax = (s16)xu + (s16)dx;
             ay = (s16)yu + (s16)dy;
-            sub_080015A8(unk56, ax, ay, entry->unk0.unk08);
+            sub_080015A8(unk56, ax, ay, e8);
             entry->unk0.unk10 = sub_080023E4(unk56, ax, ay);
 
             entry->unk0.unk00 = 1;
@@ -432,6 +434,7 @@ void sub_08120A40(struct Unknown82 *x)
             entry->unk0.unk04 = 0x14;
 
             entry++;
+            e8 += 12;
     }
 
     x->obj2.unk78 = sub_08120B90;
