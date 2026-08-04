@@ -29,8 +29,7 @@ struct Unk_0802B4A8 {
     /* 0x218 */ u32 unk218[5][2];
     /* 0x240 */ u16 unk240[5][2];
     /* 0x254 */ u16 unk254[5];
-    /* 0x25E */ u16 unk25E[4];
-    /* 0x266 */ u8 filler266[2];
+    /* 0x25E */ u16 unk25E[5];
     /* 0x268 */ u16 unk268[5];
     /* 0x272 */ u8 filler272[0x274 - 0x272];
     /* 0x274 */ s32 unk274;
@@ -96,6 +95,7 @@ extern u16 gUnk_082EB4B6[][2];
 extern u16 gUnk_0300000C;
 extern u16 gUnk_082EB5E0[][2];
 extern u8 gUnk_082EB630[];
+extern u8 gUnk_082EB610[];
 
 void sub_0803D2D0(void);
 extern u16 gUnk_082EB6D0[];
@@ -207,6 +207,7 @@ void sub_0802E11C(struct Unk_0802B4A8 *);
 void sub_0802D444(struct Unk_0802B4A8 *);
 void sub_0802DD3C(void);
 void sub_0802DD94(struct Unk_0802D898 *);
+struct Unk_0802CE64 *sub_0802CE64(struct Unk_0802B4A8 *, u16, u16, u32, s32, s32, u16, u16, u16);
 struct Unk_0802CE64 *sub_0802CFF0(struct Unk_0802B4A8 *, u16, u16, u32, s32, s32, u16, u16, u16);
 void sub_0802D0B8(void);
 void sub_0802D288(void);
@@ -244,6 +245,116 @@ void sub_0802B4A8(void) {
     x->unk144.tilesVram = VramMalloc(0x10);
     gUnk_0300000C = 0;
     x->unk0 = sub_0802BCEC;
+}
+
+void sub_0802B62C(struct Unk_0802B4A8 *x) {
+    u16 i;
+    u16 j;
+    struct Sprite *s;
+
+    if ((s32)x->unk214 >= 0 && sub_08155128(&x->unkCC) == 0)
+        x->unkCC.unk1B = 0xFF;
+
+    j = 0;
+    for (i = 0; i < 5; i++, j += 3) {
+        if (x->unk214 & (1 << j)) {
+            s = &x->unk4[i];
+            x->unk254[i] = (x->unk254[i] + 4) & 0x3FF;
+            if ((s16)x->unk25E[i] < (s16)x->unk268[i]) {
+                x->unk25E[i] += 4;
+                if ((s16)x->unk25E[i] > (s16)x->unk268[i])
+                    x->unk25E[i] = x->unk268[i];
+            } else if ((s16)x->unk25E[i] > (s16)x->unk268[i]) {
+                x->unk25E[i] -= 4;
+                if ((s16)x->unk25E[i] < (s16)x->unk268[i])
+                    x->unk25E[i] = x->unk268[i];
+            }
+            s->x = (s32)x->unk218[i][0] >> 8;
+            s->y = (s32)(x->unk218[i][1] + (gSineTable[x->unk254[i]] >> 10) * ((s16)x->unk25E[i] >> 4)) >> 8;
+            if ((s32)x->unk214 >= 0) {
+                if (!(x->unk214 & (2 << j))) {
+                    if (sub_08155128(s) == 0)
+                        x->unk214 |= 2 << j;
+                }
+                if (x->unk214 & (2 << j)) {
+                    x->unk214 &= ~(2 << j);
+                    s->unk1B = 0xFF;
+                }
+            }
+            sub_0815604C(s);
+            if (x->unk214 & (4 << j)) {
+                x->unkCC.x = s->x;
+                x->unkCC.y = s->y;
+                sub_0815604C(&x->unkCC);
+                if (!(x->unk214 & 0x800000)) {
+                    if (((x->unk2BA + i * 2) & 7) == 0) {
+                        sub_0802CFF0(x, 0x295, 2, x->unk16C.tilesVram,
+                            x->unk2B4 + x->unk218[i][0] + 0x1000,
+                            x->unk218[i][1] + 0x800, 0, 0, 1);
+                    }
+                    if (((x->unk2BA + i * 2) & 0xF) == 0) {
+                        u32 b = Rand16() & 0x1F;
+                        sub_0802CE64(x, gUnk_082EB5E0[gUnk_082EB610[b]][0], gUnk_082EB5E0[gUnk_082EB610[b]][1],
+                            x->unk16C.tilesVram,
+                            x->unk2B4 + x->unk218[i][0] + (((Rand16() & 0xF) + 8) << 8),
+                            x->unk218[i][1] + (((Rand16() & 0x1F) - 0x10) << 8),
+                            (Rand16() & 0xFF) + 0x80, 0, 0);
+                    }
+                }
+            }
+        }
+    }
+
+    if (x->unk214 & 0x8000) {
+        s = &x->unkF4;
+        if ((s32)x->unk214 >= 0) {
+            if (!(x->unk214 & 0x10000)) {
+                if (sub_08155128(s) == 0)
+                    x->unk214 |= 0x10000;
+            }
+            if (x->unk214 & 0x10000) {
+                x->unk214 &= ~0x10000;
+                s->unk1B = 0xFF;
+            }
+        }
+        s->x = x->unk274 >> 8;
+        s->y = x->unk278 >> 8;
+        sub_0815604C(s);
+    }
+
+    if (x->unk214 & 0x20000) {
+        s = &x->unk11C;
+        if ((s32)x->unk214 >= 0) {
+            if (!(x->unk214 & 0x40000)) {
+                if (sub_08155128(s) == 0)
+                    x->unk214 |= 0x40000;
+            }
+            if (x->unk214 & 0x40000) {
+                x->unk214 &= ~0x40000;
+                s->unk1B = 0xFF;
+            }
+        }
+        s->x = x->unk294 >> 8;
+        s->y = x->unk298 >> 8;
+        sub_0815604C(s);
+    }
+
+    if (x->unk214 & 0x80000) {
+        s = &x->unk144;
+        if ((s32)x->unk214 >= 0) {
+            if (!(x->unk214 & 0x100000)) {
+                if (sub_08155128(s) == 0)
+                    x->unk214 |= 0x100000;
+            }
+            if (x->unk214 & 0x100000) {
+                x->unk214 &= ~0x100000;
+                s->unk1B = 0xFF;
+            }
+        }
+        s->x = x->unk2A4 >> 8;
+        s->y = x->unk2A8 >> 8;
+        sub_0815604C(s);
+    }
 }
 
 void sub_0802BA6C(void) {
