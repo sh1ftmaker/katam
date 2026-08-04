@@ -511,10 +511,12 @@ void sub_080212C0(struct CutsceneTrigger *x) {
 
             if ((v >> i) & 1) {
                 union CutsceneVal *p;
+                u32 off;
 
                 gKirbys[i].animationIndex = 0;
+                off = i * 4;
                 p = &x2->unkB8;
-                p += i;
+                p = (union CutsceneVal *)((u32)p + off);
                 p->obj4->flags |= 0x1000;
                 p->obj4 = NULL;
             }
