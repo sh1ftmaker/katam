@@ -387,11 +387,11 @@ NAKED void sub_08120A40(struct Unknown82 *x)
 void sub_08120A40(struct Unknown82 *x)
 {
     struct Unk_0888562C_4 *entry;
+    struct Unknown82 *x2 = x;
     u8 unk56;
     u16 xu, yu;
-    s16 x12, y12;
     u32 i, j;
-    s16 unused[2];
+    s16 unused[6];
 
     x->obj2.base.counter = 0;
     x->unkB4 = gUnk_08357D20[x->obj2.object->unk14];
@@ -404,27 +404,25 @@ void sub_08120A40(struct Unknown82 *x)
 
     unk56 = x->obj2.base.unk56;
     xu = x->obj2.base.x >> 0xc;
-    x12 = xu;
     yu = x->obj2.base.y >> 0xc;
-    y12 = yu;
 
     j = 0;
     for (i = 0; i < (u16)x->unkB4; i++) {
-            u16 dx = gUnk_08357D30[x->unkB6 * 0x12 + j];
+            u16 dx = gUnk_08357D30[x2->unkB6 * 0x12 + j];
             u16 dy;
             u8 ex, ey;
             u16 ax, ay;
 
             j++;
-            dy = gUnk_08357D30[x->unkB6 * 0x12 + j];
+            dy = gUnk_08357D30[x2->unkB6 * 0x12 + j];
             j++;
 
             ex = xu + dx;
             ey = yu + dy;
             entry->unk14 = sub_080025AC(unk56, ex, ey);
 
-            ax = x12 + (s16)dx;
-            ay = y12 + (s16)dy;
+            ax = (s16)xu + (s16)dx;
+            ay = (s16)yu + (s16)dy;
             sub_080015A8(unk56, ax, ay, entry->unk0.unk08);
             entry->unk0.unk10 = sub_080023E4(unk56, ax, ay);
 
