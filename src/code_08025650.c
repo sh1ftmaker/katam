@@ -47,8 +47,8 @@ extern const u16 gUnk_082DEB80[];
 extern const u16 gUnk_082DEB8C[];
 
 // sub_08025650: functionally equivalent; the remaining diff vs the original
-// is register allocation only (the two hoisted coord-table bases lose their
-// registers to the CpuFill16 temp addresses).
+// is register allocation only (ref spills count and two computed pointers to
+// fixed stack slots and reloads them per use; ours keeps them in registers).
 #ifndef NONMATCHING
 NAKED void sub_08025650(u8 count) {
     asm(".include \"asm/nonmatching/sub_08025650.inc\"");
@@ -59,17 +59,19 @@ void sub_08025650(u8 count) {
     bool32 flags[4];
     s32 coords[4][2];
     u16 i;
+    const s32 *coords28 = gUnk_082DEB28;
+    const s32 *coords60 = gUnk_082DEB60;
 
     for (i = 0; i <= 3; i++) {
         if (i < count) {
             songs[i] = gUnk_082DEB10[i];
             flags[i] = gUnk_082DEB18[i];
-            coords[i][0] = gUnk_082DEB28[i * 2];
+            coords[i][0] = coords28[i * 2];
             coords[i][1] = gUnk_082DEB2C[i * 2];
         } else {
             songs[i] = gUnk_082DEB48[i];
             flags[i] = gUnk_082DEB50[i];
-            coords[i][0] = gUnk_082DEB60[i * 2];
+            coords[i][0] = coords60[i * 2];
             coords[i][1] = gUnk_082DEB64[i * 2];
         }
     }

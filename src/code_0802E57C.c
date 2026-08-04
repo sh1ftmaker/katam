@@ -168,9 +168,13 @@ void sub_0802E78C(void) {
                 v1[0] = 0;
                 v1[1] = 0x80;
             } else {
-                s16 *p = v1;
+#ifndef NONMATCHING
+                register s32 w asm("r0");
+#else
                 s32 w;
+#endif
                 {
+                    s16 *p = v1;
                     u16 uvx = *p;
                     s16 svx = *p;
                     if (svx < -0x400) {
@@ -184,6 +188,7 @@ void sub_0802E78C(void) {
                     *p = w;
                 }
                 {
+                    s16 *p = v1;
                     u16 uvy = p[1];
                     s16 svy = p[1];
                     if (svy < -0x400) {

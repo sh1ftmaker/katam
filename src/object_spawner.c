@@ -139,10 +139,10 @@ static NAKED void sub_0811BEBC(struct Task *task) {
 #else
 static void sub_0811BEBC(struct Task *task) {
     struct ObjectSpawner *x = TaskGetStructPtr(task);
-    u8 playerId = x->obj2.base.unk56;
-    u8 a = x->obj2.object->unk2;
-    u8 b = x->obj2.object->unk3;
-    u8 c = gCurLevelInfo[playerId].unk65E;
+    u32 playerId = x->obj2.base.unk56;
+    u32 a = x->obj2.object->unk2;
+    u32 b = x->obj2.object->unk3;
+    u32 c = gCurLevelInfo[playerId].unk65E;
 
     ObjectDestroy(task);
     if (a != 0 || playerId != 0xFF) {
