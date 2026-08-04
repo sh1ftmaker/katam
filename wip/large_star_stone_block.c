@@ -406,14 +406,15 @@ void sub_08120A40(struct Unknown82 *x)
     xu = x->obj2.base.x >> 0xc;
     yu = x->obj2.base.y >> 0xc;
 
-    for (i = 0, j = 0, x12 = xu, y12 = yu; i < (u16)x2->unkB4; i++) {
-            s16 dx = gUnk_08357D30[x2->unkB6 * 0x12 + j];
+    for (i = 0, j = 0, y12 = yu; i < (u16)x2->unkB4; i++) {
+            s16 dx = gUnk_08357D30[j + x2->unkB6 * 0x12];
             s16 dy;
-            u8 ex, ey;
+            u16 ex, ey;
             u16 ax, ay;
 
+            x12 = xu;
             j++;
-            dy = gUnk_08357D30[x2->unkB6 * 0x12 + j];
+            dy = gUnk_08357D30[j + x2->unkB6 * 0x12];
             j++;
 
             ex = xu + (u16)dx;
