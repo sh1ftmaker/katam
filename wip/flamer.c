@@ -741,9 +741,16 @@ void sub_080B9AF0(struct Object2 *flamer)
         y1 = flamer->base.y + (flamer->base.unk3D << 8);
         if (y1 <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y1 >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= *(u32 *)((u8 *)gUnk_082D88B8 + sub_080023E4(flamer->base.unk56,
+        {
+            const u32 *tbl1;
+            u8 idx1;
+
+            idx1 = sub_080023E4(flamer->base.unk56,
                 ((flamer->base.x >> 8) + flamer->base.unk3E) >> 4,
-                ((flamer->base.y >> 8) + flamer->base.unk3D) >> 4) * 4);
+                ((flamer->base.y >> 8) + flamer->base.unk3D) >> 4);
+            tbl1 = gUnk_082D88B8;
+            collideFlags |= tbl1[idx1];
+        }
     }
 
     x2 = flamer->base.x + (flamer->base.unk3C << 8);
@@ -753,9 +760,16 @@ void sub_080B9AF0(struct Object2 *flamer)
         y2 = flamer->base.y + (flamer->base.unk3D << 8);
         if (y2 <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y2 >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= *(u32 *)((u8 *)gUnk_082D88B8 + sub_080023E4(flamer->base.unk56,
+        {
+            const u32 *tbl2;
+            u8 idx2;
+
+            idx2 = sub_080023E4(flamer->base.unk56,
                 ((flamer->base.x >> 8) + flamer->base.unk3C) >> 4,
-                ((flamer->base.y >> 8) + flamer->base.unk3D) >> 4) * 4);
+                ((flamer->base.y >> 8) + flamer->base.unk3D) >> 4);
+            tbl2 = gUnk_082D88B8;
+            collideFlags |= tbl2[idx2];
+        }
     }
 
     x3 = flamer->base.x + (flamer->base.unk3E << 8);
@@ -765,9 +779,16 @@ void sub_080B9AF0(struct Object2 *flamer)
         y3 = flamer->base.y + (flamer->base.unk3F << 8);
         if (y3 <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y3 >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= *(u32 *)((u8 *)gUnk_082D88B8 + sub_080023E4(flamer->base.unk56,
+        {
+            const u32 *tbl3;
+            u8 idx3;
+
+            idx3 = sub_080023E4(flamer->base.unk56,
                 ((flamer->base.x >> 8) + flamer->base.unk3E) >> 4,
-                ((flamer->base.y >> 8) + flamer->base.unk3F) >> 4) * 4);
+                ((flamer->base.y >> 8) + flamer->base.unk3F) >> 4);
+            tbl3 = gUnk_082D88B8;
+            collideFlags |= tbl3[idx3];
+        }
     }
 
     x4 = flamer->base.x + (flamer->base.unk3C << 8);
@@ -777,9 +798,16 @@ void sub_080B9AF0(struct Object2 *flamer)
         y4 = flamer->base.y + (flamer->base.unk3F << 8);
         if (y4 <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
             && y4 >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
-            collideFlags |= *(u32 *)((u8 *)gUnk_082D88B8 + sub_080023E4(flamer->base.unk56,
+        {
+            const u32 *tbl4;
+            u8 idx4;
+
+            idx4 = sub_080023E4(flamer->base.unk56,
                 ((flamer->base.x >> 8) + flamer->base.unk3C) >> 4,
-                ((flamer->base.y >> 8) + flamer->base.unk3F) >> 4) * 4);
+                ((flamer->base.y >> 8) + flamer->base.unk3F) >> 4);
+            tbl4 = gUnk_082D88B8;
+            collideFlags |= tbl4[idx4];
+        }
     }
 
     if (collideFlags == 1)
