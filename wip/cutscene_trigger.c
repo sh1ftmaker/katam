@@ -380,13 +380,14 @@ void sub_08021844(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
     u16 i;
     u16 j = 0;
+    const s16 *p = gUnk_082DEA5C;
 
     for (i = 0; i < 4; i++) {
         x2->unk2A4[i] = 0;
         if (x2->unk294[i] == (struct Object4 *)-1) {
             struct Object4 *obj = x2->unk294[i] = sub_0808B62C(&x->obj2.base, 0x10, 0x2DE, 0, 0);
 
-            obj->x = gUnk_082DEA5C[j * 2] << 8;
+            obj->x = p[j * 2] << 8;
             obj->y = gUnk_082DEA5E[j * 2] << 8;
             obj->unk3C = 0;
             obj->unk3E = 0;
