@@ -237,22 +237,52 @@ void sub_08120608(struct Task *t)
         sub_08001678(x, y, z, 1);
 }
 
-// sub_08120670: not yet reverse engineered (gKirbys/linked-object scan); the
-// #else body below is an unverified placeholder — do not trust it as correct.
-#ifndef NONMATCHING
-NAKED void sub_08120670(struct Object2 *block)
-{
-    asm(".include \"asm/nonmatching/sub_08120670.inc\"");
-}
-#else
+// sub_08120670: linked-object scan (via sub_08039490), room+type filtered,
+// AABB overlap test against block's hitbox rect, tracks the max object->unk11.
 void sub_08120670(struct Object2 *block)
 {
+    u16 room = gCurLevelInfo[block->base.unk56].currentRoom;
+    struct Object2 **list = sub_08039490(&block->base);
+    s16 rect[4];
+
+    rect[0] = (block->base.x >> 8) + block->object->unk1A;
+    rect[1] = (block->base.y >> 8) + block->object->unk1C;
+    rect[2] = rect[0] + block->object->unk1E;
+    rect[3] = rect[1] + block->object->unk20;
+
+    for (; *list != NULL; list++) {
+        struct Object2 *o = *list;
+        s32 kx;
+        s16 ky;
+
+        if (room != gCurLevelInfo[o->base.unk56].currentRoom)
+            continue;
+        if (o->type != 0x79 && o->type != 0x7D)
+            continue;
+
+        kx = o->base.x << 8;
+        ky = (s16)((o->base.y << 8) >> 16);
+        if (rect[0] > (s16)(kx >> 16)
+         || rect[2] < (s16)((o->base.x << 8) >> 16)
+         || rect[1] > ky
+         || rect[3] < ky) {
+            continue;
+        }
+
+        {
+            u32 *p = sub_08002888(0, 0xF, gCurLevelInfo[block->base.unk56].unk65E);
+            if (*p < block->object->unk11)
+                *p = block->object->unk11;
+        }
+        block->base.flags |= 0x1000;
+    }
     block->base.counter++;
 }
-#endif
 
-// sub_08120788: not yet reverse engineered (gKirbys array scan against
-// gUnk_0203AD44 count); the #else body below is an unverified placeholder.
+// sub_08120788: gKirbys array scan (count gUnk_0203AD44), room+player-slot
+// filtered, AABB overlap test against block's hitbox rect, tracks the max
+// object->unk11 (sibling of sub_08120670, which scans the linked-object
+// list instead of gKirbys[]).
 #ifndef NONMATCHING
 NAKED void sub_08120788(struct Object2 *block)
 {
@@ -261,6 +291,42 @@ NAKED void sub_08120788(struct Object2 *block)
 #else
 void sub_08120788(struct Object2 *block)
 {
+    s16 rect[4];
+    u16 room;
+    u8 i;
+
+    rect[0] = (block->base.x >> 8) + block->object->unk1A;
+    rect[1] = (block->base.y >> 8) + block->object->unk1C;
+    rect[2] = rect[0] + block->object->unk1E;
+    rect[3] = rect[1] + block->object->unk20;
+
+    room = gCurLevelInfo[block->base.unk56].currentRoom;
+
+    for (i = 0; i < gUnk_0203AD44; i++) {
+        if (room != gCurLevelInfo[i].currentRoom)
+            continue;
+        if (!(block->object->unk22 & 2) && i < gUnk_0203AD30)
+            continue;
+        if (!(block->object->unk22 & 4) && i >= gUnk_0203AD30)
+            continue;
+        if (rect[0] > (gKirbys[i].base.base.base.x >> 8))
+            continue;
+        if (rect[2] < (gKirbys[i].base.base.base.x >> 8))
+            continue;
+        if (rect[1] > (gKirbys[i].base.base.base.y >> 8))
+            continue;
+        if (rect[3] < (gKirbys[i].base.base.base.y >> 8))
+            continue;
+        if (gKirbys[i].base.base.base.unkC & 0x8000)
+            continue;
+
+        {
+            u32 *p = sub_08002888(0, 0xF, gCurLevelInfo[block->base.unk56].unk65E);
+            if (*p < block->object->unk11)
+                *p = block->object->unk11;
+        }
+        block->base.flags |= 0x1000;
+    }
     block->base.counter++;
 }
 #endif
