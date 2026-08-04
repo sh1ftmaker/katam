@@ -3995,3 +3995,91 @@ void sub_0803BF68(struct Unk_02022930_0 *p)
     }
 }
 
+
+/* Palette-fade descriptor: same storage as struct Unk_02022930_0, but the fade
+   code treats +1/+2 as signed and +0xA as unsigned. */
+struct PalFadeTask {
+    u8 unk0;
+    s8 level;
+    s8 target;
+    u8 unk3;
+    u16 objMask;
+    u16 bgMask;
+    u16 flags;
+    u16 step;
+    u16 accum;
+    u16 unkE;
+};
+
+#define FADE_COLOR(pal, p)                            \
+{                                                     \
+    u16 v;                                            \
+    u16 n;                                            \
+    (pal)++;                                          \
+    v = (*(pal) & 0x1F) - (p)->level;                 \
+    if (v & 0x8000)                                   \
+        n = 0;                                        \
+    else                                              \
+        n = v;                                        \
+    v = ((*(pal) >> 5) & 0x1F) - (p)->level;          \
+    if (!(v & 0x8000))                                \
+        n |= v << 5;                                  \
+    v = ((*(pal) >> 10) & 0x1F) - (p)->level;         \
+    if (!(v & 0x8000))                                \
+        n |= v << 10;                                 \
+    *(pal) = n;                                       \
+}
+
+#define FADE_PALETTE(pal, p)                          \
+{                                                     \
+    FADE_COLOR(pal, p) FADE_COLOR(pal, p)             \
+    FADE_COLOR(pal, p) FADE_COLOR(pal, p)             \
+    FADE_COLOR(pal, p) FADE_COLOR(pal, p)             \
+    FADE_COLOR(pal, p) FADE_COLOR(pal, p)             \
+    FADE_COLOR(pal, p) FADE_COLOR(pal, p)             \
+    FADE_COLOR(pal, p) FADE_COLOR(pal, p)             \
+    FADE_COLOR(pal, p) FADE_COLOR(pal, p)             \
+    FADE_COLOR(pal, p)                                \
+    (pal)++;                                          \
+}
+
+void sub_0803A450(struct Unk_02022930_0 *arg)
+{
+    struct PalFadeTask *p = (struct PalFadeTask *)arg;
+    u16 *pal;
+    u16 i;
+
+    if (p->flags & 2) {
+        pal = gBgPalette;
+        for (i = 0; i < 16; i++) {
+            if ((p->bgMask >> i) & 1)
+                FADE_PALETTE(pal, p)
+            else
+                pal += 16;
+        }
+        pal = gObjPalette;
+        for (i = 0; i < 16; i++) {
+            if ((p->objMask >> i) & 1)
+                FADE_PALETTE(pal, p)
+            else
+                pal += 16;
+        }
+        gMainFlags |= 3;
+    }
+
+    if (p->flags & 1)
+        return;
+    if ((gMainFlags & 0x800) && !(p->flags & 0x80))
+        return;
+
+    if (p->level == p->target) {
+        if (p->flags & 0x40) {
+            p->level = p->target;
+        } else {
+            p->flags = (p->flags | 1) & 0xFF79;
+        }
+    } else {
+        p->accum += p->step;
+        p->level = p->accum >> 8;
+    }
+}
