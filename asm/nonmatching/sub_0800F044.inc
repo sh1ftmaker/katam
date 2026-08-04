@@ -2,11 +2,8 @@
 	.include "constants/constants.inc"
 
 	.syntax unified
-
 	.text
 
-	thumb_func_start sub_0800F044
-sub_0800F044: @ 0x0800F044
 	push {r4, r5, r6, r7, lr}
 	mov r7, sl
 	mov r6, sb
@@ -1884,3 +1881,5 @@ _0800FE40:
 	pop {r4, r5, r6, r7}
 	pop {r0}
 	bx r0
+
+	.syntax divided
