@@ -209,7 +209,11 @@ NAKED void sub_081197D4(struct BigSmallSwitch *x) {
 #else
 void sub_081197D4(struct BigSmallSwitch *x) {
     if (sub_081194DC(x)) {
-        x->unkB6 = (x->unkB6 & ~4) | 0x100 | 0;
+        register u32 zero asm("r3");
+        u16 v = x->unkB6 & ~4;
+        zero = 0;
+        asm("" : "+r"(zero));
+        x->unkB6 = (v | 0x100) | zero;
         if (x->unkB6 & 1) {
             x->unkB6 &= ~2;
         } else {
@@ -217,7 +221,13 @@ void sub_081197D4(struct BigSmallSwitch *x) {
             x->unkB4 = x->obj2.object->unk18 + 2;
             PlaySfx(&x->obj2.base, SE_SWITCH_ACTIVATE);
         }
-        x->unkB6 |= 1 | 0x200;
+        {
+            u32 bit;
+            u16 t = x->unkB6 | 1;
+            bit = 0x200;
+            asm("" : "+r"(bit));
+            x->unkB6 = t | bit;
+        }
     } else {
         u16 flags = x->unkB6;
         if (flags & 1) {
@@ -227,10 +237,17 @@ void sub_081197D4(struct BigSmallSwitch *x) {
         x->unkB6 = flags;
         if (x->unkB4 <= 0) {
             if (!(x->obj2.object->unk22 & 4)) {
-                flags = (flags & ~0x20) & ~0x10;
-                x->unkB6 = flags;
-                if (flags & 4) {
-                    x->unkB6 = flags & ~4;
+                {
+                    u32 m;
+                    u16 f1 = flags & ~0x20;
+                    u16 f2;
+                    m = 0xFFEF;
+                    asm("" : "+r"(m));
+                    f2 = f1 & m;
+                    x->unkB6 = f2;
+                    if (f2 & 4) {
+                        x->unkB6 = f2 & ~4;
+                    }
                 }
                 if (x->unkB6 & 1) {
                     x->unkB6 |= 4;

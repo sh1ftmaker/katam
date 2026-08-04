@@ -200,16 +200,11 @@ void sub_0811BF24(struct Object2 *arg) {
 }
 #endif
 
-// sub_0811C07C: functionally equivalent; remaining diff is register allocation only.
-#ifndef NONMATCHING
-static NAKED void sub_0811C07C(struct ObjectSpawner *x) {
-    asm(".include \"asm/nonmatching/sub_0811C07C.inc\"");
-}
-#else
 static void sub_0811C07C(struct ObjectSpawner *x) {
+    s16 unused[4];
     u8 playerId = x->obj2.base.unk56;
-    u16 tileX = (u32)(x->obj2.base.x << 4) >> 16;
-    u16 tileY = (u32)(x->obj2.base.y << 4) >> 16;
+    u32 tileX = (u32)(x->obj2.base.x << 4) >> 16;
+    u32 tileY = (u32)(x->obj2.base.y << 4) >> 16;
 
     if (x->unkB4 == 0) {
         sub_0808AE30(&x->obj2.base, 0, 0x28D, 0);
@@ -221,4 +216,3 @@ static void sub_0811C07C(struct ObjectSpawner *x) {
         x->unkB4--;
     }
 }
-#endif

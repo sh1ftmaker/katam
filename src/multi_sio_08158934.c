@@ -80,7 +80,9 @@ void sub_08158A28(void) {
     REG_TM3CNT_H = 0xC1;
 }
 
-// sub_08158AE4: functionally equivalent; remaining diff is register allocation.
+// sub_08158AE4: functionally equivalent; remaining diff is register allocation
+// inside the case-0 block only (which pseudo lands in r6/r0-r1/r2-r3 and two
+// gcc-elided register copies); every other block matches modulo pool offsets.
 #ifndef NONMATCHING
 NAKED void sub_08158AE4(void) {
     asm(".include \"asm/nonmatching/sub_08158AE4.inc\"");
@@ -100,7 +102,7 @@ void sub_08158AE4(void) {
         if (gUnk_03000020.unkA == 0) {
             if (a == gUnk_03000020.unk6) {
                 if (gUnk_03000020.unk2 <= 3) {
-                    if (a == (u16)~gUnk_03000020.unk4 && b == (u16)~1) {
+                    if (a == (u16)~gUnk_03000020.unk4 && b == (u16)~gUnk_03000020.unk6) {
                         gUnk_03000020.unk2++;
                     }
                 } else {

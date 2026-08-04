@@ -46,9 +46,12 @@ extern const s32 gUnk_082DEB64[];
 extern const u16 gUnk_082DEB80[];
 extern const u16 gUnk_082DEB8C[];
 
-// sub_08025650: functionally equivalent; the remaining diff vs the original
-// is register allocation only (ref spills count and two computed pointers to
-// fixed stack slots and reloads them per use; ours keeps them in registers).
+// sub_08025650: functionally equivalent; the remaining diff vs the original is
+// register allocation only. The two `register ... asm("rN")` pins below (live
+// only in the NONMATCHING branch) reproduce the reference's frame size (0x50),
+// its four spill slots and the whole loop body; what still differs is only the
+// scheduling of the two table-base pool loads (emitted at the pins instead of
+// after the spill setup) plus the tail's pool offsets.
 #ifndef NONMATCHING
 NAKED void sub_08025650(u8 count) {
     asm(".include \"asm/nonmatching/sub_08025650.inc\"");
@@ -59,8 +62,8 @@ void sub_08025650(u8 count) {
     bool32 flags[4];
     s32 coords[4][2];
     u16 i;
-    const s32 *coords28 = gUnk_082DEB28;
-    const s32 *coords60 = gUnk_082DEB60;
+    register const s32 *coords28 asm("r8") = gUnk_082DEB28;
+    register const s32 *coords60 asm("ip") = gUnk_082DEB60;
 
     for (i = 0; i <= 3; i++) {
         if (i < count) {
