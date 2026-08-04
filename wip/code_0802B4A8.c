@@ -94,11 +94,16 @@ extern u32 gUnk_082EB5C4[][2];
 extern u16 gUnk_082EB4B4[][2];
 extern u16 gUnk_082EB4B6[][2];
 extern u16 gUnk_0300000C;
+extern u16 gUnk_082EB5E0[][2];
+extern u8 gUnk_082EB630[];
 
 void sub_0803D2D0(void);
 extern u16 gUnk_082EB6D0[];
 
 void sub_0802BA6C(void);
+void sub_0802B62C(struct Unk_0802B4A8 *);
+void sub_0802D480(struct Unk_0802B4A8 *);
+struct Unk_0802CE64 *sub_0802D198(struct Unk_0802B4A8 *, u16, u16, u32, s32, s32, u16, u16);
 void sub_0802BCEC(struct Unk_0802B4A8 *);
 void sub_0802BF68(struct Unk_0802B4A8 *);
 void sub_0802D3E0(struct Unk_0802B4A8 *);
@@ -239,6 +244,71 @@ void sub_0802B4A8(void) {
     x->unk144.tilesVram = VramMalloc(0x10);
     gUnk_0300000C = 0;
     x->unk0 = sub_0802BCEC;
+}
+
+void sub_0802BA6C(void) {
+    struct Unk_0802B4A8 *tmp = TaskGetStructPtr(gCurTask);
+    struct Unk_0802B4A8 *x = tmp;
+
+    if ((x->unk214 & 0x8000000) && (gPressedKeys & 0xB)) {
+        x->unk214 |= 0x40000000;
+    }
+
+    if ((x->unk214 & 0x60000000) != 0x40000000) {
+        x->unk0(x);
+        if (gUnk_0300000C != 0)
+            return;
+        if (x->unk214 & 0x1000000) {
+            x->unk2B4 -= (s16)x->unk2B8;
+            gBgScrollRegs[0][0] = x->unk2B4 >> 9;
+        }
+        if ((x->unk214 & 0x800000) && (x->unk2BA & 0x3F) == 0) {
+            u16 a, b, dx;
+            s32 xpos;
+
+            a = Rand16() & 3;
+            b = Rand16() & 3;
+            if (a < 2) {
+                dx = -((Rand16() & 0xF) + 0x10);
+                xpos = ((Rand16() & 0x1F) << 0xB) + 0x1000;
+            } else {
+                dx = (Rand16() & 0xF) + 0x10;
+                xpos = ((Rand16() & 0x1F) << 0xB) - 0x2000;
+            }
+            sub_0802D198(x, gUnk_082EB5E0[gUnk_082EB630[b]][0], gUnk_082EB5E0[gUnk_082EB630[b]][1],
+                x->unk16C.tilesVram, xpos, (-((Rand16() & 0xF) + 0x20)) << 8, (s16)dx, 0x40);
+        }
+        x->unk2BA++;
+    } else if (x->unk214 & 0x60000000) {
+        if ((x->unk214 & 0x80000000) == 0) {
+            gBldRegs.bldCnt = 0xBF;
+            gBldRegs.bldY = 0;
+            x->unk2BC = 0;
+            m4aMPlayFadeOut(&gMPlayInfo_0, 4);
+            m4aMPlayFadeOut(&gMPlayInfo_1, 4);
+            m4aMPlayFadeOut(&gMPlayInfo_2, 4);
+            m4aMPlayFadeOut(&gMPlayInfo_3, 4);
+            x->unk214 |= 0x80000000;
+        } else {
+            u32 t = x->unk2BC + 1;
+            x->unk2BC = t;
+            if ((u16)t > 0xF) {
+                if (x->unk214 & 0x10000000) {
+                    sub_0802CB60(x);
+                    return;
+                } else {
+                    x->unk214 = 0x14000000;
+                    x->unk0 = sub_0802D480;
+                    return;
+                }
+            } else {
+                gBldRegs.bldY = t;
+            }
+        }
+    }
+
+    if (gUnk_0300000C == 0)
+        sub_0802B62C(x);
 }
 
 void sub_0802BCEC(struct Unk_0802B4A8 *x) {
