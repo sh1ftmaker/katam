@@ -7,6 +7,7 @@
 #include "gba/m4a.h"
 #include "bg.h"
 #include "functions.h"
+#include "trig.h"
 
 struct Unk_0802B4A8 {
     /* 0x000 */ void (*unk0)(struct Unk_0802B4A8 *);
@@ -16,12 +17,15 @@ struct Unk_0802B4A8 {
     /* 0x11C */ struct Sprite unk11C;
     /* 0x144 */ struct Sprite unk144;
     /* 0x16C */ struct Sprite unk16C;
-    /* 0x194 */ u8 filler194[0x214 - 0x194];
+    /* 0x194 */ struct Background unk194;
+    /* 0x1D4 */ u8 filler1D4[0x214 - 0x1D4];
     /* 0x214 */ u32 unk214;
     /* 0x218 */ u32 unk218[5][2];
     /* 0x240 */ u16 unk240[5][2];
     /* 0x254 */ u16 unk254[5];
-    /* 0x25E */ u8 filler25E[0x274 - 0x25E];
+    /* 0x25E */ u8 filler25E[0x268 - 0x25E];
+    /* 0x268 */ u16 unk268[4];
+    /* 0x270 */ u8 filler270[0x274 - 0x270];
     /* 0x274 */ s32 unk274;
     /* 0x278 */ s32 unk278;
     /* 0x27C */ s32 unk27C;
@@ -68,6 +72,7 @@ struct Unk_0802D898 {
 };
 
 extern u32 gUnk_082EB4EC[][2];
+extern u32 gUnk_082EB53C[][2];
 extern u32 gUnk_082EB514[][2];
 extern u32 gUnk_082EB564[][2];
 extern u16 gUnk_082EB640[][6][2];
@@ -79,6 +84,11 @@ void sub_0802BA6C(void);
 void sub_0802BCEC(struct Unk_0802B4A8 *);
 void sub_0802BF68(struct Unk_0802B4A8 *);
 void sub_0802C1D8(struct Unk_0802B4A8 *);
+void sub_0802C26C(struct Unk_0802B4A8 *);
+void sub_0802D408(struct Unk_0802B4A8 *);
+void sub_0802D5D4(struct Unk_0802B4A8 *);
+void sub_0802C68C(struct Unk_0802B4A8 *);
+void sub_0802D780(struct Unk_0802B4A8 *);
 void sub_0802C308(struct Unk_0802B4A8 *);
 void sub_0802C3C8(struct Unk_0802B4A8 *);
 void sub_0802C4BC(struct Unk_0802B4A8 *);
@@ -171,6 +181,7 @@ struct Unk_0802CE64 *sub_0802CFF0(struct Unk_0802B4A8 *, u16, u16, u32, s32, s32
 void sub_0802D0B8(void);
 void sub_0802CF2C(void);
 void sub_0802D528(struct Unk_0802B4A8 *);
+void sub_0802D53C(struct Unk_0802B4A8 *);
 
 void sub_0802B4A8(void) {
     struct Task *t;
@@ -215,6 +226,81 @@ void sub_0802BF68(struct Unk_0802B4A8 *x) {
     } else {
         gBldRegs.bldY = 0x10 - t;
     }
+}
+
+void sub_0802BFBC(struct Unk_0802B4A8 *x) {
+    u32 acc = 0;
+    u16 i;
+
+    for (i = 0; i < 4; i++) {
+        if ((s32)gUnk_082EB53C[i][0] >= (s32)x->unk218[i][0] && (s16)x->unk240[i][0] != 0) {
+            x->unk240[i][0] += 4;
+            if ((s16)x->unk240[i][0] >= 0) {
+                x->unk240[i][0] = 0;
+                x->unk268[i] = 0x800;
+            }
+        }
+        x->unk218[i][0] += (s16)x->unk240[i][0];
+        acc |= x->unk240[i][0];
+    }
+    if ((u16)acc == 0) {
+        x->unk0 = sub_0802D408;
+    }
+}
+
+void sub_0802C26C(struct Unk_0802B4A8 *x) {
+    s32 dx = (s32)(x->unk218[x->unk2BE][0] - x->unk274) >> 8;
+    s32 dy = (s32)(x->unk218[x->unk2BE][1] - x->unk278) >> 8;
+
+    if (dx * dx + dy * dy <= 0x8F) {
+        x->unk0 = sub_0802D5D4;
+    } else {
+        x->unk218[x->unk2BE][0] += (s16)x->unk240[x->unk2BE][0];
+        x->unk218[x->unk2BE][1] += (s16)x->unk240[x->unk2BE][1];
+    }
+}
+
+void sub_0802C5E4(struct Unk_0802B4A8 *x) {
+    struct Background *bg = &x->unk194;
+
+    gBgScrollRegs[0][0] = 0;
+    gBgScrollRegs[0][1] = 0;
+    gBgCntRegs[0] = 0x1F0A;
+    BgInit(bg, 0x06008000, 0, 0x0600F800, 0, 0, 0x306, 0, 0, 0, 0, 0x1E, 0x14, 0, 0, 0, 8, 0, 0, 0x7FFF, 0x7FFF);
+    LZ77UnCompVram(gUnk_082D7850[0x306]->tileset, (void *)bg->tilesVram);
+    sub_08153060(bg);
+    x->unk0 = sub_0802C68C;
+}
+
+void sub_0802C550(struct Unk_0802B4A8 *x) {
+    struct Sprite *s = &x->unk144;
+
+    x->unk2A4 = 0x7800;
+    x->unk2A8 = -0x2800;
+    x->unk2AC = 0;
+    x->unk2B0 = 0x200;
+    s->unk14 = 0x100;
+    s->animId = 0x2C3;
+    s->variant = 3;
+    s->unk16 = 0;
+    s->unk1B = 0xFF;
+    s->unk1C = 0x10;
+    s->palId = 6;
+    s->x = x->unk2A4 >> 8;
+    s->y = x->unk2A8 >> 8;
+    s->unk8 = 0x1000;
+    sub_08155128(s);
+    x->unk214 = (x->unk214 & ~0x100000) | 0x80000;
+    x->unk0 = sub_0802D780;
+}
+
+void sub_0802C1D8(struct Unk_0802B4A8 *x) {
+    s32 t;
+
+    t = sub_08154FE8((s32)(x->unk274 - x->unk218[x->unk2BE][0]) >> 8, (s32)(x->unk278 - x->unk218[x->unk2BE][1]) >> 8) & 0x3FF;
+    x->unk240[x->unk2BE][0] = gSineTable[t] >> 7;
+    x->unk240[x->unk2BE][1] = gSineTable[t + 0x100] >> 7;
+    x->unk0 = sub_0802C26C;
 }
 
 void sub_0802C308(struct Unk_0802B4A8 *x) {
@@ -389,6 +475,38 @@ struct Unk_0802CE64 *sub_0802CFF0(struct Unk_0802B4A8 *x, u16 animId, u16 varian
     s->unk38 = a9;
     SpriteInit(&s->sprite, tilesVram, 0x140, animId, variant, 0, 0xFF, 0x10, 0xD, a5 >> 8, a6 >> 8, 0x81000);
     return s;
+}
+
+void sub_0802D0B8(void) {
+    struct Unk_0802CE64 *tmp = TaskGetStructPtr(gCurTask);
+    struct Unk_0802CE64 *s = tmp;
+    struct Unk_0802CE64 *s2;
+
+#ifndef NONMATCHING
+    asm("" : "+r"(s));
+#endif
+    s2 = s;
+#ifndef NONMATCHING
+    asm("" : "+r"(s2));
+#endif
+    s->sprite.x = (s->unk2C - s->unk28->unk2B4) >> 8;
+    s->sprite.y = s->unk30 >> 8;
+    if (sub_08155128(&s->sprite) == 0) {
+        if (s->unk38 != 0 && --s->unk38 == 0) {
+            gCurTask->main = (TaskMain)sub_0802D53C;
+        } else {
+            s->sprite.unk1B = 0xFF;
+        }
+    }
+    sub_0815604C(&s2->sprite);
+    s->unk2C += s->unk34;
+    s->unk30 += s->unk36;
+    if ((u16)(s2->sprite.x + 0x40) > 0x170 || (s16)s2->sprite.y < -0x40 || (s16)s2->sprite.y > 0xE0) {
+        gCurTask->main = (TaskMain)sub_0802D53C;
+    }
+    if (s->unk28->unk214 & 0x4000000) {
+        gCurTask->main = (TaskMain)sub_0802D53C;
+    }
 }
 
 void sub_0802D360(struct Task *t) {
