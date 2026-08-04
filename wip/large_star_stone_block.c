@@ -452,14 +452,11 @@ NAKED void sub_08120B90(struct Unknown82 *x)
 #else
 void sub_08120B90(struct Unknown82 *x)
 {
-    struct Unk_0888562C_4 *arr = x->obj2.unk8C;
+    struct Unk_0888562C_4 * volatile arr = x->obj2.unk8C;
     u8 unk56 = x->obj2.base.unk56;
-    u32 *slot;
 
-    slot = sub_08002888(0, x->obj2.object->unk4, gCurLevelInfo[unk56].unk65E);
-    if (*slot != 0) {
-        slot = sub_08002888(0, x->obj2.object->unk4, gCurLevelInfo[x->obj2.base.unk56].unk65E);
-        *slot = 0;
+    if (*sub_08002888(0, x->obj2.object->unk4, gCurLevelInfo[unk56].unk65E) != 0) {
+        *sub_08002888(0, x->obj2.object->unk4, gCurLevelInfo[x->obj2.base.unk56].unk65E) = 0;
 
         x->unkBA = x->obj2.object->unk12;
         if (!(x->unkB8 & 1))
@@ -479,12 +476,12 @@ void sub_08120B90(struct Unknown82 *x)
         if (x->unkB8 & 1) {
             u32 i;
             x->unkB8 &= ~1;
-            for (i = 0; i < x->unkB4; i++)
+            for (i = 0; i < (u16)x->unkB4; i++)
                 sub_08001408(unk56, &arr[i].unk0, NULL, NULL);
         } else {
             u32 i;
             x->unkB8 |= 1;
-            for (i = 0; i < x->unkB4; i++)
+            for (i = 0; i < (u16)x->unkB4; i++)
                 sub_08001408(unk56, arr[i].unk14, NULL, NULL);
         }
     }
