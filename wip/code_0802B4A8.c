@@ -31,8 +31,8 @@ struct Unk_0802B4A8 {
     /* 0x254 */ u16 unk254[5];
     /* 0x25E */ u16 unk25E[4];
     /* 0x266 */ u8 filler266[2];
-    /* 0x268 */ u16 unk268[4];
-    /* 0x270 */ u8 filler270[0x274 - 0x270];
+    /* 0x268 */ u16 unk268[5];
+    /* 0x272 */ u8 filler272[0x274 - 0x272];
     /* 0x274 */ s32 unk274;
     /* 0x278 */ s32 unk278;
     /* 0x27C */ s32 unk27C;
@@ -81,6 +81,7 @@ struct Unk_0802D898 {
 
 extern u32 gUnk_082EB4EC[][2];
 extern u32 gUnk_082EB53C[][2];
+extern u32 gUnk_082EB58C[][2];
 extern u32 gUnk_082EB514[][2];
 extern u32 gUnk_082EB564[][2];
 extern u16 gUnk_082EB634[];
@@ -171,6 +172,7 @@ void sub_0802DF0C(struct Unk_0802B4A8 *);
 void sub_0802CB60(struct Unk_0802B4A8 *);
 void sub_0802BFBC(struct Unk_0802B4A8 *);
 void sub_0802C064(struct Unk_0802B4A8 *);
+void sub_0802D430(struct Unk_0802B4A8 *);
 void sub_0802CC7C(struct Unk_0802D898 *);
 void sub_0802CDA0(struct Unk_0802D898 *);
 void sub_0802CDF8(struct Unk_0802D898 *);
@@ -267,6 +269,51 @@ void sub_0802BFBC(struct Unk_0802B4A8 *x) {
     }
     if ((u16)acc == 0) {
         x->unk0 = sub_0802D408;
+    }
+}
+
+void sub_0802C064(struct Unk_0802B4A8 *x) {
+    u32 acc = 0;
+    u16 i;
+
+    for (i = 0; i < 5; i++) {
+        if (i == 4) {
+            if ((s32)gUnk_082EB58C[i][0] >= (s32)x->unk218[i][0] && (s16)x->unk240[i][0] != 0) {
+                x->unk240[i][0] += 2;
+                x->unk240[i][1] += 2;
+                if ((s16)x->unk240[i][0] >= 0) {
+                    x->unk240[i][0] = 0;
+                    x->unk240[i][1] = 0;
+                    x->unk268[i] = 0x800;
+                }
+            }
+        } else {
+            if ((s16)x->unk240[i][1] > 0) {
+                x->unk240[i][1] -= 2;
+                if ((s16)x->unk240[i][1] < 0) {
+                    x->unk240[i][1] = 0;
+                }
+            } else if ((s16)x->unk240[i][1] < 0) {
+                x->unk240[i][1] += 2;
+                if ((s16)x->unk240[i][1] > 0) {
+                    x->unk240[i][1] = 0;
+                }
+            }
+            if ((s32)gUnk_082EB58C[i][0] <= (s32)x->unk218[i][0] && (s16)x->unk240[i][0] != 0) {
+                x->unk240[i][0] -= 2;
+                if ((s16)x->unk240[i][0] >= 0) {
+                    x->unk240[i][0] = 0;
+                    x->unk240[i][1] = 0;
+                    x->unk268[i] = 0x800;
+                }
+            }
+        }
+        x->unk218[i][0] += (s16)x->unk240[i][0];
+        x->unk218[i][1] += (s16)x->unk240[i][1];
+        acc |= x->unk240[i][0] | x->unk240[i][1];
+    }
+    if ((u16)acc == 0 && (x->unk214 & 0x2000000)) {
+        x->unk0 = sub_0802D430;
     }
 }
 
