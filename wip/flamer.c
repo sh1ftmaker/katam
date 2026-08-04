@@ -178,14 +178,14 @@ void sub_080B89DC(struct Object2 *flamer)
     else if (t2 == 0)
     {
         *facing = (*facing & 0x3F) | ({ s32 m = -0x40; m; });
-        if (!(flamer->base.flags & 1))
+        if (flamer->base.flags & 1)
         {
-            flamer->base.x = ((flamer->base.x + (flamer->base.unk3C - 1) * 0x100) & 0xFFFFF000) + 0x1300;
+            flamer->base.x = ((flamer->base.x + (flamer->base.unk3E + 1) * 0x100) & 0xFFFFF000) - 0x300;
             asm("");
         }
         else
         {
-            flamer->base.x = ((flamer->base.x + (flamer->base.unk3E + 1) * 0x100) & 0xFFFFF000) - 0x300;
+            flamer->base.x = ((flamer->base.x + (flamer->base.unk3C - 1) * 0x100) & 0xFFFFF000) + 0x1300;
             asm("");
         }
     }
