@@ -233,7 +233,7 @@ void FillLevelInfo(u8 playerId, u16 room, const u16 **a, const u16 **b)
     struct Background *bg2 = &levelInfo->unkC0[2];
     struct Background *bg0 = &levelInfo->unkC0[0];
     u32 prevRoom = levelInfo->currentRoom;
-    u32 var24 = 0;
+    u8 i;
 
     if (prevRoom != 0xFFFF)
         sub_08003028(playerId, playerId == var0->unk0);
@@ -313,8 +313,104 @@ void FillLevelInfo(u8 playerId, u16 room, const u16 **a, const u16 **b)
             bg2->unk2E &= 0xFFDF;
         }
         else {
-            // TODO _08000D74
+            bg2->unk26 = 0x1F;
+            bg2->unk28 = 0x15;
+            bg2->unk2E |= 0x20;
+        }
+
+        bg2->scrollX = 0;
+        bg2->scrollY = (levelInfo->unk180[1].height << 3) - 0xA0;
+        bg2->unk18 = 0;
+        bg2->unk1A = 0;
+        bg2->prevScrollX = 0x7FFF;
+        bg2->prevScrollY = 0x7FFF;
+
+        if (gRoomProps[room].priorityFlags & 4) {
+            levelInfo->unkB8 = gRoomProps[room].unk0E;
+            levelInfo->unkBA = gRoomProps[room].unk10;
+        }
+        else {
+            s32 x = (levelInfo->unk180[1].width << 11) - 0xF000;
+            s32 y = (levelInfo->unk180[1].height << 11) - 0xA000;
+
+            if (x > 0) {
+                if (gRoomProps[room].unk0E == -1)
+                    levelInfo->unkB8 = x / 0x870;
+                else
+                    levelInfo->unkB8 = gRoomProps[room].unk0E;
+            }
+            else {
+                levelInfo->unkB8 = 0;
+            }
+
+            if (y > 0) {
+                if (gRoomProps[room].unk10 == -1)
+                    levelInfo->unkBA = y / 0x5A0;
+                else
+                    levelInfo->unkBA = gRoomProps[room].unk10;
+            }
+            else {
+                levelInfo->unkBA = 0;
+            }
+        }
+
+        if (*(u32 *)&levelInfo->unk180[2] == 0x00200020) {
+            bg0->unk26 = 0x20;
+            bg0->unk28 = 0x20;
+            bg0->unk2E &= 0xFFDF;
+        }
+        else {
+            bg0->unk26 = 0x1F;
+            bg0->unk28 = 0x15;
+            bg0->unk2E |= 0x20;
+        }
+
+        bg0->scrollX = 0;
+        bg0->scrollY = (levelInfo->unk180[2].height << 3) - 0xA0;
+        bg0->unk18 = 0;
+        bg0->unk1A = 0;
+        bg0->prevScrollX = 0x7FFF;
+        bg0->prevScrollY = 0x7FFF;
+
+        levelInfo->unk_S16Vec2_B4.x = gRoomProps[room].unkXmod_06;
+        levelInfo->unk_S16Vec2_B4.y = gRoomProps[room].unkXmod_08;
+    }
+
+    if (prevRoom != 0xFFFF) {
+        for (i = 0; i < gUnk_0203AD44; i++) {
+            if (i != playerId && gCurLevelInfo[i].currentRoom == prevRoom)
+                break;
+        }
+
+        if (i < gUnk_0203AD44) {
+            while (levelInfo->unk1F0.first != NULL) {
+                struct Unk_02023720 *node = sub_08002958(i);
+
+                node->unk08 = levelInfo->unk1F0.first->unk08;
+                sub_080028CC(playerId, levelInfo->unk1F0.first);
+                sub_08002918(i, node);
+            }
+        }
+        else {
+            while (levelInfo->unk1F0.first != NULL)
+                sub_080028CC(playerId, levelInfo->unk1F0.first);
         }
     }
-    // TODO rest (asm _08000D74 .. _080012F6)
+
+    if (room != 0xFFFF) {
+        for (i = 0; i < gUnk_0203AD44; i++) {
+            if (i != playerId && gCurLevelInfo[i].currentRoom == room)
+                break;
+        }
+
+        if (i < gUnk_0203AD44) {
+            levelInfo->unk65E = gCurLevelInfo[i].unk65E;
+            levelInfo->unk180[0].tilemap = (const u16 *)gUnk_02028EE0[levelInfo->unk65E];
+        }
+        else {
+            // TODO _08001048
+        }
+        // TODO _0800120E
+    }
+    // TODO rest (asm _080012D0 .. _080012F6)
 }
