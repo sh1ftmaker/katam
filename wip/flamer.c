@@ -15,7 +15,7 @@ void sub_080B9810(struct Object2 *);
 void sub_080B998C(struct Object2 *);
 void sub_080B9AF0(struct Object2 *);
 void sub_080B9DF0(struct Object2 *, u8);
-void sub_080BA004(struct Object2 *);
+void sub_080BA004(void);
 void sub_080BA334(struct Object2 *);
 void sub_080BA36C(struct Object2 *);
 void sub_080BA39C(struct Object2 *);
@@ -47,6 +47,9 @@ extern const struct Unk_08353510 gUnk_083546A4[];
 extern const struct Unk_08353510 gUnk_08354710[];
 extern const struct Unk_08353510 gUnk_08354734[];
 extern const struct Unk_08353510 gUnk_0835477C[];
+extern const s8 gUnk_083547E0[];
+
+void sub_080709F8(struct Object4 *, struct Sprite *, u32, u16, u8, u16);
 
 void sub_080B8954(struct Object2 *flamer)
 {
@@ -320,6 +323,39 @@ void sub_080B998C(struct Object2 *flamer)
         flamer->base.xspeed += gUnk_0835477C[flamer->unk9F].unk4;
     flamer->base.yspeed += gUnk_0835477C[flamer->unk9F].unk6;
     flamer->unk9E--;
+}
+
+void sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
+{
+    struct Task *t = TaskCreate(sub_080BA004, sizeof(struct Object4), 0x3500, TASK_USE_IWRAM, sub_0803DCCC);
+    struct Object4 *tmp = TaskGetStructPtr(t), *newObj = tmp;
+    u16 gfxId;
+    u16 param;
+
+    sub_0803E3B0(tmp);
+    newObj->unk0 = 3;
+    newObj->x = flamer->base.x;
+    newObj->y = flamer->base.y;
+    newObj->parent = flamer;
+    newObj->roomId = flamer->base.roomId;
+    newObj->y += (s8)gUnk_083547E0[dirIndex & 3] << 8;
+    if (Macro_0810B1F4(&flamer->base))
+        newObj->flags |= 0x2000;
+    newObj->flags |= 0x4000;
+    gfxId = 0x31E;
+    sub_080709F8(newObj, &newObj->sprite, 6, gfxId, 12, 12);
+    newObj->sprite.palId = 0;
+    if (flamer->base.unkC & 0x10)
+        param = gUnk_08351648[OBJ_DROPPY].unk8;
+    else
+        param = gfxId;
+    if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == newObj->roomId)
+    {
+        newObj->sprite.palId = sub_0803DF24(param);
+        if (newObj->sprite.palId == 0xFF)
+            newObj->sprite.palId = sub_0803DFAC(param, 0);
+    }
+    PlaySfx(&flamer->base, SE_BASIC_ENEMY_FIRE_ATTACK);
 }
 
 
