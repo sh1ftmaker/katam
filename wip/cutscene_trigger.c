@@ -488,19 +488,26 @@ void sub_0802114C(struct CutsceneTrigger *x) {
         int v = x2->unkCC;
 
         if ((v >> i) & 1) {
+#ifndef NONMATCHING
+            register union CutsceneVal *p asm("r5");
+#else
+            union CutsceneVal *p;
+#endif
+
             gKirbys[i].animationIndex = 0xA;
-            (&x2->unkB8)[i].obj4 = sub_0808B62C(&gKirbys[i].base.base.base, 4, 0x2C3, 1, 0);
-            (&x2->unkB8)[i].obj4->sprite.palId = 0;
-            if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == (&x2->unkB8)[i].obj4->roomId) {
-                if ((&x2->unkB8)[i].obj4->sprite.palId == 0) {
-                    (&x2->unkB8)[i].obj4->sprite.palId = sub_0803DF24(0x2C3);
-                    if ((&x2->unkB8)[i].obj4->sprite.palId == 0xFF)
-                        (&x2->unkB8)[i].obj4->sprite.palId = sub_0803DFAC(0x2C3, 1);
+            p = &(&x2->unkB8)[i];
+            p->obj4 = sub_0808B62C(&gKirbys[i].base.base.base, 4, 0x2C3, 1, 0);
+            p->obj4->sprite.palId = 0;
+            if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == p->obj4->roomId) {
+                if (p->obj4->sprite.palId == 0) {
+                    p->obj4->sprite.palId = sub_0803DF24(0x2C3);
+                    if (p->obj4->sprite.palId == 0xFF)
+                        p->obj4->sprite.palId = sub_0803DFAC(0x2C3, 1);
                 }
             } else {
-                (&x2->unkB8)[i].obj4->sprite.palId = 0;
+                p->obj4->sprite.palId = 0;
             }
-            o = (&x2->unkB8)[i].obj4;
+            o = p->obj4;
             o->x = gKirbys[i].base.base.base.x - 0x800;
             o->y = gKirbys[i].base.base.base.y - 0xC00;
             o->flags |= 1;
