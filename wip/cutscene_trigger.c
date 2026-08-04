@@ -377,6 +377,7 @@ void sub_0802318C(struct CutsceneTrigger *x) {
 }
 
 void sub_080231C0(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
     u8 i;
 
     x->unkB4.s[0] = 0;
@@ -384,7 +385,7 @@ void sub_080231C0(struct CutsceneTrigger *x) {
         struct Kirby *kirby = &gKirbys[i];
 
         if (kirby->hp > 0 && kirby->base.base.base.roomId == x->obj2.base.roomId) {
-            if (kirby->base.base.base.x < x->unkB8.obj4->x)
+            if (kirby->base.base.base.x < x2->unkB8.obj4->x)
                 kirby->base.base.base.flags &= ~1;
             else
                 kirby->base.base.base.flags |= 1;
@@ -455,10 +456,9 @@ void sub_0802331C(struct CutsceneTrigger *x) {
 
 void sub_08023368(struct CutsceneTrigger *x) {
     struct Object4 *obj = x->unkB8.obj4;
-    u16 flags = obj->flags;
 
-    if (flags & 2) {
-        obj->flags = 0x1000 | flags;
+    if (obj->flags & 2) {
+        obj->flags |= 0x1000;
         x->obj2.unk78 = sub_08023394;
     }
 }
@@ -473,7 +473,7 @@ void sub_080233A8(struct CutsceneTrigger *x) {
         struct Object4 *obj = x->unkC4.obj4;
         u16 v = obj->unk8;
 
-        obj->unk8 = 0xFFBF & v;
+        obj->unk8 = v & 0xFFBF;
         x->obj2.base.flags |= 0x1000;
     }
 }
@@ -638,9 +638,9 @@ void sub_08023734(struct CutsceneTrigger *x) {
     u16 i;
 
     for (i = 0; i < 4; i++) {
-        struct Object4 *obj = x->unk294[i];
+        if (x->unk294[i] != NULL) {
+            struct Object4 *obj = x->unk294[i];
 
-        if (obj != NULL) {
             if (obj->x <= 0x11FFF && obj->y > -0x2000) {
                 flag = 0;
             } else {
