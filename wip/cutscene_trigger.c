@@ -406,7 +406,7 @@ void sub_08020DDC(struct CutsceneTrigger *x) {
         } else {
             q = &x2->unkB8;
             obj = q[i].obj4;
-            obj->x = ((-(x2->unkCE * 0x12) >> 1) - ((Rand16() & mask) - 0x52)) << 8;
+            obj->x = ((-(x2->unkCE * 0x12) >> 1) + 0x52 - (Rand16() & mask)) << 8;
         }
         q[i].obj4->y = (0x74 - (Rand16() & 0xF)) << 8;
     }
