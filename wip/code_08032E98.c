@@ -1512,6 +1512,39 @@ void sub_08034D68(struct Kirby *kirby)
     dst[1] = t;
 }
 
+void sub_0803557C(struct Object5 *p)
+{
+    if (p->unkF != 0) {
+        if (!(gUnk_03000510.unk4 & ((1 << gUnk_0203AD3C) | 0x10))) {
+            if ((u8)++p->unkF > 0x30) {
+                CpuFill16(0, (void *)0x060077A0, 0x100);
+                p->unkF = 0;
+                sub_08034FA8(NULL);
+                p->unk1C = NULL;
+            }
+        }
+    }
+    if ((s8)p->unk9 != (s8)p->unkA) {
+        if ((s8)p->unk9 > (s8)p->unkA) {
+            s32 d = ((s8)p->unk9 - (s8)p->unkA) >> 3;
+            if (d != 0)
+                p->unk9 = p->unk9 - d;
+            else
+                p->unk9 = p->unk9 - 1;
+            if ((s8)p->unk9 <= 0) {
+                p->unk9 = 0;
+                p->unkF = 1;
+            }
+        } else if ((s8)p->unk9 < (s8)p->unkA) {
+            if (gUnk_0203AD40 & 7) {
+                p->unk9 = p->unk9 + 1;
+                PlaySfxInternal(&gKirbys[gUnk_0203AD3C].base.base.base, 0x1F6);
+            }
+        }
+        sub_08034FA8(p);
+    }
+}
+
 extern const u16 *const gUnk_08D60B64[];
 extern const u32 *const gUnk_08D60BE4[][32];
 
@@ -1581,6 +1614,46 @@ u32 sub_080364E4(struct ObjectBase *arg0, struct Kirby *kirby)
         sub_0804A728(kirby);
     }
     return 0;
+}
+
+u8 sub_0803912C(struct ObjectBase *a, struct ObjectBase *b)
+{
+    s8 ra[4];
+    s8 rb[4];
+    s32 ax, ay, bx, by;
+
+    if (a->flags & 1) {
+        ra[2] = -a->unk3C;
+        ra[0] = -a->unk3E;
+    } else {
+        ra[0] = a->unk3C;
+        ra[2] = a->unk3E;
+    }
+    ra[1] = a->unk3D;
+    ra[3] = a->unk3F;
+
+    if (b->flags & 1) {
+        rb[2] = -b->unk3C;
+        rb[0] = -b->unk3E;
+    } else {
+        rb[0] = b->unk3C;
+        rb[2] = b->unk3E;
+    }
+    rb[1] = b->unk3D;
+    rb[3] = b->unk3F;
+
+    ax = a->x + (ra[0] << 8);
+    bx = b->x + (rb[0] << 8);
+    if ((ax <= bx && ax + ((ra[2] - ra[0]) << 8) >= bx)
+     || (ax >= bx && bx + ((rb[2] - rb[0]) << 8) >= ax)) {
+        ay = a->y + (ra[1] << 8);
+        by = b->y + (rb[1] << 8);
+        if (((ay <= by && ay + ((ra[3] - ra[1]) << 8) >= by)
+          || (ay >= by && by + ((rb[3] - rb[1]) << 8) >= ay))
+         && a->yspeed <= 0)
+            return TRUE;
+    }
+    return FALSE;
 }
 
 u8 sub_0803925C(struct ObjectBase *a, struct ObjectBase *b)
