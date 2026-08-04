@@ -442,9 +442,9 @@ void sub_080B9048(struct Object2 *flamer)
         if (*CollisionAttributesAt(flamer, flamer->base.unk3E << 8, 0) & 0xFFFFDEFC)
         {
             if (flamer->base.flags & 1)
-                flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x80; m; });
-            else
                 flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x40; m; });
+            else
+                flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x80; m; });
             sub_080B8954(flamer);
         }
     }
