@@ -9,6 +9,10 @@
 #include "functions.h"
 #include "trig.h"
 #include "palette.h"
+#include "random.h"
+#include "save.h"
+#include "multi_08030C94.h"
+#include "code_0814EBE4.h"
 
 struct Unk_0802B4A8 {
     /* 0x000 */ void (*unk0)(struct Unk_0802B4A8 *);
@@ -117,6 +121,7 @@ void sub_0802D92C(struct Unk_0802D898 *);
 void sub_0802D9A4(struct Unk_0802D898 *);
 void sub_0802D708(struct Unk_0802B4A8 *);
 void sub_0802D4E0(struct Unk_0802B4A8 *);
+void sub_0802D4F4(struct Unk_0802B4A8 *);
 void sub_0802D564(struct Unk_0802B4A8 *);
 void sub_0802D588(struct Unk_0802B4A8 *);
 void sub_0802D5B0(struct Unk_0802B4A8 *);
@@ -423,6 +428,61 @@ void sub_0802C4BC(struct Unk_0802B4A8 *x) {
     x->unk2A8 = x->unk298;
 }
 
+void sub_0802CA78(struct Unk_0802B4A8 *x) {
+    u16 i;
+    u32 flag = 1;
+
+    for (i = 0; i < 4; i++) {
+        if ((s16)x->unk240[i][0] > 0x80) {
+            x->unk240[i][0] -= 6;
+            if ((s16)x->unk240[i][0] <= 0x80) {
+                x->unk4[i].animId = 0x2D;
+                x->unk4[i].variant = 6;
+                x->unk240[i][0] = 0x80;
+            }
+        }
+        if ((s32)x->unk218[i][0] > 0x13000 || (s32)x->unk218[i][1] < -0x4000) {
+            x->unk240[i][1] = 0;
+            x->unk240[i][0] = 0;
+        } else {
+            flag = 0;
+        }
+        x->unk218[i][0] += (s16)x->unk240[i][0];
+        x->unk218[i][1] += (s16)x->unk240[i][1];
+    }
+    if (flag != 0) {
+        x->unk0 = sub_0802D4F4;
+    }
+}
+
+void sub_0802CB60(struct Unk_0802B4A8 *x) {
+    gBldRegs.bldCnt = 0;
+    gBldRegs.bldY = 0;
+    CpuFill16(0x7FFF, gBgPalette, 0x200);
+    CpuFill16(0x7FFF, gObjPalette, 0x200);
+    gMainFlags |= 3;
+    gUnk_0300000C = 1;
+    TasksDestroyInPriorityRange(0, 0xFFFF);
+    gUnk_03003A04 = gUnk_03003790;
+    gUnk_030068B0 = 0;
+    gUnk_03006078 = gUnk_030039A4;
+    if (gAIKirbyState < AI_KIRBY_STATE_UNK1) {
+        gAIKirbyState = AI_KIRBY_STATE_UNK1;
+        if (!(gUnk_0203AD10 & 0x10)) {
+            if (gUnk_0203AD10 & 2) {
+                if (gUnk_0203AD3C == gUnk_0203AD24) {
+                    UpdateSaveBufferByOffset(SAVE_BUFFER_TYPE_WORLD_PROPS, gSaveID > 2 ? 0 : gSaveID);
+                } else {
+                    sub_08031CE4(8);
+                }
+            } else {
+                UpdateSaveBufferByOffset(SAVE_BUFFER_TYPE_WORLD_PROPS, gSaveID > 2 ? 0 : gSaveID);
+            }
+        }
+    }
+    sub_0814EBE4();
+}
+
 void sub_0802CDA0(struct Unk_0802D898 *x) {
     u32 t = x->unk4A + 1;
 
@@ -543,6 +603,23 @@ void sub_0802D0B8(void) {
     if (s->unk28->unk214 & 0x4000000) {
         gCurTask->main = (TaskMain)sub_0802D53C;
     }
+}
+
+struct Unk_0802CE64 *sub_0802D198(struct Unk_0802B4A8 *x, u16 animId, u16 variant, u32 tilesVram, s32 a5, s32 a6, u16 a7, u16 a8) {
+    struct Task *t;
+    struct Unk_0802CE64 *s;
+
+    t = TaskCreate(sub_0802D288, 0x3C, 0x101, 0, NULL);
+    s = TaskGetStructPtr(t);
+    s->unk28 = x;
+    s->unk2C = a5;
+    s->unk30 = a6;
+    s->unk34 = a7;
+    s->unk36 = a8;
+    s->unk38 = Rand16() & 0x3FF;
+    s->unk3A = (Rand16() & 0x7FF) + 0x800;
+    SpriteInit(&s->sprite, tilesVram, 0x140, animId, variant, 0, 0xFF, 0x10, 0xD, a5 >> 8, a6 >> 8, 0x81000);
+    return s;
 }
 
 void sub_0802D288(void) {
