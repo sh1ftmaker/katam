@@ -1909,6 +1909,206 @@ _08036C70:
     return 1;
 }
 
+extern void sub_08088F84(void *, s16, s16);
+extern void sub_0800E0E4(struct Object2 *, s16, s16);
+extern struct Object4 *sub_0808AE30(struct ObjectBase *, u32, u16, u8);
+extern void sub_08085328(void *);
+extern void sub_0806FE64(u16, struct ObjectBase *);
+
+void sub_08036CBC(struct ObjectBase *arg0)
+{
+    s8 box[4];
+    u32 flags;
+    u32 maxX, minX, maxY, minY;
+    s32 dir;
+    u32 cx;
+    u32 cy;
+    u32 j;
+    u32 x, y;
+    u32 n;
+    u32 k;
+    s32 d;
+    u32 t;
+    u8 id;
+    struct Object4 *obj;
+
+    if (!(arg0->unk68 & 0x20))
+        goto _noHit;
+
+    dir = 1;
+    flags = arg0->flags;
+    if (flags & 0x40000)
+        return;
+
+    id = arg0->unk56;
+    maxX = (u16)(gCurLevelInfo[id].levelMaxPosition.x << 4 >> 16);
+    maxY = (u16)(gCurLevelInfo[id].levelMaxPosition.y << 4 >> 16);
+    minX = (u16)(gCurLevelInfo[id].levelMinPosition.x << 4 >> 16);
+    minY = (u16)(gCurLevelInfo[id].levelMinPosition.y << 4 >> 16);
+    if (flags & dir) {
+        box[2] = -arg0->unk3C;
+        box[0] = -arg0->unk3E;
+    } else {
+        box[0] = arg0->unk3C;
+        box[2] = arg0->unk3E;
+    }
+    box[1] = arg0->unk3D;
+    box[3] = arg0->unk3F;
+    if (flags & 1)
+        dir = 0xFF;
+
+    t = (arg0->x >> 8) & 0xF;
+    d = box[2] - box[0];
+    if (d < 0)
+        d = box[0] - box[2];
+    cx = (u8)(((d + t) >> 4) + 1);
+
+    t = ((arg0->y >> 8) + box[1]) & 0xF;
+    d = box[3] - box[1];
+    if (d < 0)
+        d = box[1] - box[3];
+    cy = (u8)((d + t) >> 4);
+
+    y = (u16)(arg0->y << 4 >> 16);
+    for (j = 0; j <= cy; j = (u8)(j + 1)) {
+        if ((s32)y <= (s16)maxY && (s32)y >= (s16)minY) {
+            x = (u16)(arg0->x << 4 >> 16);
+            n = cx;
+            if (n != 0) {
+                n = (u8)(n - 1);
+                if ((s32)x <= (s16)maxX && (s32)x >= (s16)minX) {
+                    d = (s8)dir;
+                    do {
+                        if ((gUnk_082D88B8[(u8)sub_080023E4(arg0->unk56, x, y)] & 0x00F01000) == 0x1000) {
+                            id = arg0->unk56;
+                            sub_08001408(id, sub_080025AC(id, x, y), NULL, NULL);
+                            sub_08088F84(arg0->parent, (s16)x, (s16)y);
+                            arg0->flags |= 0x80000;
+                            return;
+                        }
+                        x = (u16)(x + d);
+                        if (n == 0)
+                            break;
+                        n = (u8)(n - 1);
+                        if ((s32)x > (s16)maxX)
+                            break;
+                    } while ((s32)x >= (s16)minX);
+                }
+            }
+            if (j & 1)
+                y = (u16)(y + 1 + j);
+            else
+                y = (u16)(y - 1 - j);
+        }
+    }
+    return;
+
+_noHit:
+    if (arg0->flags & 1) {
+        box[2] = -arg0->unk3C;
+        box[0] = -arg0->unk3E;
+    } else {
+        box[0] = arg0->unk3C;
+        box[2] = arg0->unk3E;
+    }
+    box[1] = arg0->unk3D;
+    box[3] = arg0->unk3F;
+
+    t = ((arg0->x >> 8) + box[0]) & 0xF;
+    d = box[2] - box[0];
+    if (d < 0)
+        d = box[0] - box[2];
+    cx = (u8)((d + t) >> 4);
+
+    t = ((arg0->y >> 8) + box[1]) & 0xF;
+    d = box[3] - box[1];
+    if (d < 0)
+        d = box[1] - box[3];
+    cy = (u8)((d + t) >> 4);
+
+    x = (u16)(((arg0->x >> 8) + box[0]) << 0xC >> 0x10);
+    y = (u16)(((arg0->y >> 8) + box[1]) << 0xC >> 0x10);
+
+    id = arg0->unk56;
+    d = (gCurLevelInfo[id].levelMaxPosition.x >> 12) - (cx + x);
+    if ((s16)d & 0x8000) {
+        cx = (u8)(cx + (u16)d);
+        if (cx & 0x80)
+            return;
+    }
+    d = x - (gCurLevelInfo[id].levelMinPosition.x >> 12);
+    if ((s16)d & 0x8000) {
+        if ((s32)cx + (s16)d < 0)
+            return;
+        x = (u16)(x - (u16)d);
+        cx = (u8)(cx + (u16)d);
+    }
+    d = (gCurLevelInfo[id].levelMaxPosition.y >> 12) - (cy + y);
+    if ((s16)d & 0x8000) {
+        cy = (u8)(cy + (u16)d);
+        if (cy & 0x80)
+            return;
+    }
+    d = y - (gCurLevelInfo[id].levelMinPosition.y >> 12);
+    if ((s16)d & 0x8000) {
+        if ((s32)cy + (s16)d < 0)
+            return;
+        y = (u16)(y - (u16)d);
+        cy = (u8)(cy + (u16)d);
+    }
+
+    j = (u8)(cy + 1);
+    while (j != 0) {
+        j = (u8)(j - 1);
+        n = (u8)(cx + 1);
+        if (n == 0)
+            continue;
+        k = j + y;
+        do {
+            u32 tile;
+
+            n = (u8)(n - 1);
+            tile = gUnk_082D88B8[(u8)sub_080023E4(arg0->unk56, (u16)(x + n), (u16)k)];
+            if (!(tile & 0x1000))
+                continue;
+            switch (tile & 0x00F00000) {
+            case 0x00200000:
+                if (!(arg0->unk68 & 0x1000))
+                    continue;
+                break;
+            case 0x00300000:
+                if (!(arg0->unk68 & 0x4000))
+                    continue;
+                break;
+            case 0x00400000:
+                if (!(arg0->unk68 & 0x800))
+                    continue;
+                break;
+            }
+            if (tile & 0x20) {
+                id = arg0->unk56;
+                t = n + x;
+                sub_08001408(id, sub_080025AC(id, t, k), NULL, NULL);
+                sub_0800E0E4((struct Object2 *)arg0, (s16)t, (s16)k);
+                PlaySfx(arg0, 0x1FE);
+            } else {
+                id = arg0->unk56;
+                t = n + x;
+                sub_08001408(id, sub_080025AC(id, t, k), NULL, NULL);
+                obj = sub_0808AE30(arg0, 0, 0x28D, 0);
+                obj->x = (t << 12) + 0x800;
+                obj->y = (k << 12) + 0x800;
+                PlaySfx(arg0, 0x1FE);
+                if (arg0->unk68 & 0x10000000) {
+                    sub_08085328(arg0->parent);
+                    sub_0806FE64(2, arg0);
+                }
+            }
+            arg0->flags |= 0x80000;
+        } while (n != 0);
+    }
+}
+
 u8 sub_0803912C(struct ObjectBase *a, struct ObjectBase *b)
 {
     s8 ra[4];
