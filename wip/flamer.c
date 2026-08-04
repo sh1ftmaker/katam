@@ -577,15 +577,17 @@ void sub_080B95F0(struct Object2 *flamer)
 void sub_080B976C(struct Object2 *flamer)
 {
     s32 c;
+    u16 n;
 
     flamer->base.flags |= 4;
-    c = flamer->base.counter;
+    n = flamer->base.counter;
 #ifndef NONMATCHING
     asm("" ::: "memory");
 #endif
+    c = flamer->base.counter;
     if (c != 0)
     {
-        flamer->base.counter++;
+        flamer->base.counter = n + 1;
         if ((s16)flamer->base.counter > 0xC)
         {
             if (flamer->unk85 & 0x10)
@@ -597,12 +599,13 @@ void sub_080B976C(struct Object2 *flamer)
     else
     {
         s32 t = flamer->unk9E + 1;
+        u8 u;
 
         flamer->unk9E = t;
-        t &= 0xFF;
-        if ((t & 3) == 3)
+        u = t;
+        if ((u & 3) == 3)
         {
-            sub_080B9DF0(flamer, t >> 2);
+            sub_080B9DF0(flamer, (t & 0xFF) >> 2);
             if (flamer->unk9E & 8)
                 flamer->unk9E = c;
         }
