@@ -408,9 +408,78 @@ void FillLevelInfo(u8 playerId, u16 room, const u16 **a, const u16 **b)
             levelInfo->unk180[0].tilemap = (const u16 *)gUnk_02028EE0[levelInfo->unk65E];
         }
         else {
-            // TODO _08001048
+            u8 mask = 0;
+            u8 j;
+
+            for (i = 0; i < gUnk_0203AD44; i++) {
+                if (i != playerId && gCurLevelInfo[i].currentRoom != 0xFFFF)
+                    mask |= 1 << gCurLevelInfo[i].unk65E;
+            }
+
+            for (i = 0; i < 4; i++) {
+                if (((mask >> i) & 1) == 0) {
+                    levelInfo->unk65E = i;
+                    break;
+                }
+            }
+
+            RLUnCompWram(gSolidityMaps[gRoomProps[room].solidityMapIdx]->unk0, gUnk_02024ED0[levelInfo->unk65E]);
+            RLUnCompWram(gUnk_08D63C28[gRoomProps[room].unk22]->unk10, gUnk_02026D60[levelInfo->unk65E]);
+            LZ77UnCompWram((const u32 *)levelInfo->unk180[0].tilemap, gUnk_02028EE0[levelInfo->unk65E]);
+            levelInfo->unk180[0].tilemap = (const u16 *)gUnk_02028EE0[levelInfo->unk65E];
+
+            CpuFill32(0, gUnk_02023358[levelInfo->unk65E], 4);
+            CpuFill32(0, gUnk_02023388[levelInfo->unk65E], 0x40);
+
+            gUnk_02023508[levelInfo->unk65E] = 0;
+            gUnk_02023510[levelInfo->unk65E] = 0;
+            gUnk_02026D50[levelInfo->unk65E] = 1;
+
+            if (prevRoom == room)
+                gUnk_02026D50[levelInfo->unk65E] |= 4;
+
+            gUnk_02023518[levelInfo->unk65E] = gRoomProps[room].songIdx;
+
+            for (j = 0; j < 2; j++)
+                gUnk_02023520[levelInfo->unk65E][j] |= 0xFFFF;
         }
-        // TODO _0800120E
+
+        if (room != 0xFFFF) {
+            levelInfo->unkC0[1].prevScrollX = 0x7FFF;
+            levelInfo->unkC0[1].prevScrollY = 0x7FFF;
+            levelInfo->unkC0[1].unk1A = 0;
+            levelInfo->unkC0[1].unk18 = 0;
+            levelInfo->unkC0[1].scrollX = 0;
+            levelInfo->unkC0[1].scrollY = 0;
+
+            levelInfo->unkC0[2].prevScrollX = 0x7FFF;
+            levelInfo->unkC0[2].prevScrollY = 0x7FFF;
+            levelInfo->unkC0[2].unk18 = 0;
+            levelInfo->unkC0[2].unk1A = 0;
+            levelInfo->unkC0[2].scrollX = 0;
+            levelInfo->unkC0[2].scrollY = 0;
+
+            levelInfo->unkC0[0].prevScrollX = 0x7FFF;
+            levelInfo->unkC0[0].prevScrollY = 0x7FFF;
+            levelInfo->unkC0[0].unk18 = 0;
+            levelInfo->unkC0[0].unk1A = 0;
+            levelInfo->unkC0[0].scrollX = 0;
+            levelInfo->unkC0[0].scrollY = 0;
+
+            levelInfo->unk1EC = 1;
+            levelInfo->unk662 = 0x180;
+            levelInfo->unk664 = 0x180;
+
+            if (playerId == var0->unk0)
+                LoadLevelGfx(playerId, a, b);
+
+            sub_08001D18(playerId);
+            levelInfo->viewportPositionUnmodified.x = levelInfo->viewportPosition.x;
+            levelInfo->viewportPositionUnmodified.y = levelInfo->viewportPosition.y;
+            sub_08002EC4(playerId, playerId == var0->unk0);
+        }
     }
-    // TODO rest (asm _080012D0 .. _080012F6)
+
+    if ((gUnk_0203AD10 & 2) && playerId < gUnk_0203AD30 && gUnk_0203AD3C != i)
+        sub_08031CE4(8);
 }
