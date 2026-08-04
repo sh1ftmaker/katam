@@ -24,8 +24,9 @@ extern u16 gUnk_082EB954[];
 extern u8 gUnk_082EB984[];
 extern u16 *gUnk_08D60B24[];
 
-void sub_0802F8D8(struct Unk_0802E57C *, u16, u16, u32, s32, s32, s16, s16, u16);
-void sub_0802FA40(struct Unk_0802E57C *, u16, u16, u32, s32, s32, s16, s16, u16);
+struct Unk_0802F8D8;
+struct Unk_0802F8D8 *sub_0802F8D8(struct Unk_0802E57C *, u16, u16, u32, s32, s32, s16, s16, u16);
+struct Unk_0802F8D8 *sub_0802FA40(struct Unk_0802E57C *, u16, u16, u32, s32, s32, s16, s16, u16);
 
 struct Unk_0802E57C *sub_0802E57C(void) {
     struct Task *t = TaskCreate(sub_0802E78C, sizeof(struct Unk_0802E57C), 0x100, 0, sub_0802E71C);

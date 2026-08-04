@@ -774,9 +774,6 @@ struct Unk_08353510 {
 extern const struct AnimInfo gUnk_08352E14[];
 extern const struct AnimInfo gUnk_08352F68[];
 
-extern const struct AnimInfo gUnk_08355578[];
-extern const struct AnimInfo gUnk_08355584[];
-
 extern const u8 gUnk_08357F24[];
 extern const u8 gUnk_08357F44[];
 

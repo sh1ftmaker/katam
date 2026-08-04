@@ -109,7 +109,7 @@ static void sub_080B5E1C(struct Object2 *cookin) {
             register s32 m ASM_PIN("r1") = -1;
             ObjectSetFunc(o, m, func);
 #else
-            ObjectSetFunc(obj, -1, sub_080B5BE8);
+            ObjectSetFunc(cookin, -1, sub_080B5BE8);
 #endif
         }
         cookin->base.flags &= ~0x800;
