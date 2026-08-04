@@ -52,6 +52,12 @@ extern const s8 gUnk_083547E0[];
 void sub_080709F8(struct Object4 *, struct Sprite *, u32, u16, u8, u16);
 bool32 sub_0806FAC8(struct Object4 *);
 
+u32 sub_080B75D0(struct Object2 *);
+u32 sub_080B7E74(struct Object2 *);
+u32 sub_080B819C(struct Object2 *);
+struct Kirby *sub_0803D368(struct ObjectBase *);
+extern void (*const gUnk_083547AC[])(struct Object2 *);
+
 void sub_080B8954(struct Object2 *flamer)
 {
     u8 t;
@@ -79,6 +85,316 @@ void sub_080B8954(struct Object2 *flamer)
         flamer->base.xspeed = -flamer->base.xspeed;
     flamer->base.flags |= 0x140;
     flamer->base.unkC &= ~1;
+}
+
+void sub_080B89DC(struct Object2 *flamer)
+{
+    u32 v;
+    u32 collision;
+    u32 attr;
+    u8 t;
+
+    flamer->base.flags |= 4;
+    if (flamer->base.x <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.x
+        && flamer->base.x >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.x
+        && flamer->base.y <= gCurLevelInfo[flamer->base.unk56].levelMaxPosition.y
+        && flamer->base.y >= gCurLevelInfo[flamer->base.unk56].levelMinPosition.y)
+        flamer->unk85 |= 0x20;
+    else
+        flamer->unk85 &= 0xDF;
+
+    v = sub_080B75D0(flamer);
+    if (v == 0)
+        goto end;
+
+    if (v & 1)
+    {
+        t = flamer->unk85 & 0xC0;
+        if (t == 0x40)
+        {
+            flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x40; m; });
+            if (!(flamer->base.flags & 1))
+                flamer->base.x = (flamer->base.x & 0xFFFFF000) + 0x300;
+            else
+                flamer->base.x = (flamer->base.x & 0xFFFFF000) + 0xD00;
+        }
+        else if (t == 0)
+        {
+            flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x80; m; });
+            if (flamer->base.flags & 1)
+                flamer->base.x = (flamer->base.x & 0xFFFFF000) + 0x300;
+            else
+                flamer->base.x = (flamer->base.x & 0xFFFFF000) + 0xD00;
+        }
+        else if (t == 0x80)
+        {
+            flamer->unk85 = (flamer->unk85 & 0x3F) | 0x40;
+            flamer->base.y = (flamer->base.y & 0xFFFFF000) + 0xB00;
+        }
+        else if (t == 0xC0)
+        {
+            flamer->unk85 = flamer->unk85 & 0x3F;
+            flamer->base.y = (flamer->base.y & 0xFFFFF000) + 0x400;
+        }
+
+        if (sub_080B75D0(flamer) & 1)
+        {
+            sub_080B9048(flamer);
+            goto end;
+        }
+    }
+
+    collision = sub_080B7E74(flamer);
+    attr = sub_080B819C(flamer) & 0xF0000000;
+    if (collision == 0)
+        goto end;
+    if ((collision & 0xF0000001) || (attr & 0xF0000000))
+        goto dispatch;
+
+    t = flamer->unk85 & 0xC0;
+    if (t == 0x40)
+    {
+        flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x80; m; });
+        if (flamer->base.flags & 1)
+            flamer->base.x = ((flamer->base.x + (flamer->base.unk3C - 1) * 0x100) & 0xFFFFF000) + 0x1300;
+        else
+            flamer->base.x = ((flamer->base.x + (flamer->base.unk3E + 1) * 0x100) & 0xFFFFF000) - 0x300;
+    }
+    else if (t == 0)
+    {
+        flamer->unk85 = (flamer->unk85 & 0x3F) | ({ s32 m = -0x40; m; });
+        if (flamer->base.flags & 1)
+            flamer->base.x = ((flamer->base.x + (flamer->base.unk3E + 1) * 0x100) & 0xFFFFF000) - 0x300;
+        else
+            flamer->base.x = ((flamer->base.x + (flamer->base.unk3C - 1) * 0x100) & 0xFFFFF000) + 0x1300;
+    }
+    else if (t == 0x80)
+    {
+        flamer->unk85 = flamer->unk85 & 0x3F;
+        flamer->base.y = ((flamer->base.y + (flamer->base.unk3D - 1) * 0x100) & 0xFFFFF000) + 0x1300;
+    }
+    else if (t == 0xC0)
+    {
+        flamer->unk85 = (flamer->unk85 & 0x3F) | 0x40;
+        flamer->base.y = ((flamer->base.y + (flamer->base.unk3F + 1) * 0x100) & 0xFFFFF000) - 0x300;
+    }
+
+dispatch:
+    t = flamer->unk85 & 0xC0;
+    if (t == 0x40)
+    {
+        s16 mag;
+        switch (flamer->subtype)
+        {
+        case 1: mag = 0x140; break;
+        case 2: mag = 0x300; break;
+        default: mag = 0xCD; break;
+        }
+        flamer->base.xspeed = mag;
+        flamer->base.yspeed = 0;
+        if (attr != 0)
+        {
+            s16 corrected;
+            bool8 haveCorrected = TRUE;
+            if (attr == 0x30000000)
+            {
+                switch (flamer->subtype)
+                {
+                case 1: corrected = 0xE2; break;
+                case 2: corrected = 0x21F; break;
+                default: corrected = 0x90; break;
+                }
+            }
+            else if (attr == 0x10000000 || attr == 0x20000000 || attr == 0x50000000 || attr == 0x60000000)
+            {
+                switch (flamer->subtype)
+                {
+                case 1: corrected = 0x127; break;
+                case 2: corrected = 0x2C4; break;
+                default: corrected = 0xBC; break;
+                }
+            }
+            else if (attr == 0x40000000)
+            {
+                switch (flamer->subtype)
+                {
+                case 1: corrected = 0xE2; break;
+                case 2: corrected = 0x21F; break;
+                default: corrected = 0x90; break;
+                }
+            }
+            else
+            {
+                haveCorrected = FALSE;
+            }
+            if (haveCorrected)
+                flamer->base.xspeed = corrected;
+            gUnk_083547AC[attr >> 0x1C](flamer);
+        }
+    }
+    else if (t == 0)
+    {
+        s16 mag;
+        switch (flamer->subtype)
+        {
+        case 1: mag = 0x140; break;
+        case 2: mag = 0x300; break;
+        default: mag = 0xCD; break;
+        }
+        flamer->base.xspeed = -mag;
+        flamer->base.yspeed = 0;
+        if (attr != 0)
+        {
+            s16 corrected;
+            bool8 haveCorrected = TRUE;
+            if (attr == 0x90000000 || attr == 0xA0000000)
+            {
+                switch (flamer->subtype)
+                {
+                case 1: corrected = 0xE2; break;
+                case 2: corrected = 0x21F; break;
+                default: corrected = 0x90; break;
+                }
+            }
+            else if (attr == 0x70000000 || attr == 0x80000000 || attr == 0xC0000000)
+            {
+                switch (flamer->subtype)
+                {
+                case 1: corrected = 0x127; break;
+                case 2: corrected = 0x2C4; break;
+                default: corrected = 0xBC; break;
+                }
+            }
+            else
+            {
+                haveCorrected = FALSE;
+            }
+            if (haveCorrected)
+                flamer->base.xspeed = -corrected;
+            gUnk_083547AC[attr >> 0x1C](flamer);
+        }
+    }
+    else if (t == 0x80)
+    {
+        s16 mag;
+        switch (flamer->subtype)
+        {
+        case 1: mag = 0x140; break;
+        case 2: mag = 0x300; break;
+        default: mag = 0xCD; break;
+        }
+        flamer->base.xspeed = 0;
+        flamer->base.yspeed = mag;
+        if (attr != 0)
+        {
+            s16 corrected;
+            bool8 haveCorrected = TRUE;
+            if (attr == 0x30000000 || attr == 0x40000000 || attr == 0x90000000 || attr == 0xA0000000)
+            {
+                switch (flamer->subtype)
+                {
+                case 1: corrected = 0xE2; break;
+                case 2: corrected = 0x21F; break;
+                default: corrected = 0x90; break;
+                }
+            }
+            else if (attr == 0x10000000 || attr == 0x20000000 || attr == 0x50000000 || attr == 0x60000000)
+            {
+                switch (flamer->subtype)
+                {
+                case 1: corrected = 0x127; break;
+                case 2: corrected = 0x2C4; break;
+                default: corrected = 0xBC; break;
+                }
+            }
+            else if (attr == 0x70000000 || attr == 0x80000000 || attr == 0xB0000000 || attr == 0xC0000000)
+            {
+                switch (flamer->subtype)
+                {
+                case 1: corrected = 0x117; break;
+                case 2: corrected = 0x4A; break;
+                default: corrected = 0x74; break;
+                }
+            }
+            else
+            {
+                haveCorrected = FALSE;
+            }
+            if (haveCorrected)
+                flamer->base.yspeed = corrected;
+            gUnk_083547AC[attr >> 0x1C](flamer);
+        }
+    }
+    else
+    {
+        s16 mag;
+        switch (flamer->subtype)
+        {
+        case 1: mag = 0x140; break;
+        case 2: mag = 0x300; break;
+        default: mag = 0xCD; break;
+        }
+        flamer->base.xspeed = 0;
+        flamer->base.yspeed = -mag;
+        if (attr != 0)
+        {
+            s16 corrected;
+            bool8 haveCorrected = TRUE;
+            if (attr == 0x10000000 || attr == 0x60000000 || attr == 0x70000000 || attr == 0xB0000000 || attr == 0xC0000000)
+            {
+                switch (flamer->subtype)
+                {
+                case 1: corrected = 0x117; break;
+                case 2: corrected = 0x4A; break;
+                default: corrected = 0x74; break;
+                }
+            }
+            else if (attr == 0x30000000 || attr == 0x40000000 || attr == 0x90000000)
+            {
+                switch (flamer->subtype)
+                {
+                case 1: corrected = 0xE2; break;
+                case 2: corrected = 0x21F; break;
+                default: corrected = 0x90; break;
+                }
+            }
+            else
+            {
+                haveCorrected = FALSE;
+            }
+            if (haveCorrected)
+                flamer->base.yspeed = -corrected;
+            gUnk_083547AC[attr >> 0x1C](flamer);
+        }
+    }
+
+    if (flamer->base.flags & 1)
+        flamer->base.xspeed = -flamer->base.xspeed;
+
+    if (flamer->object->subtype1 != 0)
+        goto end;
+
+    flamer->unk9E++;
+    if (flamer->unk9E <= 0x14)
+        goto end;
+
+    {
+        s32 dx = flamer->kirby3->base.base.base.x - flamer->base.x;
+        s32 dy;
+        if (dx >= -0x3FFF && dx <= 0x3FFF
+            && (dy = flamer->kirby3->base.base.base.y - flamer->base.y, dy >= -0x3FFF && dy <= 0x3FFF))
+        {
+            sub_080BA39C(flamer);
+        }
+        else
+        {
+            flamer->kirby3 = sub_0803D368(&flamer->base);
+            flamer->unk9E = 0;
+        }
+    }
+
+end:
+    return;
 }
 
 void sub_080B9048(struct Object2 *flamer)
