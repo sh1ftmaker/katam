@@ -1428,9 +1428,11 @@ void sub_08034C9C(u8 arg0)
     u16 i;
     u8 *p;
     vu16 *dst;
+    int palette;
 
     if (!(gUnk_0203AD10 & 0x10)) {
         p = TaskGetStructPtr(gUnk_03000010);
+        palette = 0xE;
         p[0x14] = arg0;
         dst = (vu16 *)0x0600E380;
         for (i = 0; i < 6 - arg0; i++) {
@@ -1447,19 +1449,19 @@ void sub_08034C9C(u8 arg0)
         }
         for (i = 0; i < arg0; i++) {
             s32 v;
-            v = (i * 5 + 0x1C5) | (0xE << 12);
+            v = (i * 5 + 0x1C5) | (palette << 12);
             *dst = v;
             dst++;
-            v = (i * 5 + 0x1C6) | (0xE << 12);
+            v = (i * 5 + 0x1C6) | (palette << 12);
             *dst = v;
             dst++;
-            v = (i * 5 + 0x1C7) | (0xE << 12);
+            v = (i * 5 + 0x1C7) | (palette << 12);
             *dst = v;
             dst++;
-            v = (i * 5 + 0x1C8) | (0xE << 12);
+            v = (i * 5 + 0x1C8) | (palette << 12);
             *dst = v;
             dst++;
-            v = (i * 5 + 0x1C9) | (0xE << 12);
+            v = (i * 5 + 0x1C9) | (palette << 12);
             *dst = v;
             dst += 0x1C;
         }
