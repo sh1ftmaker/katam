@@ -2191,3 +2191,82 @@ void sub_0803518C(u8 *p)
         *dst = 0xF1B3;
     }
 }
+
+void sub_0803533C(struct Object5 *p)
+{
+    u16 v;
+    s32 w;
+    s32 t;
+    s32 d;
+
+    if (p->unk1C->unk80 <= 0) {
+        p->unkA = 0;
+    } else {
+        if ((u8)(p->unk1C->type - 0x38) <= 0x1A) {
+            if (p->unk1C->type == 0x4F)
+                v = p->unk1C->unk80 * gUnk_08351628[p->unk1C->subtype][gUnk_0203AD30 - 1];
+            else
+                v = p->unk1C->unk80
+                  * gUnk_08351458[p->unk1C->type - 0x38][gUnk_0203AD30 - 1];
+            w = v << 16;
+        } else {
+            w = (p->unk1C->unk80 * gUnk_083513E8[p->unk1C->type]) << 16;
+        }
+        p->unkA = w >> 24;
+        if (w & 0xFF0000)
+            p->unkA = (w >> 24) + 1;
+    }
+    if (p->unk1C->base.flags & 0x1000) {
+        if (p->unk1C->unk80 <= 0) {
+            p->unkA = 0;
+        } else {
+            CPU_FILL(0, (void *)0x060077A0, 0x100, 16);
+            p->unk9 = 0;
+            p->unkA = 0;
+            sub_08034FA8(NULL);
+        }
+        p->unk1C = NULL;
+        return;
+    }
+    if (gKirbys[gUnk_0203AD3C].base.base.base.roomId != p->unk1C->base.roomId
+        || gKirbys[gUnk_0203AD3C].hp <= 0 || (gUnk_0203AD10 & 0x20)) {
+        CPU_FILL(0, (void *)0x060077A0, 0x100, 16);
+        p->unk9 = 0;
+        p->unkA = 0;
+        sub_08034FA8(NULL);
+        p->unk1C = NULL;
+        return;
+    }
+    if ((u8)(p->unk1C->type - 0x38) <= 0x1A) {
+        t = p->unk1C->base.x - 0x7800;
+        d = gCurLevelInfo[gUnk_0203AD3C].viewportPosition.x - t;
+        if (d < 0)
+            d = t - gCurLevelInfo[gUnk_0203AD3C].viewportPosition.x;
+        if (d <= 0xF000) {
+            t = p->unk1C->base.y - 0x5000;
+            d = gCurLevelInfo[gUnk_0203AD3C].viewportPosition.y - t;
+            if (d < 0)
+                d = t - gCurLevelInfo[gUnk_0203AD3C].viewportPosition.y;
+            if (d <= 0xC800)
+                return;
+        }
+    } else {
+        t = p->unk1C->base.x - 0x7800;
+        d = gCurLevelInfo[gUnk_0203AD3C].viewportPosition.x - t;
+        if (d < 0)
+            d = t - gCurLevelInfo[gUnk_0203AD3C].viewportPosition.x;
+        if (d <= 0xA800) {
+            t = p->unk1C->base.y - 0x5000;
+            d = gCurLevelInfo[gUnk_0203AD3C].viewportPosition.y - t;
+            if (d < 0)
+                d = t - gCurLevelInfo[gUnk_0203AD3C].viewportPosition.y;
+            if (d <= 0x8000)
+                return;
+        }
+    }
+    CPU_FILL(0, (void *)0x060077A0, 0x100, 16);
+    p->unk9 = 0;
+    p->unkA = 0;
+    sub_08034FA8(NULL);
+    p->unk1C = NULL;
+}
