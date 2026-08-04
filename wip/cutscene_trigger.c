@@ -42,7 +42,7 @@ struct CutsceneTrigger {
     /* 0x0EA */ u8 fillerEA[0x1AA];
     /* 0x294 */ struct Object4 *unk294[4];
     /* 0x2A4 */ u16 unk2A4[4];
-    /* 0x2AC */ u8 filler2AC[8];
+    /* 0x2AC */ u16 unk2AC[4];
     /* 0x2B4 */ u16 unk2B4;
     /* 0x2B6 */ u16 unk2B6;
 }; /* size = 0x2B8 */
@@ -53,6 +53,11 @@ extern const s16 gUnk_082DEA4C[];
 extern const s16 gUnk_082DEA4E[];
 extern const s16 gUnk_082DEA5C[];
 extern const s16 gUnk_082DEA5E[];
+extern const s16 gUnk_082DEA6C[][2];
+extern const s16 gUnk_082DEA7C[][2];
+extern const s16 gUnk_082DEA8C[][2];
+extern const s16 gUnk_082DEA9C[];
+extern const u16 gUnk_0835105C[];
 
 void sub_08020798(struct CutsceneTrigger *);
 void sub_0802084C(struct CutsceneTrigger *);
@@ -560,6 +565,171 @@ void sub_0802172C(struct CutsceneTrigger *x) {
         }
     }
     x->obj2.unk78 = sub_08022F0C;
+}
+
+void sub_08021984(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    u16 j;
+    u16 k;
+    u8 done;
+
+    k = 0;
+    for (j = 0; j < 4; j++) {
+        if (x2->unk294[j] != NULL) {
+            struct Object4 *obj = x2->unk294[j];
+            struct Kirby *kirby = &gKirbys[j];
+            struct ObjectBase *p = (struct ObjectBase *)((u8 *)x2 + 0xB4) + j;
+
+            switch (x2->unk2A4[j]) {
+                case 0: {
+                    u8 flag = 1;
+                    s32 d;
+                    s32 v;
+                    s32 t;
+
+                    if (obj->x > kirby->base.base.base.x) {
+                        d = obj->x - kirby->base.base.base.x;
+                        v = (d >> 8) * gUnk_082DEA6C[k][0];
+
+                        if (v < gUnk_082DEA7C[k][0]) {
+                            t = (u16)gUnk_082DEA7C[k][0];
+                        } else {
+                            if (v > gUnk_082DEA8C[k][0]) {
+                                v = gUnk_082DEA8C[k][0];
+                            }
+                            t = v;
+                        }
+                        obj->unk3C = t;
+                        if (obj->unk3C < d) {
+                            obj->unk3C = -obj->unk3C;
+                            flag = 0;
+                        } else {
+                            obj->unk3C = 0;
+                        }
+                    } else if (obj->x < kirby->base.base.base.x) {
+                        d = kirby->base.base.base.x - obj->x;
+                        v = (d >> 8) * gUnk_082DEA6C[k][0];
+
+                        if (v < gUnk_082DEA7C[k][0]) {
+                            t = (u16)gUnk_082DEA7C[k][0];
+                        } else {
+                            if (v > gUnk_082DEA8C[k][0]) {
+                                v = gUnk_082DEA8C[k][0];
+                            }
+                            t = v;
+                        }
+                        obj->unk3C = t;
+                        if (obj->unk3C < d) {
+                            flag = 0;
+                        } else {
+                            obj->unk3C = 0;
+                        }
+                    } else {
+                        obj->x = kirby->base.base.base.x;
+                        obj->unk3C = 0;
+                    }
+                    if (obj->y > kirby->base.base.base.y) {
+                        d = obj->y - kirby->base.base.base.y;
+                        v = (d >> 8) * gUnk_082DEA6C[k][1];
+
+                        if (v < gUnk_082DEA7C[k][1]) {
+                            t = (u16)gUnk_082DEA7C[k][1];
+                        } else {
+                            if (v > gUnk_082DEA8C[k][1]) {
+                                v = gUnk_082DEA8C[k][1];
+                            }
+                            t = v;
+                        }
+                        obj->unk3E = t;
+                        if (obj->unk3E < d) {
+                            flag = 0;
+                        } else {
+                            obj->unk3E = 0;
+                        }
+                    } else if (obj->y < kirby->base.base.base.y) {
+                        d = kirby->base.base.base.y - obj->y;
+                        v = (d >> 8) * gUnk_082DEA6C[k][1];
+
+                        if (v < gUnk_082DEA7C[k][1]) {
+                            t = (u16)gUnk_082DEA7C[k][1];
+                        } else {
+                            if (v > gUnk_082DEA8C[k][1]) {
+                                v = gUnk_082DEA8C[k][1];
+                            }
+                            t = v;
+                        }
+                        obj->unk3E = t;
+                        if (obj->unk3E < d) {
+                            obj->unk3E = -obj->unk3E;
+                            flag = 0;
+                        } else {
+                            obj->unk3E = 0;
+                        }
+                    } else {
+                        obj->y = kirby->base.base.base.y;
+                        obj->unk3E = 0;
+                    }
+                    if (flag != 0) {
+                        x2->unk2A4[j] = 1;
+                    }
+                    break;
+                }
+                case 1:
+                    sub_080525C0(kirby);
+                    sub_0808AE30(&kirby->base.base.base, 0, 0x292, 0);
+                    kirby->animationIndex = 0x5B;
+                    p->x = obj->x;
+                    p->y = obj->y;
+                    p->xspeed = 0;
+                    p->yspeed = 0;
+                    kirby->base.base.base.unk6C = p;
+                    obj->flags |= 0x1000;
+                    x2->unk294[j] = (struct Object4 *)-1;
+                    x2->unk2AC[j] = 0;
+                    x2->unk2A4[j] = 2;
+                    break;
+                case 2:
+                    if (x2->unk2AC[j]++ > 0x1E) {
+                        PlaySfx(&x->obj2.base, 0x208);
+                        x2->unk2A4[j] = 3;
+                    }
+                    break;
+                case 3:
+                    p->x += p->xspeed;
+                    p->y -= p->yspeed;
+                    p->xspeed -= 0x10;
+                    p->yspeed += 0xA;
+                    if (gUnk_082DEA9C[k] > p->xspeed) {
+                        x2->unk2A4[j] = 4;
+                    }
+                    break;
+                case 4:
+                    p->x += p->xspeed;
+                    p->y -= p->yspeed;
+                    p->xspeed += 0x18;
+                    p->yspeed += 0xA;
+                    if (p->y < -0x2000) {
+                        x2->unk2A4[j] = 5;
+                    }
+                    break;
+                case 5:
+                    p->xspeed = 0;
+                    p->yspeed = 0;
+                    break;
+            }
+            k++;
+        }
+    }
+    done = 1;
+    for (j = 0; j < 4; j++) {
+        if (x2->unk294[j] != NULL && x2->unk2A4[j] <= 4) {
+            done = 0;
+        }
+    }
+    if (done != 0) {
+        sub_0808859C(&x->obj2, gUnk_0835105C[15], 0);
+        x->obj2.base.flags |= 0x1000;
+    }
 }
 
 void sub_08021DD4(struct Task *t) {
