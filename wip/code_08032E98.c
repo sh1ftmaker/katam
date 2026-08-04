@@ -158,8 +158,9 @@ void sub_080361C8(void)
     if (!(gUnk_0203AD10 & 0x10)) {
         dst = (vu16 *)0x0600E4AA;
         for (i = 0; i < 8; i++) {
-            v = (i + 0x1BD) | 0xFFFFF000;
-            *dst = v;
+            // NB: the (long long) promotion is load-bearing; every narrower
+            // cast and every temp-local spelling diffs (permuter-found).
+            *dst = (((long long)i) + 0x1BD) | 0xFFFFF000;
             dst++;
         }
     }
