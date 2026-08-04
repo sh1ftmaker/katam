@@ -249,6 +249,127 @@ void sub_0802084C(struct CutsceneTrigger *x) {
     }
 }
 
+void sub_08020A90(struct CutsceneTrigger *x) {
+    struct CutsceneTrigger *x2 = x;
+    u32 flag;
+    u16 i;
+    u16 j;
+    u16 *st = &x2->unkD4;
+
+    if (*st <= 0x63) {
+        flag = 1;
+        j = 0;
+        for (i = 0; i < 4; i++) {
+            struct Kirby *kirby = &gKirbys[i];
+            int v = x2->unkCC;
+
+            if ((v >> i) & 1) {
+                if (x2->unkD2 == j) {
+                    flag = 0;
+                    switch (x2->unkD4) {
+                    case 0:
+                        x2->unkB8.obj4 = sub_0808B62C(&x->obj2.base, 4, 0x2C3, 0, 0);
+                        x2->unkB8.obj4->sprite.palId = 0;
+                        if (gKirbys[gUnk_0203AD3C].base.base.base.roomId == x2->unkB8.obj4->roomId) {
+                            if (x2->unkB8.obj4->sprite.palId == 0) {
+                                x2->unkB8.obj4->sprite.palId = sub_0803DF24(0x2C3);
+                                if (x2->unkB8.obj4->sprite.palId == 0xFF)
+                                    x2->unkB8.obj4->sprite.palId = sub_0803DFAC(0x2C3, 0);
+                            }
+                        } else {
+                            x2->unkB8.obj4->sprite.palId = 0;
+                        }
+                        x2->unkB8.obj4->x = kirby->base.base.base.x;
+                        x2->unkB8.obj4->y = kirby->base.base.base.y - 0x1400;
+                        x2->unkD0 = 0;
+                        x2->unkD4 = 1;
+                        break;
+                    case 1:
+                        if (x2->unkD0++ > 0x1E)
+                            x2->unkD4 = 2;
+                        break;
+                    case 2:
+                        kirby->base.base.base.flags |= 1;
+                        x2->unkB8.obj4->flags |= 0x1000;
+                        x2->unkB8.obj4 = NULL;
+                        x2->unkD0 = 0;
+                        x2->unkD4 = 3;
+                        break;
+                    case 3:
+                        if (x2->unkD0++ > 0x10) {
+                            if (x2->unkD2 + 1 != x2->unkCE) {
+                                x2->unkD2++;
+                                x2->unkD4 = 0;
+                            } else {
+                                x2->unkD0 = 0;
+                                x2->unkD4 = 4;
+                            }
+                        }
+                        break;
+                    case 4:
+                        if (x2->unkD0++ > 0x2D) {
+                            u16 k;
+                            u16 m;
+
+                            k = 0;
+                            for (m = 0; m < 4; m++) {
+                                int w = x2->unkCC;
+
+                                if ((w >> m) & 1) {
+                                    if (k == x2->unkCE - 1)
+                                        break;
+                                    gKirbys[m].animationIndex = 0x17;
+                                    gKirbys[m].base.base.base.x -= 0x600;
+                                    k++;
+                                }
+                            }
+                            x2->unkD0 = 0;
+                            x2->unkD4 = 5;
+                        }
+                        break;
+                    case 5:
+                        if (x2->unkD0++ > 0x78) {
+                            x2->unkD0 = 0;
+                            x2->unkD4 = 0;
+                            x2->unkD2++;
+                        }
+                        break;
+                    }
+                }
+                j++;
+            }
+        }
+        if (flag != 0)
+            x2->unkD4 = 0x64;
+    } else
+        switch (*st) {
+        case 0x64: {
+        u16 k;
+        u16 m;
+
+        k = 0;
+        for (m = 0; m < 4; m++) {
+            int v = x->unkCC;
+
+            if ((v >> m) & 1) {
+                struct Kirby *kirby = &gKirbys[m];
+
+                kirby->animationIndex = 0;
+                kirby->base.base.base.x = (-(k * 18) + 0x50) << 8;
+                kirby->base.base.base.flags &= ~1;
+                k++;
+            }
+        }
+        x->unkD0 = 0;
+        *st = 0x65;
+        break; }
+        case 0x65:
+            if (x->unkD0++ > 0x3C)
+                x->obj2.unk78 = sub_08022E80;
+            break;
+        }
+}
+
 void sub_08020DDC(struct CutsceneTrigger *x) {
     struct CutsceneTrigger *x2 = x;
     struct Object4 *obj;
