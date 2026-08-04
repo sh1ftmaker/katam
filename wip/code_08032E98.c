@@ -2109,6 +2109,146 @@ _noHit:
     }
 }
 
+extern u8 (*const gUnk_0834BD88[])(struct ObjectBase *);
+extern void sub_08038010(struct Kirby *, struct ObjectBase *);
+
+// !!! INCOMPLETE BODY -- NOT BEHAVIOURALLY AUTHORITATIVE. DO NOT SHIP. !!!
+//
+// The reference is ~1731 asm lines: an outer sweep plus SIX near-identical
+// bounding-box collision blocks. Decoded and written here: the outer sweep,
+// and collision block 1 (ref _0803740C.._080376B0). Blocks 2-6
+// (ref _080376D2.._08037B72, asm lines 7986-9254) are NOT written -- they
+// re-apply the same predicate against gKirbys[], against gUnk_02022F50[i][..]
+// a second time, and against gUnk_02022EC0.
+//
+// This links and it DIFFs, which unblocks the port's build. It does NOT do
+// all the collision work the real function does. A caller will get partial
+// collision resolution that looks plausible and is wrong -- a worse failure
+// mode than an obvious stub, which is why this warning is here and not only
+// in the commit message. Filling in blocks 2-6 is the highest-value
+// follow-up on this file.
+//
+// Confidence: outer sweep HIGH; block 1 control flow HIGH; block 1's
+// sprite-hitbox fallback predicate MEDIUM.
+void sub_08037314(void)
+{
+    u32 i;
+    u32 j;
+    u8 count;
+    u8 n;
+    struct Object2 **pp;
+    struct ObjectBase **q;
+    struct ObjectBase **r;
+    struct Object2 *o2;
+    struct ObjectBase *obj;
+    struct ObjectBase *other;
+    struct Kirby *kirby;
+    s32 x1, y1, x2, y2;
+    s32 ax, ay;
+    u8 res;
+    u8 hit;
+
+    for (i = 0; i < gUnk_0203AD44; i++) {
+        pp = &gUnk_02022EC0[i][0];
+        count = gUnk_02022F40[i];
+        while (count != 0) {
+            o2 = *pp;
+            pp++;
+            count--;
+            if (o2 != NULL) {
+                for (j = 0; j < gUnk_0203AD44; j++) {
+                    kirby = &gKirbys[j];
+                    if (o2->base.roomId == kirby->base.base.base.roomId
+                     && !(kirby->base.base.base.flags & 0x100))
+                        sub_08038010(kirby, &o2->base);
+                }
+                q = &gUnk_02022F50[i * 64];
+                n = gUnk_02022EB0[i][0];
+                while (n != 0) {
+                    other = *q;
+                    if ((other->unkC & 0x1000)
+                     && o2->base.roomId == other->roomId
+                     && !(other->flags & 0x100))
+                        sub_08038010((struct Kirby *)other, &o2->base);
+                    n--;
+                    q++;
+                }
+            }
+        }
+
+        q = &gUnk_02022F50[i * 64 + 32];
+        count = gUnk_02022EB0[i][1];
+        while (count != 0) {
+            obj = *q;
+            count--;
+            if (obj != NULL) {
+                if (obj->flags & 1)
+                    x1 = (obj->x >> 8) + (-obj->unk38 - obj->unk3A * 2);
+                else
+                    x1 = (obj->x >> 8) + obj->unk38;
+                y1 = (obj->y >> 8) + obj->unk39;
+
+                if (obj->flags & 0x2000000) {
+                    r = &gUnk_02022F50[i * 64];
+                    n = gUnk_02022EB0[i][0];
+                    while (n != 0) {
+                        other = *r;
+                        if (other != NULL) {
+                            if (obj->flags & 0x200)
+                                break;
+                            if (!(other->flags & 0x200)) {
+                                if (other->flags & 1)
+                                    x2 = (other->x >> 8) + (-other->unk38 - other->unk3A * 2);
+                                else
+                                    x2 = (other->x >> 8) + other->unk38;
+                                y2 = (other->y >> 8) + other->unk39;
+
+                                ax = (obj->x >> 8) + obj->sprite.unk20[0].unk4;
+                                ay = (obj->y >> 8) + obj->sprite.unk20[0].unk5;
+                                hit = 0;
+                                if (obj->unk3A != 0 && obj->unk3B != 0) {
+                                    if (((x1 <= x2 && x1 + obj->unk3A * 2 >= x2)
+                                      || (x1 >= x2 && x2 + other->unk3A * 2 >= x1))
+                                     && ((y1 <= y2 && y1 + obj->unk3B * 2 >= y2)
+                                      || (y1 >= y2 && y2 + other->unk3B * 2 >= y1)))
+                                        hit = 1;
+                                }
+                                if (hit == 0 && obj->sprite.unk20[0].unk0 == 0) {
+                                    if (((ax <= x2 && ax + (obj->sprite.unk20[0].unk6 - obj->sprite.unk20[0].unk4) >= x2)
+                                      || (ax >= x2 && x2 + other->unk3A * 2 >= ax))
+                                     && ((ay <= y2 && ay + (obj->sprite.unk20[0].unk7 - obj->sprite.unk20[0].unk5) >= y2)
+                                      || (ay >= y2 && y2 + other->unk3B * 2 >= ay)))
+                                        hit = 1;
+                                }
+                                if (hit != 0) {
+                                    res = gUnk_0834BD88[obj->unk0](other);
+                                    if ((u16)gUnk_0834BD88[other->unk0](obj) != 0)
+                                        *r = NULL;
+                                    obj = *q;
+                                    if (res != 0) {
+                                        if (obj->flags & 0x400000)
+                                            obj->flags = (obj->flags | 0x40000) & 0xFBFFFFFF;
+                                        *q = NULL;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        n--;
+                        r++;
+                    }
+                }
+                obj = *q;
+                if (obj != NULL) {
+                    if (obj->flags & 0x400000)
+                        obj->flags = (obj->flags | 0x40000) & 0xFBFFFFFF;
+                }
+            }
+            q++;
+        }
+    }
+}
+
 u8 sub_0803912C(struct ObjectBase *a, struct ObjectBase *b)
 {
     s8 ra[4];
@@ -3299,4 +3439,177 @@ void sub_0803533C(struct Object5 *p)
     p->unkA = 0;
     sub_08034FA8(NULL);
     p->unk1C = NULL;
+}
+
+
+void sub_08035788(struct Kirby *kirby)
+{
+    u8 color = gKirbys[gUnk_0203AD3C].color;
+    struct Object5 *p = TaskGetStructPtr(gUnk_03000010);
+    vu16 *dst;
+    u8 i, j;
+    u16 k;
+    u32 flag;
+
+    CpuFill16(0x184, (void *)0x0600E000, 0x500);
+    if (gUnk_0203AD10 & 0x10) {
+        sub_0803D21C(&gUnk_0834BB20[gKirbys[gUnk_0203AD3C].color * 0x10], 0xF0, 0x10);
+        CpuSet(gUnk_08D60F8C[gLanguage], (void *)0x060070A0, 0x400);
+        dst = (vu16 *)0x0600E198;
+        for (i = 0; i < 6; i++) {
+            *dst = (((long long)i) + 0x1B5) | 0xFFFFF000;
+            dst++;
+        }
+        return;
+    }
+    sub_0803D21C(&gUnk_0834BB20[color * 0x10], 0xF0, 0x10);
+    if (gUnk_03000010->main == sub_08035FA8) {
+        dst = (vu16 *)0x0600E18E;
+        CpuSet(gUnk_08D60F8C[gLanguage], (void *)0x060070A0, 0x400);
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 16; j++) {
+                *dst = (i * 16 + (((long long)j) + 0x185)) | 0xFFFFF000;
+                dst++;
+            }
+            dst += 0x10;
+        }
+        return;
+    }
+    sub_0803D21C(&gUnk_0834BB20[gKirbys[gUnk_0203AD3C].color * 0x10], 0xF0, 0x10);
+    CpuSet(gUnk_082EC7A0, (void *)0x060070A0, 0x380);
+    CpuSet(gUnk_08D60EE4[gLanguage], (void *)0x060077A0, 0x80);
+    if (gUnk_03000010->main == sub_080340A8) {
+        sub_08034A20();
+        return;
+    }
+    if (gKirbys[gUnk_0203AD3C].unkDB != 0)
+        sub_080356AC(0x060078A0, 0xE, gKirbys[gUnk_0203AD3C].unkDB);
+    else
+        sub_080356AC(0x060078A0, 0xE, gKirbys[gUnk_0203AD3C].ability);
+    dst = (vu16 *)0x0600E48E;
+    *dst++ = 0xF18F;
+    *dst++ = 0xF190;
+    *dst = 0xF191;
+    dst += 0x1E;
+    *dst++ = 0xF19F;
+    *dst++ = 0xF59F;
+    *dst = 0xF1A1;
+    {
+        u8 v = gKirbys[gUnk_0203AD3C].lives;
+
+        if (v > 0x63) {
+            v = 0x63;
+        }
+        for (k = 0; k < 2; k++) {
+            u32 off = (k + 0xA) * 2;
+            vu16 *d = (vu16 *)(off + 0x0600E480);
+            u32 dv = gUnk_0834BD60[k + 6];
+            u32 t = v / dv;
+            u16 q = t;
+            v = v - dv * t;
+            *d = (((long long)q) + 0x185) | 0xFFFFF000;
+            d = (vu16 *)(off + 0x0600E4C0);
+            *d = (((long long)q) + 0x195) | 0xFFFFF000;
+        }
+    }
+    sub_0803518C((u8 *)&gKirbys[gUnk_0203AD3C]);
+    sub_08034C9C(p->filler14[0]);
+    if (gRoomProps[gKirbys[gUnk_0203AD3C].base.base.base.roomId].priorityFlags & 8) {
+        *(vu16 *)0x0600E002 = 0xF1B0;
+        *(vu16 *)0x0600E042 = 0xF1B1;
+    } else {
+        *(vu16 *)0x0600E002 = 0xF184;
+        *(vu16 *)0x0600E042 = 0xF184;
+    }
+    sub_08034D68(&gKirbys[gUnk_0203AD3C]);
+    if (!(gUnk_0203AD10 & 0x10)) {
+        dst = (vu16 *)0x0600E4AA;
+        for (k = 0; k < 8; k++) {
+            *dst = (((long long)k) + 0x1BD) | 0xFFFFF000;
+            dst++;
+        }
+    }
+    if (p->unk1C != NULL) {
+        CpuSet((const u8 *)gUnk_08D60EE4[gLanguage] + (p->unk1C->type << 8),
+            (void *)0x060077A0, 0x80);
+        sub_08034FA8(p);
+    } else {
+        CpuFill16(0, (void *)0x060077A0, 0x100);
+        sub_08034FA8(NULL);
+    }
+    if (gUnk_02021580 >= gUnk_0203AD44)
+        return;
+    if (!(gKirbys[gUnk_02021580].base.base.base.unkC & 0x10000)
+        && gKirbys[gUnk_02021580].base.base.base.roomId == kirby->base.base.base.roomId)
+        return;
+    if (!(gRoomProps[kirby->base.base.base.roomId].priorityFlags & 0x10))
+        return;
+    j = TRUE;
+    for (i = 1; i < 9; i++) {
+        if (gUnk_0835105C[i] == kirby->base.base.base.roomId) {
+            if (*sub_08002888(1, i, 0) != 0) {
+                j = FALSE;
+                break;
+            }
+        }
+    }
+    for (i = 9; i < 0xE; i++) {
+        if (gUnk_0835105C[i] == kirby->base.base.base.roomId) {
+            if (*sub_08002888(1, i + 3, 0) != 0) {
+                j = FALSE;
+                break;
+            }
+        }
+    }
+    if (!j)
+        return;
+    flag = gKirbys[gUnk_02021580].base.base.base.unkC & 0x10000;
+    if (!flag || kirby->lives != 0) {
+        if (p->unkE <= 0x5F) {
+            if (flag)
+                sub_08034924(1);
+            else
+                sub_08034828(1);
+        } else if ((u8)(p->unkE + 0x80) <= 0x5F) {
+            if (flag)
+                sub_08034924(2);
+            else
+                sub_08034828(2);
+        } else {
+            if (flag)
+                sub_08034924(0);
+            else
+                sub_08034828(0);
+            *(vu16 *)0x0600E002 = 0xF1B0;
+            *(vu16 *)0x0600E042 = 0xF1B1;
+            sub_08034D68(kirby);
+            p->unkD = 0;
+        }
+        if (p->unkE <= 0x5F || (u8)(p->unkE + 0x80) <= 0x5F) {
+            struct Sprite *s = &p->unk20[0][gUnk_0203AD3C];
+
+            s->tilesVram = gKirbys[gUnk_02021580].base.base.base.sprite.tilesVram + 0x100;
+            s->palId = gUnk_02021580;
+            s->unk1B = 0xFF;
+            if (gUnk_0203AD20 & 8) {
+                s->y = 0x91;
+                s->unk8 |= 0x800;
+            } else {
+                s->y = 0xF;
+                s->unk8 &= ~0x800;
+            }
+            sub_08155128(s);
+            sub_0815604C(s);
+        } else {
+            if (gKirbys[gUnk_02021580].base.base.base.unkC & 0x10000)
+                sub_08034924(0);
+            else
+                sub_08034828(0);
+            *(vu16 *)0x0600E002 = 0xF1B0;
+            *(vu16 *)0x0600E042 = 0xF1B1;
+            sub_08034D68(kirby);
+            p->unkD = 0;
+        }
+    }
+    p->unk10 |= 1;
 }
