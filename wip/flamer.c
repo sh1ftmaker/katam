@@ -92,9 +92,9 @@ void sub_080B89DC(struct Object2 *flamer)
     u32 v;
     u32 collision;
     u32 attr;
-    u8 t1;
-    u8 t2;
-    u8 t3;
+    u32 t1;
+    u32 t2;
+    u32 t3;
     u8 st;
     u8 *facing;
     u8 *sub;
