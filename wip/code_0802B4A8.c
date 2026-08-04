@@ -24,7 +24,7 @@ struct Unk_0802B4A8 {
     /* 0x144 */ struct Sprite unk144;
     /* 0x16C */ struct Sprite unk16C;
     /* 0x194 */ struct Background unk194;
-    /* 0x1D4 */ u8 filler1D4[0x214 - 0x1D4];
+    /* 0x1D4 */ struct Background unk1D4;
     /* 0x214 */ u32 unk214;
     /* 0x218 */ u32 unk218[5][2];
     /* 0x240 */ u16 unk240[5][2];
@@ -82,6 +82,7 @@ extern u32 gUnk_082EB4EC[][2];
 extern u32 gUnk_082EB53C[][2];
 extern u32 gUnk_082EB514[][2];
 extern u32 gUnk_082EB564[][2];
+extern u16 gUnk_082EB634[];
 extern u16 gUnk_082EB640[][6][2];
 extern u16 gUnk_082EB5B4[];
 extern u16 gUnk_0300000C;
@@ -154,6 +155,7 @@ void sub_0802DCC4(struct Unk_0802B4A8 *);
 void sub_0802DD18(struct Unk_0802B4A8 *);
 void sub_0802DCA0(struct Unk_0802B4A8 *);
 void sub_0802C770(struct Unk_0802B4A8 *);
+void sub_0802D800(struct Unk_0802B4A8 *);
 void sub_0802DDA0(struct Unk_0802B4A8 *);
 void sub_0802DDB4(struct Unk_0802B4A8 *);
 void sub_0802DDC0(struct Unk_0802B4A8 *);
@@ -430,6 +432,48 @@ void sub_0802C4BC(struct Unk_0802B4A8 *x) {
     x->unk298 += x->unk2A0;
     x->unk2A4 = x->unk294;
     x->unk2A8 = x->unk298;
+}
+
+void sub_0802C770(struct Unk_0802B4A8 *x) {
+    struct Background *bg;
+
+    gDispCnt |= 0x300;
+    gBgScrollRegs[0][0] = 0;
+    gBgScrollRegs[0][1] = 0;
+    gBgCntRegs[0] = 0x1F09;
+    bg = &x->unk194;
+    BgInit(bg, 0x06008000, 0, 0x0600F800, 0, 0, gUnk_082EB634[gLanguage], 0, 0, 0, 0, 0x1E, 0x14, 0, 0, 0, 0x18, 0, 0, 0x7FFF, 0x7FFF);
+    sub_08153060(bg);
+    LZ77UnCompVram(gUnk_082D7850[bg->unk1C]->tileset, (void *)bg->tilesVram);
+
+    gBgScrollRegs[1][0] = 0;
+    gBgScrollRegs[1][1] = 0;
+    gBgCntRegs[1] = 0x1E02;
+    bg = &x->unk1D4;
+    bg->tilesVram = 0x06000000;
+    bg->unkA = 0;
+    bg->tilemapVram = 0x0600F000;
+    bg->unk18 = 0;
+    bg->unk1A = 0;
+    bg->unk1C = 0x2B1;
+    bg->unk1E = 0;
+    bg->unk20 = 0;
+    bg->unk22 = 0;
+    bg->unk24 = 0;
+    bg->unk26 = 0x1E;
+    bg->unk28 = 0x14;
+    bg->paletteOffset = 0;
+    bg->animFrameCounter = 0;
+    bg->animDelayCounter = 0;
+    bg->unk2E = 9;
+    bg->prevScrollX = 0x7FFF;
+    bg->prevScrollY = 0x7FFF;
+    sub_08153060(bg);
+    LZ77UnCompVram(gUnk_082D7850[bg->unk1C]->tileset, (void *)bg->tilesVram);
+
+    x->unk2BC = 0;
+    x->unk214 &= 0xFFF7FFFF;
+    x->unk0 = sub_0802D800;
 }
 
 void sub_0802CA78(struct Unk_0802B4A8 *x) {
