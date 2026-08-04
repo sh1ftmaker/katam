@@ -365,10 +365,10 @@ end:
 void sub_0811F034(struct Task *t)
 {
     struct StarStoneBlock *block = TaskGetStructPtr(t);
-    u8 f, unk56, unk56b, unk3, unk3b, unk65E;
+    u8 flags, unk56, unk56b, unk3, unk3b, unk65E;
     u32 unk2;
 
-    f = block->unkE3;
+    flags = block->unkE3;
     unk56 = block->obj2.base.unk56;
     unk56b = unk56;
     unk2 = block->obj2.object->unk2;
@@ -382,7 +382,7 @@ void sub_0811F034(struct Task *t)
     ObjectDestroy(t);
     if (unk2 != 0 || unk56b != 0xFF)
     {
-        if (f & 0x40)
+        if (flags & 0x40)
             sub_08001678(unk2, unk3, unk65E, 1);
         else
             sub_08001678(unk2, unk3b, unk65E, 0);

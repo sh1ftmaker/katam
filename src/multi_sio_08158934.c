@@ -4,8 +4,8 @@
 #include "multi_sio.h"
 
 struct Unk_03000020 {
-    /* 0x0 */ u8 unk0;
-    /* 0x2 */ u16 unk2;
+    /* 0x0 */ u8 slot;
+    /* 0x2 */ u16 step;
     /* 0x4 */ u16 unk4;
     /* 0x6 */ u16 unk6;
     /* 0x8 */ u16 unk8;
@@ -103,21 +103,21 @@ void sub_08158AE4(void) {
         register u32 recv asm("r6") = REG_SIODATA32;
         struct Unk_03000020 *ptr = &gUnk_03000020;
         struct Unk_03000020 *s;
-        u32 k = ptr->unk0;
-        u32 x = recv << (k * 16);
+        u32 slotVal = ptr->slot;
+        u32 x = recv << (slotVal * 16);
         register u32 z asm("r1");
         u16 a = x >> 16;
         u16 b;
-        z = recv << ((1 - k) * 16);
+        z = recv << ((1 - slotVal) * 16);
         b = z >> 16;
         {u16 unkAv = ptr->unkA; s = ptr;
 
         if (unkAv == 0) {
             u32 a1 = a;
             if (a1 == s->unk6) {
-                if (s->unk2 <= 3) {
+                if (s->step <= 3) {
                     if (a1 == (u16)~s->unk4 && b == (u16)~s->unk6) {
-                        s->unk2++;
+                        s->step++;
                     }
                 } else {
                     s->unkA = b;
@@ -125,30 +125,30 @@ void sub_08158AE4(void) {
                         gUnk_03006CC0 = 1;
                         gUnk_0300002C = sub_08158DBC(1);
                         REG_SIODATA32 = gUnk_0300002C;
-                        s->unk2 = 0;
+                        s->step = 0;
                         goto send;
                     }
                     s->unkA = 0;
-                    s->unk2 = 0;
+                    s->step = 0;
                 }
             } else {
-                s->unk2 = 0;
+                s->step = 0;
             }
         }
         }
-        if (s->unk2 <= 3) {
-            s->unk4 = *(u16 *)(gAgbSramLibVer + s->unk2 * 2);
+        if (s->step <= 3) {
+            s->unk4 = *(u16 *)(gAgbSramLibVer + s->step * 2);
         } else {
             s->unk4 = 0x8000;
         }
         s->unk6 = ~b;
-        REG_SIODATA32 = (s->unk4 << ((1 - s->unk0) * 16))
-                      + (s->unk6 << (s->unk0 * 16));
+        REG_SIODATA32 = (s->unk4 << ((1 - s->slot) * 16))
+                      + (s->unk6 << (s->slot * 16));
         goto send;
     }
     case 1:
         if (sub_08158D14(gUnk_03006CC0) != 0) {
-            gUnk_03000020.unk2 = 0;
+            gUnk_03000020.step = 0;
             CpuFill32(0, &gUnk_03000020, sizeof(gUnk_03000020));
             gUnk_03006CC0 = 0;
         } else {
@@ -159,7 +159,7 @@ void sub_08158AE4(void) {
         goto send;
     case 2:
         if (sub_08158D14(gUnk_03006CC0) != 0) {
-            gUnk_03000020.unk2 = 0;
+            gUnk_03000020.step = 0;
             CpuFill32(0, &gUnk_03000020, sizeof(gUnk_03000020));
             gUnk_03006CC0 = 0;
         } else {
@@ -170,7 +170,7 @@ void sub_08158AE4(void) {
         goto send;
     case 3:
         if (sub_08158D14(gUnk_03006CC0) != 0) {
-            gUnk_03000020.unk2 = 0;
+            gUnk_03000020.step = 0;
             CpuFill32(0, &gUnk_03000020, sizeof(gUnk_03000020));
             gUnk_03006CC0 = 0;
         }

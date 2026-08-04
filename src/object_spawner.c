@@ -11,12 +11,12 @@
 
 struct ObjectSpawner {
     /* 0x00 */ struct Object2 obj2;
-    /* 0xB4 */ s16 unkB4;
+    /* 0xB4 */ s16 breakTimer;
     /* 0xB6 */ u16 unkB6;
     /* 0xB8 */ u8 fillerB8[0x24];
     /* 0xDC */ u16 unkDC;
-    /* 0xDE */ u8 unkDE;
-    /* 0xDF */ u8 unkDF;
+    /* 0xDE */ u8 aliveCount;
+    /* 0xDF */ u8 spawnCounter;
 }; /* size = 0xE0 */
 
 void sub_0811BA30(struct Object2 *);
@@ -37,8 +37,8 @@ void sub_0811BA30(struct Object2 *obj2) {
     obj2->unk8C = buf;
     CpuFill32(0, buf, (obj2->object->unk14 >> 8) << 2);
     x->obj2.unk78 = sub_0811BAAC;
-    x->unkDE = 0;
-    x->unkDF = 0;
+    x->aliveCount = 0;
+    x->spawnCounter = 0;
     x->unkDC = 0;
 }
 
@@ -60,10 +60,10 @@ static void sub_0811BAAC(struct ObjectSpawner *x) {
     }
 
     if (x2->unkDC >= x->obj2.object->unk18 >> 8
-     && x2->unkDE < (x->obj2.object->unk14 & 0xFF00) >> 8) {
-        x2->unkDF++;
-        if (x2->unkDF >= x->obj2.object->unk12) {
-            x2->unkDF = x->obj2.object->unk12;
+     && x2->aliveCount < (x->obj2.object->unk14 & 0xFF00) >> 8) {
+        x2->spawnCounter++;
+        if (x2->spawnCounter >= x->obj2.object->unk12) {
+            x2->spawnCounter = x->obj2.object->unk12;
             if ((u16)((u8)x->obj2.object->unk14 - 0x38) <= 0x1A) {
                 if (x->obj2.base.counter == 0) {
                     sub_0808AE30(&x->obj2.base, 0, 0x2C4, 0);
@@ -91,16 +91,16 @@ static void sub_0811BAAC(struct ObjectSpawner *x) {
                 for (i = 0; i < n; i++) {
                     if (arr[i] == NULL) {
                         arr[i] = created;
-                        x2->unkDE++;
+                        x2->aliveCount++;
                         break;
                     }
                 }
-                x2->unkDF = 0;
+                x2->spawnCounter = 0;
             }
         }
     }
 
-    if (!(x->obj2.object->unk22 & 1) && x2->unkDE != 0) {
+    if (!(x->obj2.object->unk22 & 1) && x2->aliveCount != 0) {
         sub_0811BE64(x);
     }
 }
@@ -126,7 +126,7 @@ void sub_0811BE64(struct ObjectSpawner *x) {
     for (i = 0; i < (x->obj2.object->unk14 & 0xFF00) >> 8; i++) {
         if (arr[i] != NULL && (arr[i]->flags & 0x1000)) {
             arr[i] = NULL;
-            x->unkDE--;
+            x->aliveCount--;
         }
     }
 }
@@ -134,13 +134,13 @@ void sub_0811BE64(struct ObjectSpawner *x) {
 static void sub_0811BEBC(struct Task *task) {
     struct ObjectSpawner *x = TaskGetStructPtr(task);
     u32 playerId = x->obj2.base.unk56;
-    u32 a = x->obj2.object->unk2;
-    char b = x->obj2.object->unk3;
-    char c = gCurLevelInfo[playerId].unk65E;
+    u32 unk2 = x->obj2.object->unk2;
+    char unk3 = x->obj2.object->unk3;
+    char unk65E = gCurLevelInfo[playerId].unk65E;
 
     ObjectDestroy(task);
-    if (a != 0 || playerId != 0xFF) {
-        sub_08001678(a, b, c, 1);
+    if (unk2 != 0 || playerId != 0xFF) {
+        sub_08001678(unk2, unk3, unk65E, 1);
     }
 }
 
@@ -196,13 +196,13 @@ static void sub_0811C07C(struct ObjectSpawner *x) {
     u32 tileX = (u32)(x->obj2.base.x << 4) >> 16;
     u32 tileY = (u32)(x->obj2.base.y << 4) >> 16;
 
-    if (x->unkB4 == 0) {
+    if (x->breakTimer == 0) {
         sub_0808AE30(&x->obj2.base, 0, 0x28D, 0);
         PlaySfx(&x->obj2.base, SE_BLOCK_BREAK);
         sub_080023E4(playerId, tileX, tileY);
         sub_08001408(playerId, sub_080025AC(playerId, tileX, tileY), 0, 0);
         x->obj2.base.flags |= 0x1000;
     } else {
-        x->unkB4--;
+        x->breakTimer--;
     }
 }

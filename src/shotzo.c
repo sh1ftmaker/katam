@@ -143,29 +143,29 @@ NAKED void sub_0811A934(struct Object2 *shotzo) {
 #else
 void sub_0811A934(struct Object2 *shotzo)
 {
-    u8 *p = &shotzo->unk9E;
-    u32 v = *p << 24;
+    u8 *framePtr = &shotzo->unk9E;
+    u32 frameShifted = *framePtr << 24;
 
-    if (v >> 24 <= 7)
+    if (frameShifted >> 24 <= 7)
     {
-        const u16 *table;
+        const u16 *offsetTable;
 
         switch (shotzo->unk83)
         {
         case 0:
-            table = gUnk_08357C14;
+            offsetTable = gUnk_08357C14;
             break;
         case 1:
-            table = gUnk_08357C24;
+            offsetTable = gUnk_08357C24;
             break;
         case 3:
-            table = gUnk_08357C34;
+            offsetTable = gUnk_08357C34;
             break;
         default:
             goto skip;
         }
-        shotzo->base.objBase54 = table[(v >> 25) * 2] >> 8;
-        shotzo->base.objBase55 = table[*p | 1] >> 8;
+        shotzo->base.objBase54 = offsetTable[(frameShifted >> 25) * 2] >> 8;
+        shotzo->base.objBase55 = offsetTable[*framePtr | 1] >> 8;
     skip:
         shotzo->unk9E++;
         if (shotzo->base.flags & 1)
@@ -233,29 +233,29 @@ NAKED void sub_0811AA80(struct Object2 *shotzo) {
 #else
 void sub_0811AA80(struct Object2 *shotzo)
 {
-    u8 *p = &shotzo->unk9E;
-    u32 v = *p << 24;
+    u8 *framePtr = &shotzo->unk9E;
+    u32 frameShifted = *framePtr << 24;
 
-    if (v >> 24 <= 7)
+    if (frameShifted >> 24 <= 7)
     {
-        const u16 *table;
+        const u16 *offsetTable;
 
         switch (shotzo->unk83)
         {
         case 0:
-            table = gUnk_08357C14;
+            offsetTable = gUnk_08357C14;
             break;
         case 1:
-            table = gUnk_08357C24;
+            offsetTable = gUnk_08357C24;
             break;
         case 3:
-            table = gUnk_08357C34;
+            offsetTable = gUnk_08357C34;
             break;
         default:
             goto skip;
         }
-        shotzo->base.objBase54 = table[(v >> 25) * 2] >> 8;
-        shotzo->base.objBase55 = table[*p | 1] >> 8;
+        shotzo->base.objBase54 = offsetTable[(frameShifted >> 25) * 2] >> 8;
+        shotzo->base.objBase55 = offsetTable[*framePtr | 1] >> 8;
     skip:
         shotzo->unk9E++;
         if (shotzo->base.flags & 1)
