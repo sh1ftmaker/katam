@@ -331,6 +331,7 @@ void sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
     struct Object4 *tmp = TaskGetStructPtr(t), *newObj = tmp;
     u16 gfxId;
     u16 param;
+    register u32 z asm("sl");
 
     sub_0803E3B0(tmp);
     newObj->unk0 = 3;
@@ -338,13 +339,14 @@ void sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
     newObj->y = flamer->base.y;
     newObj->parent = flamer;
     newObj->roomId = flamer->base.roomId;
+    z = 0;
     newObj->y += (s8)gUnk_083547E0[dirIndex & 3] << 8;
     if (Macro_0810B1F4(&flamer->base))
         newObj->flags |= 0x2000;
     newObj->flags |= 0x4000;
     gfxId = 0x31E;
     sub_080709F8(newObj, &newObj->sprite, 6, gfxId, 12, 12);
-    newObj->sprite.palId = 0;
+    newObj->sprite.palId = (u8)z;
     if (flamer->base.unkC & 0x10)
         param = gUnk_08351648[OBJ_DROPPY].unk8;
     else
