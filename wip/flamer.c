@@ -1083,144 +1083,240 @@ void nullsub_125(struct Object2 *flamer)
 {
 }
 
-// sub_080BA5C8: functionally equivalent; remaining diff is register allocation / constant scheduling.
-#ifndef NONMATCHING
-NAKED void sub_080BA5C8(struct Object2 *flamer)
-{
-    asm(".include \"asm/nonmatching/sub_080BA5C8.inc\"");
-}
-#else
 void sub_080BA5C8(struct Object2 *flamer)
 {
     u32 t = flamer->unk85 & 0xC0;
 
     if (t == 0x80 || t == 0xC0)
     {
+#ifndef NONMATCHING
+        register s32 off asm("r2") = flamer->base.unk3E * 0x100;
+        register s32 x0 asm("r0") = flamer->base.x;
+        register s32 x asm("r4") = x0 + off;
+        register s32 y asm("r3") = flamer->base.y;
+        register s32 m asm("r1");
+        register s32 xm asm("r0");
+#else
         s32 off = flamer->base.unk3E * 0x100;
         s32 x0 = flamer->base.x;
-        register s32 x asm("r4") = x0 + off;
+        s32 x = x0 + off;
         s32 y = flamer->base.y;
         s32 m;
         s32 xm;
+#endif
         x &= ~0xF00;
         m = 0xF00;
+#ifndef NONMATCHING
+        asm("" : "+r"(m));
+#endif
         xm = x + m;
         y &= m;
         flamer->base.x = xm - y - off;
     }
     else
     {
+#ifndef NONMATCHING
+        register s32 x asm("r4") = flamer->base.x;
+        register s32 off asm("r2") = flamer->base.unk3F * 0x100;
+        register s32 y0 asm("r0") = flamer->base.y;
+        register s32 y asm("r3") = y0 + off;
+        register s32 m asm("r1");
+        register s32 ym asm("r0");
+#else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3F * 0x100;
-        s32 y = flamer->base.y + off;
+        s32 y0 = flamer->base.y;
+        s32 y = y0 + off;
         s32 m;
-        s32 ym = y & ~0xF00;
+        s32 ym;
+#endif
+        y &= ~0xF00;
         m = 0xF00;
-        ym += m;
+#ifndef NONMATCHING
+        asm("" : "+r"(m));
+#endif
+        ym = y + m;
         x &= m;
         flamer->base.y = ym - x - off;
     }
 }
-#endif
 
 
-// sub_080BA638: functionally equivalent; remaining diff is register allocation / constant scheduling.
-#ifndef NONMATCHING
-NAKED void sub_080BA638(struct Object2 *flamer)
-{
-    asm(".include \"asm/nonmatching/sub_080BA638.inc\"");
-}
-#else
 void sub_080BA638(struct Object2 *flamer)
 {
     u32 t = flamer->unk85 & 0xC0;
 
     if (t == 0x80 || t == 0xC0)
     {
+#ifndef NONMATCHING
+        register s32 off asm("r1") = flamer->base.unk3C * 0x100;
+        register s32 x0 asm("r0") = flamer->base.x;
+        register s32 x asm("r3") = x0 + off;
+        register s32 y asm("r2") = flamer->base.y;
+        register s32 m asm("r0");
+        register s32 xm asm("r0");
+#else
         s32 off = flamer->base.unk3C * 0x100;
-        s32 x = flamer->base.x + off;
+        s32 x0 = flamer->base.x;
+        s32 x = x0 + off;
         s32 y = flamer->base.y;
+        s32 m;
+        s32 xm;
+#endif
         x &= ~0xF00;
-        y &= 0xF00;
-        flamer->base.x = x + y - off;
+        m = 0xF00;
+#ifndef NONMATCHING
+        asm("" : "+r"(m));
+#endif
+        y &= m;
+        xm = x + y;
+        flamer->base.x = xm - off;
     }
     else
     {
+#ifndef NONMATCHING
+        register s32 x asm("r3") = flamer->base.x;
+        register s32 off asm("r1") = flamer->base.unk3F * 0x100;
+        register s32 y0 asm("r0") = flamer->base.y;
+        register s32 y asm("r2") = y0 + off;
+        register s32 m asm("r0");
+        register s32 ym asm("r0");
+#else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3F * 0x100;
-        s32 y = flamer->base.y + off;
+        s32 y0 = flamer->base.y;
+        s32 y = y0 + off;
+        s32 m;
+        s32 ym;
+#endif
         y &= ~0xF00;
-        x &= 0xF00;
-        flamer->base.y = y + x - off;
+        m = 0xF00;
+#ifndef NONMATCHING
+        asm("" : "+r"(m));
+#endif
+        x &= m;
+        ym = y + x;
+        flamer->base.y = ym - off;
     }
 }
-#endif
 
 
-// sub_080BA6A4: functionally equivalent; remaining diff is register allocation / constant scheduling.
-#ifndef NONMATCHING
-NAKED void sub_080BA6A4(struct Object2 *flamer)
-{
-    asm(".include \"asm/nonmatching/sub_080BA6A4.inc\"");
-}
-#else
 void sub_080BA6A4(struct Object2 *flamer)
 {
     u32 t = flamer->unk85 & 0xC0;
 
     if (t == 0x80 || t == 0xC0)
     {
+#ifndef NONMATCHING
+        register s32 off asm("r2") = flamer->base.unk3C * 0x100;
+        register s32 x0 asm("r0") = flamer->base.x;
+        register s32 x asm("r4") = x0 + off;
+        register s32 y asm("r3") = flamer->base.y;
+        register s32 m asm("r1");
+        register s32 xm asm("r0");
+#else
         s32 off = flamer->base.unk3C * 0x100;
-        s32 x = flamer->base.x + off;
+        s32 x0 = flamer->base.x;
+        s32 x = x0 + off;
         s32 y = flamer->base.y;
+        s32 m;
+        s32 xm;
+#endif
         x &= ~0xF00;
-        y &= 0xF00;
-        flamer->base.x = x + 0xF00 - y - off;
+        m = 0xF00;
+#ifndef NONMATCHING
+        asm("" : "+r"(m));
+#endif
+        xm = x + m;
+        y &= m;
+        flamer->base.x = xm - y - off;
     }
     else
     {
+#ifndef NONMATCHING
+        register s32 x asm("r4") = flamer->base.x;
+        register s32 off asm("r2") = flamer->base.unk3D * 0x100;
+        register s32 y0 asm("r0") = flamer->base.y;
+        register s32 y asm("r3") = y0 + off;
+        register s32 m asm("r1");
+        register s32 ym asm("r0");
+#else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3D * 0x100;
-        s32 y = flamer->base.y + off;
+        s32 y0 = flamer->base.y;
+        s32 y = y0 + off;
+        s32 m;
+        s32 ym;
+#endif
         y &= ~0xF00;
-        x &= 0xF00;
-        flamer->base.y = y + 0xF00 - x - off;
+        m = 0xF00;
+#ifndef NONMATCHING
+        asm("" : "+r"(m));
+#endif
+        ym = y + m;
+        x &= m;
+        flamer->base.y = ym - x - off;
     }
 }
-#endif
 
 
-// sub_080BA714: functionally equivalent; remaining diff is register allocation / constant scheduling.
-#ifndef NONMATCHING
-NAKED void sub_080BA714(struct Object2 *flamer)
-{
-    asm(".include \"asm/nonmatching/sub_080BA714.inc\"");
-}
-#else
 void sub_080BA714(struct Object2 *flamer)
 {
     u32 t = flamer->unk85 & 0xC0;
 
     if (t == 0x80 || t == 0xC0)
     {
+#ifndef NONMATCHING
+        register s32 off asm("r1") = flamer->base.unk3E * 0x100;
+        register s32 x0 asm("r0") = flamer->base.x;
+        register s32 x asm("r3") = x0 + off;
+        register s32 y asm("r2") = flamer->base.y;
+        register s32 m asm("r0");
+        register s32 xm asm("r0");
+#else
         s32 off = flamer->base.unk3E * 0x100;
-        s32 x = flamer->base.x + off;
+        s32 x0 = flamer->base.x;
+        s32 x = x0 + off;
         s32 y = flamer->base.y;
+        s32 m;
+        s32 xm;
+#endif
         x &= ~0xF00;
-        y &= 0xF00;
-        flamer->base.x = x + y - off;
+        m = 0xF00;
+#ifndef NONMATCHING
+        asm("" : "+r"(m));
+#endif
+        y &= m;
+        xm = x + y;
+        flamer->base.x = xm - off;
     }
     else
     {
+#ifndef NONMATCHING
+        register s32 x asm("r3") = flamer->base.x;
+        register s32 off asm("r1") = flamer->base.unk3D * 0x100;
+        register s32 y0 asm("r0") = flamer->base.y;
+        register s32 y asm("r2") = y0 + off;
+        register s32 m asm("r0");
+        register s32 ym asm("r0");
+#else
         s32 x = flamer->base.x;
         s32 off = flamer->base.unk3D * 0x100;
-        s32 y = flamer->base.y + off;
+        s32 y0 = flamer->base.y;
+        s32 y = y0 + off;
+        s32 m;
+        s32 ym;
+#endif
         y &= ~0xF00;
-        x &= 0xF00;
-        flamer->base.y = y + x - off;
+        m = 0xF00;
+#ifndef NONMATCHING
+        asm("" : "+r"(m));
+#endif
+        x &= m;
+        ym = y + x;
+        flamer->base.y = ym - off;
     }
 }
-#endif
 
 
 // sub_080BA780: functionally equivalent; remaining diff is register allocation / constant scheduling.
