@@ -3613,3 +3613,385 @@ void sub_08035788(struct Kirby *kirby)
     }
     p->unk10 |= 1;
 }
+extern const u16 gUnk_0834BE20[];
+extern const u16 gUnk_0834BEA0[];
+extern const u16 gUnk_0834BF20[];
+extern const u16 gUnk_0834BFA0[];
+extern const u16 gUnk_0834C020[];
+extern const u16 gUnk_0834C0A0[];
+
+#define FADE_ADD(pal, tr, tg, tb)                                            \
+    {                                                                        \
+        u32 c = *(pal);                                                      \
+        *(pal) = tr[(0x1F & c) + (s8)p->unk1] |                              \
+                 tg[(((c << 16) >> 21) & 0x1F) + (s8)p->unk1] |               \
+                 tb[(((c << 16) >> 26) & 0x1F) + (s8)p->unk1];                \
+    }
+
+#define FADE_SUB(pal, tr, tg, tb)                                            \
+    {                                                                        \
+        u32 c = *(pal);                                                      \
+        *(pal) = tr[(0x1F & c) - ((s8)p->unk1 - 0x1F)] |                     \
+                 tg[(((c << 16) >> 21) & 0x1F) - ((s8)p->unk1 - 0x1F)] |      \
+                 tb[(((c << 16) >> 26) & 0x1F) - ((s8)p->unk1 - 0x1F)];       \
+    }
+
+#define FADE_MIX(pal, tr, tg, tb)                                            \
+    {                                                                        \
+        u32 c = *(pal);                                                      \
+        *(pal) = tr[(0x1F & c) + (s8)p->unk1] |                              \
+                 tg[(((c << 16) >> 21) & 0x1F) - ((s8)p->unk1 - 0x1F)] |      \
+                 tb[(((c << 16) >> 26) & 0x1F) - ((s8)p->unk1 - 0x1F)];       \
+    }
+
+void sub_0803AFE8(struct Unk_02022930_0 *p)
+{
+    u16 *pal;
+    u16 i;
+    s32 sum;
+    s32 v;
+    s32 lim;
+    u16 flags;
+    u8 saved;
+
+    if (p->unk8 & 2) {
+        pal = gBgPalette;
+        for (i = 0; i < 16; i++) {
+            if ((p->unk6 >> i) & 1) {
+                if (i == 0)
+                    FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+            } else {
+                pal += 16;
+            }
+        }
+        pal = gObjPalette;
+        for (i = 0; i < 16; i++) {
+            if ((p->unk4 >> i) & 1) {
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+                FADE_ADD(pal, gUnk_0834BE20, gUnk_0834BEA0, gUnk_0834BF20);
+                pal++;
+            } else {
+                pal += 16;
+            }
+        }
+        gMainFlags |= 3;
+    }
+    flags = p->unk8;
+    if (!(flags & 1)) {
+        if (!(gMainFlags & 0x800) || (flags & 0x80)) {
+            sum = (u16)p->unkA + p->unkC;
+            p->unkC = sum;
+            v = (s16)sum >> 8;
+            p->unk1 = v;
+            lim = (s8)p->unk2;
+            saved = p->unk2;
+            if ((v <= lim && (s16)(u16)p->unkA < 0) || (v >= lim && (s16)(u16)p->unkA > 0)) {
+                if (flags & 0x20) {
+                    if (flags & 0x40) {
+                        p->unkC = (s8)p->unk2 << 8;
+                        p->unk1 = saved;
+                    } else {
+                        p->unk8 = (flags | 1) & 0xFF59;
+                    }
+                } else {
+                    p->unk1 = saved;
+                    p->unk8 = flags | 0x20;
+                }
+            }
+        }
+    }
+}
+
+void sub_0803B788(struct Unk_02022930_0 *p)
+{
+    u16 *pal;
+    u16 i;
+    s32 sum;
+    s32 v;
+    s32 lim;
+    u16 flags;
+    u8 saved;
+
+    if (p->unk8 & 2) {
+        pal = gBgPalette;
+        for (i = 0; i < 16; i++) {
+            if ((p->unk6 >> i) & 1) {
+                if (i == 0)
+                    FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+            } else {
+                pal += 16;
+            }
+        }
+        pal = gObjPalette;
+        for (i = 0; i < 16; i++) {
+            if ((p->unk4 >> i) & 1) {
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_SUB(pal, gUnk_0834BFA0, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+            } else {
+                pal += 16;
+            }
+        }
+        gMainFlags |= 3;
+    }
+    flags = p->unk8;
+    if (!(flags & 1)) {
+        if (!(gMainFlags & 0x800) || (flags & 0x80)) {
+            sum = (u16)p->unkA + p->unkC;
+            p->unkC = sum;
+            v = (s16)sum >> 8;
+            p->unk1 = v;
+            lim = (s8)p->unk2;
+            saved = p->unk2;
+            if ((v <= lim && (s16)(u16)p->unkA < 0) || (v >= lim && (s16)(u16)p->unkA > 0)) {
+                if (flags & 0x20) {
+                    if (flags & 0x40) {
+                        p->unkC = (s8)p->unk2 << 8;
+                        p->unk1 = saved;
+                    } else {
+                        p->unk8 = (flags | 1) & 0xFF59;
+                    }
+                } else {
+                    p->unk1 = saved;
+                    p->unk8 = flags | 0x20;
+                }
+            }
+        }
+    }
+}
+
+void sub_0803BF68(struct Unk_02022930_0 *p)
+{
+    u16 *pal;
+    u16 i;
+    s32 sum;
+    s32 v;
+    s32 lim;
+    u16 flags;
+    u8 saved;
+
+    if (p->unk8 & 2) {
+        pal = gBgPalette;
+        for (i = 0; i < 16; i++) {
+            if ((p->unk6 >> i) & 1) {
+                if (i == 0)
+                    FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+            } else {
+                pal += 16;
+            }
+        }
+        pal = gObjPalette;
+        for (i = 0; i < 16; i++) {
+            if ((p->unk4 >> i) & 1) {
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+                FADE_MIX(pal, gUnk_0834BE20, gUnk_0834C020, gUnk_0834C0A0);
+                pal++;
+            } else {
+                pal += 16;
+            }
+        }
+        gMainFlags |= 3;
+    }
+    flags = p->unk8;
+    if (!(flags & 1)) {
+        if (!(gMainFlags & 0x800) || (flags & 0x80)) {
+            sum = (u16)p->unkA + p->unkC;
+            p->unkC = sum;
+            v = (s16)sum >> 8;
+            p->unk1 = v;
+            lim = (s8)p->unk2;
+            saved = p->unk2;
+            if ((v <= lim && (s16)(u16)p->unkA < 0) || (v >= lim && (s16)(u16)p->unkA > 0)) {
+                if (flags & 0x20) {
+                    if (flags & 0x40) {
+                        p->unkC = (s8)p->unk2 << 8;
+                        p->unk1 = saved;
+                    } else {
+                        p->unk8 = (flags | 1) & 0xFF59;
+                    }
+                } else {
+                    p->unk1 = saved;
+                    p->unk8 = flags | 0x20;
+                }
+            }
+        }
+    }
+}
+
