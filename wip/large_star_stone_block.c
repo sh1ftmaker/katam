@@ -391,6 +391,7 @@ void sub_08120A40(struct Unknown82 *x)
     u16 xu, yu;
     s16 x12, y12;
     u32 i, j;
+    s16 unused[2];
 
     x->obj2.base.counter = 0;
     x->unkB4 = gUnk_08357D20[x->obj2.object->unk14];
@@ -409,30 +410,30 @@ void sub_08120A40(struct Unknown82 *x)
 
     j = 0;
     for (i = 0; i < x->unkB4; i++) {
-        u16 dx = gUnk_08357D30[x->unkB6 * 0x12 + j];
-        u16 dy;
-        u8 ex, ey;
-        u16 ax, ay;
+            u16 dx = gUnk_08357D30[x->unkB6 * 0x12 + j];
+            u16 dy;
+            u8 ex, ey;
+            u16 ax, ay;
 
-        j++;
-        dy = gUnk_08357D30[x->unkB6 * 0x12 + j];
-        j++;
+            j++;
+            dy = gUnk_08357D30[x->unkB6 * 0x12 + j];
+            j++;
 
-        ex = xu + dx;
-        ey = yu + dy;
-        entry->unk14 = sub_080025AC(unk56, ex, ey);
+            ex = xu + dx;
+            ey = yu + dy;
+            entry->unk14 = sub_080025AC(unk56, ex, ey);
 
-        ax = x12 + (s16)dx;
-        ay = y12 + (s16)dy;
-        sub_080015A8(unk56, ax, ay, entry->unk0.unk08);
-        entry->unk0.unk10 = sub_080023E4(unk56, ax, ay);
+            ax = x12 + (s16)dx;
+            ay = y12 + (s16)dy;
+            sub_080015A8(unk56, ax, ay, entry->unk0.unk08);
+            entry->unk0.unk10 = sub_080023E4(unk56, ax, ay);
 
-        entry->unk0.unk00 = 1;
-        entry->unk0.unk02 = ex;
-        entry->unk0.unk03 = ey;
-        entry->unk0.unk04 = 0x14;
+            entry->unk0.unk00 = 1;
+            entry->unk0.unk02 = ex;
+            entry->unk0.unk03 = ey;
+            entry->unk0.unk04 = 0x14;
 
-        entry++;
+            entry++;
     }
 
     x->obj2.unk78 = sub_08120B90;
