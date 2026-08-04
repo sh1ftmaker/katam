@@ -304,17 +304,21 @@ void sub_0803D250(const u16 **arg0, const u16 **arg1)
 void sub_0803D280(u8 arg0, u8 arg1)
 {
     u16 *src = &gObjPalette[arg0];
+    s16 count;
     u16 *dest = &gUnk_02022320[arg0];
 
-    CpuSet(src, dest, arg1);
+    count = arg1;
+    CpuSet(src, dest, count);
 }
 
 void sub_0803D2A8(u8 arg0, u8 arg1)
 {
+    s16 count;
     u16 *src = &gBgPalette[arg0];
     u16 *dest = &gUnk_02022120[arg0];
 
-    CpuSet(src, dest, arg1);
+    count = arg1;
+    CpuSet(src, dest, count);
 }
 
 void sub_0803D2D0(void)
