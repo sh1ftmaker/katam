@@ -184,6 +184,12 @@ void sub_0803D208(u32 arg0)
     TaskDestroy(gUnk_02022920);
 }
 
+void sub_0803D21C(const u16 *palette, u8 offset, u16 num)
+{
+    CpuSet(palette, &gBgPalette[offset], num);
+    CpuSet(palette, &gUnk_02022120[offset], num);
+}
+
 void sub_0803D250(const u16 **arg0, const u16 **arg1)
 {
     CpuSet(arg0[0], gUnk_02022120, CPU_SET_32BIT | 0x30);
