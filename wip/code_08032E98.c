@@ -11,6 +11,13 @@ extern u32 gUnk_0203AD4C;
 
 extern void sub_080356AC(u32, u8, u8);
 extern void sub_08020220(void);
+extern void sub_080203C8(void);
+extern void sub_08031CE4(u8);
+extern struct Task *gUnk_03000010;
+extern void sub_080363B4(void);
+extern void sub_08034A20(void);
+extern void sub_08035FA8(void);
+extern void sub_080340A8(void);
 extern void sub_080006EC(void);
 extern void PauseMenuInitRetained(void);
 
@@ -24,7 +31,9 @@ struct Unk_08039E04 {
 extern void (*const gUnk_0834BD94[])(void);
 
 void sub_08039E24(struct Unk_08039E04 *);
+void sub_08039E58(struct Unk_08039E04 *);
 void sub_08039F04(struct Unk_08039E04 *);
+void sub_08039F38(struct Unk_08039E04 *);
 void sub_08039F94(struct Unk_08039E04 *);
 void sub_0803D2D0(void);
 void sub_0803D324(struct Unk_02022930_0 *, u8);
@@ -50,6 +59,40 @@ void sub_080361B0(void)
     *(vu16 *)0x0600E042 = 0xF184;
 }
 
+void sub_080361C8(void)
+{
+    u16 i;
+    s32 v;
+    vu16 *dst;
+
+    if (!(gUnk_0203AD10 & 0x10)) {
+        dst = (vu16 *)0x0600E4AA;
+        for (i = 0; i < 8; i++) {
+            v = (i + 0x1BD) | 0xFFFFF000;
+            *dst = v;
+            dst++;
+        }
+    }
+}
+
+void sub_0803620C(void)
+{
+    if (!(gUnk_0203AD10 & 0x10)) {
+        CpuFill16(0x184, (void *)0x0600E000, 0x500);
+        sub_080363B4();
+        gUnk_03000010->main = sub_08035FA8;
+    }
+}
+
+void sub_08036258(void)
+{
+    if (!(gUnk_0203AD10 & 0x10)) {
+        CpuFill16(0x184, (void *)0x0600E000, 0x500);
+        sub_08034A20();
+        gUnk_03000010->main = sub_080340A8;
+    }
+}
+
 void nullsub_119(void)
 {
 }
@@ -66,6 +109,44 @@ void sub_08039E04(struct Unk_08039E04 *arg0)
         m4aSongNumStart(0x1F8);
     }
     arg0->unk0 = sub_08039E24;
+}
+
+bool32 sub_080395D4(void)
+{
+    if ((gMainFlags & 0x400) || gUnk_0203AD4C != 0) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+void sub_08039D7C(void)
+{
+    struct Unk_08039E04 *s = TaskGetStructPtr(gCurTask);
+
+    s->unk0(s);
+}
+
+void sub_08039E24(struct Unk_08039E04 *arg0)
+{
+    struct Unk_02022930_0 *r0;
+
+    arg0->unkA = 0;
+    r0 = sub_0803CA20(7);
+    r0->unk8 |= 0x80;
+    r0->unk4 = 0xFFFF;
+    r0->unk6 = -1;
+    arg0->unk0 = sub_08039E58;
+}
+
+void sub_08039F04(struct Unk_08039E04 *arg0)
+{
+    sub_080203C8();
+    if (arg0->unk4 != 0) {
+        if (gUnk_0203AD10 & 2) {
+            sub_08031CE4(8);
+        }
+        arg0->unk0 = sub_08039F38;
+    }
 }
 
 void sub_08039ED4(struct Unk_08039E04 *arg0)
