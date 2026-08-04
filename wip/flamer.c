@@ -382,6 +382,7 @@ dispatch:
 callback:
     gUnk_083547AC[attr >> 0x1C](flamer);
 post:
+    asm("" :: "r"(attr));
 
     if (flamer->base.flags & 1)
         flamer->base.xspeed = -flamer->base.xspeed;
