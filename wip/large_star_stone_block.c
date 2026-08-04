@@ -5,6 +5,10 @@
 #include "object.h"
 #include "code_0806F780.h"
 #include "malloc_ewram.h"
+#include "unknown_75.h"
+
+extern const u8 gUnk_08357D20[];
+extern const s8 gUnk_08357D30[];
 
 struct LargeStarStoneBlock
 {
@@ -371,9 +375,9 @@ void sub_081209D8(struct Task *t)
         sub_08001678(x, y, z, 1);
 }
 
-// sub_08120A40: not yet reverse engineered (EwramMalloc'd array builder using
-// gUnk_08357D20/gUnk_08357D30 tables); the #else body below is an unverified
-// placeholder — do not trust it as correct.
+// sub_08120A40: EwramMalloc'd array builder using gUnk_08357D20/gUnk_08357D30
+// tables; entry struct is struct Unk_0888562C_4 (unknown_75.h), same idiom as
+// unknown_75.c:sub_0811C29C but building a whole array instead of one entry.
 #ifndef NONMATCHING
 NAKED void sub_08120A40(struct Unknown82 *x)
 {
@@ -382,12 +386,63 @@ NAKED void sub_08120A40(struct Unknown82 *x)
 #else
 void sub_08120A40(struct Unknown82 *x)
 {
+    struct Unk_0888562C_4 *entry;
+    u8 unk56;
+    u16 xu, yu;
+    s16 x12, y12;
+    u32 i, j;
+
+    x->obj2.base.counter = 0;
+    x->unkB4 = gUnk_08357D20[x->obj2.object->unk14];
+    x->unkB6 = x->obj2.object->unk14;
+    x->unkB8 = 0;
+    x->unkBA = 0;
+
+    entry = EwramMalloc(x->unkB4 * sizeof(struct Unk_0888562C_4));
+    x->obj2.unk8C = entry;
+
+    unk56 = x->obj2.base.unk56;
+    xu = x->obj2.base.x >> 0xc;
+    x12 = xu;
+    yu = x->obj2.base.y >> 0xc;
+    y12 = yu;
+
+    j = 0;
+    for (i = 0; i < x->unkB4; i++) {
+        u16 dx = gUnk_08357D30[x->unkB6 * 0x12 + j];
+        u16 dy;
+        u8 ex, ey;
+        u16 ax, ay;
+
+        j++;
+        dy = gUnk_08357D30[x->unkB6 * 0x12 + j];
+        j++;
+
+        ex = xu + dx;
+        ey = yu + dy;
+        entry->unk14 = sub_080025AC(unk56, ex, ey);
+
+        ax = x12 + (s16)dx;
+        ay = y12 + (s16)dy;
+        sub_080015A8(unk56, ax, ay, entry->unk0.unk08);
+        entry->unk0.unk10 = sub_080023E4(unk56, ax, ay);
+
+        entry->unk0.unk00 = 1;
+        entry->unk0.unk02 = ex;
+        entry->unk0.unk03 = ey;
+        entry->unk0.unk04 = 0x14;
+
+        entry++;
+    }
+
     x->obj2.unk78 = sub_08120B90;
 }
 #endif
 
-// sub_08120B90: not yet reverse engineered (consumer of sub_08120A40's ewram
-// array); the #else body below is an unverified placeholder.
+// sub_08120B90: consumer of sub_08120A40's ewram array; same entry struct
+// (struct Unk_0888562C_4), invoking sub_08001408 on either the whole entry
+// pointer or just its cached union field, same shape as unknown_75.c's
+// sub_0811C328 but looped over the array instead of a single entry.
 #ifndef NONMATCHING
 NAKED void sub_08120B90(struct Unknown82 *x)
 {
@@ -396,6 +451,43 @@ NAKED void sub_08120B90(struct Unknown82 *x)
 #else
 void sub_08120B90(struct Unknown82 *x)
 {
+    struct Unk_0888562C_4 *arr = x->obj2.unk8C;
+    u8 unk56 = x->obj2.base.unk56;
+    u32 *slot;
+
+    slot = sub_08002888(0, x->obj2.object->unk4, gCurLevelInfo[unk56].unk65E);
+    if (*slot != 0) {
+        slot = sub_08002888(0, x->obj2.object->unk4, gCurLevelInfo[x->obj2.base.unk56].unk65E);
+        *slot = 0;
+
+        x->unkBA = x->obj2.object->unk12;
+        if (!(x->unkB8 & 1))
+            x->unkB8 |= 0x10;
+    }
+
+    if ((s16)x->unkBA > 0) {
+        x->unkBA--;
+    } else {
+        if (x->unkB8 & 1)
+            x->unkB8 |= 0x10;
+        x->unkBA = 0;
+    }
+
+    if (x->unkB8 & 0x10) {
+        x->unkB8 &= ~0x10;
+        if (x->unkB8 & 1) {
+            u32 i;
+            x->unkB8 &= ~1;
+            for (i = 0; i < x->unkB4; i++)
+                sub_08001408(unk56, &arr[i].unk0, NULL, NULL);
+        } else {
+            u32 i;
+            x->unkB8 |= 1;
+            for (i = 0; i < x->unkB4; i++)
+                sub_08001408(unk56, arr[i].unk14, NULL, NULL);
+        }
+    }
+
     x->obj2.base.counter++;
 }
 #endif
