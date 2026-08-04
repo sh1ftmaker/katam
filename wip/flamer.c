@@ -801,7 +801,7 @@ struct Object4 *sub_080B9DF0(struct Object2 *flamer, u8 dirIndex)
     u16 gfxId;
     u16 param;
     u8 dy;
-    register u32 z asm("sl");
+    u32 z;
 
     sub_0803E3B0(tmp);
     newObj->unk0 = 3;
