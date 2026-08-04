@@ -143,44 +143,47 @@ void sub_081202A0(struct LargeStarStoneBlock *block)
 
 void sub_08120438(struct LargeStarStoneBlock *block)
 {
-    s32 y12 = block->obj2.base.y >> 0xc;
+    struct LargeStarStoneBlock *block2 = block;
+    s32 y12 = block2->obj2.base.y >> 0xc;
     u8 f;
+    u8 *e4;
 
-    if (block->unkE8 >= y12 && block->unkE7 == y12)
+    if (block2->unkE8 >= y12 && block2->unkE7 == y12)
     {
-        u8 unk56 = block->obj2.base.unk56;
-        u8 x12 = block->obj2.base.x >> 0xc;
-        u8 y12b = block->unkE7;
+        u8 unk56 = block2->obj2.base.unk56;
+        u8 x12 = block2->obj2.base.x >> 0xc;
+        u8 y12b = block2->unkE7;
 
         sub_080023E4(unk56, x12, y12b);
         sub_08001408(unk56, sub_080025AC(unk56, x12, y12b), 0, 0);
-        unk56 = block->obj2.base.unk56;
-        x12 = (block->obj2.base.x >> 0xc) + 1;
-        y12b = block->obj2.base.y >> 0xc;
+        unk56 = block2->obj2.base.unk56;
+        x12 = (block2->obj2.base.x >> 0xc) + 1;
+        y12b = block2->obj2.base.y >> 0xc;
         sub_080023E4(unk56, x12, y12b);
         sub_08001408(unk56, sub_080025AC(unk56, x12, y12b), 0, 0);
-        block->unkE7++;
+        block2->unkE7++;
     }
-    f = block->unkE4;
+    e4 = &block->unkE4;
+    f = *e4;
     if (f & 1)
         f |= 4;
     else
         f &= 0xFB;
-    block->unkE4 = f;
+    *e4 = f;
     if ((block->obj2.base.y >> 8) > 0x50)
     {
         block->obj2.base.sprite.unk8 = (block->obj2.base.sprite.unk8 & ~0x3000) | 0x3000;
-        f = block->unkE4;
+        f = *e4;
         f |= 1;
-        block->unkE4 = f;
+        *e4 = f;
     }
-    f = block->unkE4;
+    f = *e4;
     if (!(f & 4) && (f & 1))
         f |= 2;
     else
         f &= 0xFD;
-    block->unkE4 = f;
-    if (block->unkE4 & 2)
+    *e4 = f;
+    if (*e4 & 2)
     {
         sub_08089864(&block->obj2.base, -0x10, 5, 0);
         sub_08089864(&block->obj2.base, -0x10, 5, 1);
