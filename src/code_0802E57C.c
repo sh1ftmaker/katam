@@ -141,11 +141,17 @@ void sub_0802E78C(void) {
             u32 idx = Rand16() & 0x1F;
             u32 dur = (Rand16() & 0xF) + 0x32;
             s16 v1[2] = { -x->unk180, -x->unk182 };
+#ifndef NONMATCHING
             volatile s32 x2, y2;
             register u32 diff asm("r0");
             register u32 diff2 asm("r1");
             register s32 t asm("r0");
             register s32 ty asm("r4");
+#else
+            s32 x2, y2;
+            u32 diff, diff2;
+            s32 t, ty;
+#endif
             u16 animId, variant;
 
             t = x->unk178 + (((Rand16() & 0xF) - 8) << 8);
@@ -161,20 +167,28 @@ void sub_0802E78C(void) {
             diff2 = diff;
             if ((s16)diff < 0) {
                 diff = 0;
+#ifndef NONMATCHING
                 asm("" :: "r"(diff));
+#endif
                 diff2 = diff;
             }
             if (diff2 <= 0xFF) {
                 v1[0] = 0;
                 v1[1] = 0x80;
             } else {
+#ifndef NONMATCHING
                 register s32 w asm("r0");
+#else
+                s32 w;
+#endif
                 {
                     s16 *q = v1;
                     s16 *p = q;
                     u16 uvx;
                     s16 svx;
+#ifndef NONMATCHING
                     asm("" : "+r"(p));
+#endif
                     uvx = *p;
                     svx = *p;
                     if (svx < -0x400) {
@@ -190,11 +204,18 @@ void sub_0802E78C(void) {
                 {
                     s16 *q = v1;
                     s16 *p = q;
+#ifndef NONMATCHING
                     register u32 uvy asm("r1");
                     register s32 svy asm("r2");
                     asm("" : "+r"(p));
+#else
+                    u32 uvy;
+                    s32 svy;
+#endif
                     uvy = (u16)p[1];
+#ifndef NONMATCHING
                     asm("" : "+r"(uvy));
+#endif
                     t = uvy << 16;
                     svy = t >> 16;
                     if (svy < -0x400) {

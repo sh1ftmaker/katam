@@ -186,7 +186,11 @@ static void sub_08121B70(struct KirbyCannon *x) {
 #endif
 
 static void sub_08121FCC(struct KirbyCannon *x) {
+#ifndef NONMATCHING
     register struct KirbyCannon *x2 asm("r8") = x;
+#else
+    struct KirbyCannon *x2 = x;
+#endif
     struct Object4 *eff;
 
     if (x->obj2.base.flags & 2) {

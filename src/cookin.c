@@ -102,10 +102,14 @@ static void sub_080B5E1C(struct Object2 *obj) {
         if (obj->unk80 > 0)
             ObjectSetFunc(obj, 0, sub_080B5BE8);
         else {
+#ifndef NONMATCHING
             register void (*func)(struct Object2 *) asm("r2") = sub_080B5BE8;
             register struct Object2 *o asm("r0") = obj;
             register s32 m asm("r1") = -1;
             ObjectSetFunc(o, m, func);
+#else
+            ObjectSetFunc(obj, -1, sub_080B5BE8);
+#endif
         }
         obj->base.flags &= ~0x800;
         if (obj->object->subtype1 == 1)
@@ -206,10 +210,14 @@ static void sub_080B60AC(struct Object2 *obj) {
                     if (parent->unk80 > 0)
                         ObjectSetFunc(parent, 0, sub_080B5BE8);
                     else {
+#ifndef NONMATCHING
                         register void (*func)(struct Object2 *) asm("r2") = sub_080B5BE8;
                         register struct Object2 *o asm("r0") = parent;
                         register s32 m asm("r1") = -1;
                         ObjectSetFunc(o, m, func);
+#else
+                        ObjectSetFunc(parent, -1, sub_080B5BE8);
+#endif
                     }
                     parent->base.flags &= ~0x800;
                     if (parent->object->subtype1 == 1)

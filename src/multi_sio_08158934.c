@@ -212,7 +212,9 @@ u32 sub_08158D80(void) {
     u8 i;
 
     /* barrier: stops gcc folding (gUnk >> 4) >> 24 into gUnk >> 28 */
+#ifndef NONMATCHING
     asm("" : "+r"(data));
+#endif
     sum = data >> 24;
 
     for (i = 6; i != 0;) {
@@ -245,10 +247,14 @@ u32 sub_08158DBC(u8 kind) {
         base = ((gUnk_03000034 & 0xFFFFFF) << 4) | 0x20000000;
         /* barriers: keep `base` opaque so base >> 28 is not const-folded,
            and keep the u8 truncation of the seed nibble */
+#ifndef NONMATCHING
         asm("" : "+r"(base));
+#endif
         {
             u32 t = base >> 28;
+#ifndef NONMATCHING
             asm("" : "+r"(t));
+#endif
             sum = t;
         }
         for (i = 6; i != 0; i--) {
@@ -260,10 +266,14 @@ u32 sub_08158DBC(u8 kind) {
         base = (gUnk_0300607C << 4) | 0x40000000;
         /* barriers: keep `base` opaque so base >> 28 is not const-folded,
            and keep the u8 truncation of the seed nibble */
+#ifndef NONMATCHING
         asm("" : "+r"(base));
+#endif
         {
             u32 t = base >> 28;
+#ifndef NONMATCHING
             asm("" : "+r"(t));
+#endif
             sum = t;
         }
         for (i = 6; i != 0; i--) {

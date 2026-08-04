@@ -326,7 +326,9 @@ void sub_08119AA8(struct BigSmallSwitch *x) {
         if (q[0] == a && q[1] == b) {
             u32 q2 = q[2];
             u8 match;
+#ifndef NONMATCHING
             asm("" : "+r"(q2));
+#endif
             match = 1;
             if (q2 != c) {
                 match = 0;
