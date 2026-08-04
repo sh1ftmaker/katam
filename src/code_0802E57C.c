@@ -131,18 +131,6 @@ void sub_0802E71C(struct Task *t) {
     }
 }
 
-// Matches except for 2 instruction pairs (8 objdump diff lines, was 85):
-//   - the y-clamp reads v1[1] with `ldrsh` where ref sign-extends the already
-//     loaded halfword (`lsls #16; asrs #16`);
-//   - the y2 outgoing-argument `ldr r4, [sp, #0x20]` is scheduled one slot
-//     early (before the `ldr r3, [r7, #8]` / x2 load pair).
-// Byte length, frame layout, spill slots, pools, branch layout and every other
-// register assignment are identical.
-#ifndef NONMATCHING
-NAKED void sub_0802E78C(void) {
-    asm(".include \"asm/nonmatching/sub_0802E78C.inc\"");
-}
-#else
 void sub_0802E78C(void) {
     struct Unk_0802E57C *tmp = TaskGetStructPtr(gCurTask), *x = tmp;
     u32 *p = &x->unk188;
@@ -202,11 +190,13 @@ void sub_0802E78C(void) {
                 {
                     s16 *q = v1;
                     s16 *p = q;
-                    u16 uvy;
-                    s16 svy;
+                    register u32 uvy asm("r1");
+                    register s32 svy asm("r2");
                     asm("" : "+r"(p));
-                    uvy = p[1];
-                    svy = p[1];
+                    uvy = (u16)p[1];
+                    asm("" : "+r"(uvy));
+                    t = uvy << 16;
+                    svy = t >> 16;
                     if (svy < -0x400) {
                         w = -0x400;
                     } else {
@@ -220,8 +210,7 @@ void sub_0802E78C(void) {
             }
             animId = gUnk_082EB954[gUnk_082EB984[idx] * 2];
             variant = (gUnk_082EB954 + 1)[gUnk_082EB984[idx] * 2];
-            ty = y2;
-            sub_0802F8D8(x, animId, variant, x->unk8, x2, ty, v1[0], v1[1], dur);
+            sub_0802F8D8(x, animId, variant, x->unk8, x2, (ty = y2), v1[0], v1[1], dur);
         }
         x->unk4(x);
         x->unk18C++;
@@ -233,7 +222,6 @@ void sub_0802E78C(void) {
         }
     }
 }
-#endif
 
 void sub_0802E97C(struct Unk_0802E57C *x) {
     u16 i;
